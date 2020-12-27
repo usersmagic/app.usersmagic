@@ -7,9 +7,12 @@ module.exports = (req, res) => {
   
   return res.render('auth/register', {
     page: 'auth/register',
-    title: 'Hesap Aç',
+    title: 'Sign Up',
     includes: {
-      external: ['css', 'js', 'fontawesome']
+      external: {
+        css: ['page', 'general', 'logo', 'inputs', 'buttons', 'fontawesome'],
+        js: ['page']
+      }
     },
     error
   });

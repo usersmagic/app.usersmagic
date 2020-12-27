@@ -1,0 +1,67 @@
+extends ../partials/header
+block main
+  .all-content-header-wrapper
+    .header-user-logo
+      img(src=company.profile_photo alt="usersmagic " + company.name)
+    a.header-each-step-text(href="/projects") Projects
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/create?id=" + project._id)= project.name
+  .all-content-inner-wrapper
+    .blocks-wrapper
+      .welcome-block-wrapper
+        img.each-type-image(src="/res/images/block_icons/welcome.png" alt="usersmagic welcome block")
+        span.each-type-title Welcome Screen
+      .custom-blocks-wrapper.drag-and-drop-wrapper
+      .add-block-wrapper
+        .add-block-button
+          .add-block-plus-wrapper
+            i.fas.fa-plus
+          .add-block-text-wrapper
+            span.add-block-title Add a Block
+            span.add-block-subtitle Rating, question...
+        .each-add-block-wrapper#yes_no
+          img.each-type-image(src="/res/images/block_icons/yes_no.png" alt="usersmagic yes/no")
+          .each-block-text-wrapper
+            span.each-type-title Yes/No
+            span.each-type-subtitle Pick the next type you need
+        .each-add-block-wrapper#multiple_choice
+          img.each-type-image(src="/res/images/block_icons/multiple_choice.png" alt="usersmagic multiple choice")
+          .each-block-text-wrapper
+            span.each-type-title Multiple Choice
+            span.each-type-subtitle Pick the next type you need
+        .each-add-block-wrapper#opinion_scale
+          img.each-type-image(src="/res/images/block_icons/opinion_scale.png" alt="usersmagic opinion scale")
+          .each-block-text-wrapper
+            span.each-type-title Opinion Scale
+            span.each-type-subtitle Pick the next type you need
+        .each-add-block-wrapper#open_answer
+          img.each-type-image(src="/res/images/block_icons/open_answer.png" alt="usersmagic open answer")
+          .each-block-text-wrapper
+            span.each-type-title Open Answer
+            span.each-type-subtitle Pick the next type you need
+    .block-settings-wrapper
+      .block-settings-header-wrapper
+        img.each-type-image(src="/res/images/block_icons/welcome.png" alt="usersmagic welcome")
+        span.each-type-title.settings-title Welcome Screen
+        span.required-text(style="display: none;") Required
+        .general-slider-button.required-slide-button(style="display: none;")
+          div
+        i.far.fa-trash-alt.settings-delete-button(style="display: none;")
+      .block-settings-content-wrapper
+        span.block-settings-input-title Opening Message
+        input.block-settings-short-input(type="text" name="opening" placeholder="Welcome your testers")
+        span.block-settings-input-title Task & Details
+        textarea.block-settings-long-input(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")
+        span.block-settings-input-title Image
+        span.block-settings-text.add-image-button Add an image to explain the task. This is optional.
+        //- span.block-settings-input-title Choices
+        //- .block-settings-choices-wrapper.drag-and-drop-wrapper
+        //-   .block-settings-each-choice
+        //-     span New Choice
+        //-     i.far.fa-trash-alt.choice-delete-button
+        //-   .block-settings-each-choice
+        //-     span New Choice 2
+        //-     i.far.fa-trash-alt.choice-delete-button
+        //- input.block-settings-each-choice-input(type="text" placeholder="Choice 4" name="choice")
+        //- span.block-settings-text Press Enter to add a new choice
+    .block-preview-wrapper

@@ -1,0 +1,76 @@
+.all-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+}
+
+.form-wrapper {
+  background-color: rgb(254, 254, 254);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px;
+  width: 485px;
+  min-width: 485px;
+}
+.form-title {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 36px;
+  margin-top: 60px;
+}
+.form-subtitle {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 50px;
+}
+.form-input-wrapper {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.form-agreement-text {
+  margin-bottom: 10px;
+}
+.form-agreement-text span {
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(78, 75, 102, 1);
+}
+.form-agreement-text a {
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(46, 197, 206, 1);
+  margin-left: 5px;
+  text-decoration: none;
+}
+.form-agreement-text a:hover {
+  text-decoration: underline;
+}
+.form-login-link {
+  display: flex;
+  align-items: center;
+}
+.form-login-link span {
+  font-weight: 700;
+  font-size: 12px;
+  color: rgb(78, 75, 102, 1);
+}
+.form-login-link a {
+  font-weight: 500;
+  font-size: 12px;
+  color: rgb(46, 197, 206, 1);
+  font-weight: 500;
+  margin-left: 20px;
+  text-decoration: none;
+}
+.form-login-link a:hover {
+  text-decoration: underline;
+}
+
+.content-wrapper {
+  flex: 1;
+  background-color: rgb(225, 246, 248);
+}

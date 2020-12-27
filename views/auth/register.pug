@@ -1,0 +1,25 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .form-wrapper
+      a.general-logo-wrapper(href="/")
+        img(src="/res/images/logo.png" alt="usersmagic app")
+        span usersmagic
+      span.form-title Welcome!
+      span.form-subtitle Create your free account
+      form.form-input-wrapper(action="/auth/register" method="POST")
+        span.general-input-title Email
+        input.general-input-with-border(type="text" autocomplete="off" name="email" placeholder="name@email.com")
+        span.general-input-title Password
+        input.general-input-with-border(type="password" name="password" placeholder="••••••••")
+        span.general-input-title Confirm Password
+        input.general-input-with-border(type="password" name="confirmPassword" placeholder="••••••••")
+        button.general-seablue-button
+          span Create Account
+      span.form-agreement-text
+        span By signing up, I agree to
+        a(href="/agreement/termsofservice") Usersmagic's Term of Service
+      .form-login-link
+        span Already have an account?
+        a(href="/auth/login") Log in
+    .content-wrapper

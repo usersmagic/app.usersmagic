@@ -12,7 +12,7 @@ const i18n = require('i18n');
 
 const MongoStore = require('connect-mongo')(session);
 
-const numCPUs = process.env.WEB_CONCURRENCY || require('os').cpus().length;
+const numCPUs = 1 || process.env.WEB_CONCURRENCY || require('os').cpus().length;
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);

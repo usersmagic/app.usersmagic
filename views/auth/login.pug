@@ -1,0 +1,21 @@
+extends ../partials/head
+block content
+  .all-wrapper
+    .form-wrapper
+      a.general-logo-wrapper(href="/")
+        img(src="/res/images/logo.png" alt="usersmagic app")
+        span usersmagic
+      span.form-title Welcome back!
+      span.form-subtitle Log in to unleash your users’ magic
+      form.form-input-wrapper(action="/auth/login" method="POST")
+        span.general-input-title Email
+        input.general-input-with-border(type="text" autocomplete="off" name="email" placeholder="name@email.com")
+        span.general-input-title Password
+        input.general-input-with-border(type="password" name="password" placeholder="••••••••")
+        button.general-seablue-button
+          span Log in
+        a.password-lost-link(href="/auth/lost_password") Forgot my password
+      .form-register-link
+        span Don't have an account?
+        a(href="/auth/register") Sign up
+    .content-wrapper

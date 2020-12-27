@@ -1,0 +1,68 @@
+.all-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+}
+
+.form-wrapper {
+  background-color: rgb(254, 254, 254);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 30px;
+  width: 485px;
+  min-width: 485px;
+}
+.form-title {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 36px;
+  margin-top: 60px;
+}
+.form-subtitle {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 50px;
+}
+.form-input-wrapper {
+  width: 75%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.password-lost-link {
+  color: rgba(46, 197, 206, 1);
+  font-weight: 500;
+  font-size: 12px;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+.password-lost-link:hover {
+  text-decoration: underline;
+}
+.form-register-link {
+  display: flex;
+  align-items: center;
+}
+.form-register-link span {
+  font-weight: 700;
+  font-size: 12px;
+  color: rgb(78, 75, 102, 1);
+}
+.form-register-link a {
+  font-weight: 500;
+  font-size: 12px;
+  color: rgb(46, 197, 206, 1);
+  font-weight: 500;
+  margin-left: 20px;
+  text-decoration: none;
+}
+.form-register-link a:hover {
+  text-decoration: underline;
+}
+
+.content-wrapper {
+  flex: 1;
+  background-color: rgb(225, 246, 248);
+}

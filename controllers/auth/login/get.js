@@ -7,9 +7,11 @@ module.exports = (req, res) => {
 
   return res.render('auth/login', {
     page: 'auth/login',
-    title: 'Giriş Yap',
+    title: 'Login',
     includes: {
-      external: ['css', 'fontawesome']
+      external: {
+        css: ['page', 'general', 'logo', 'inputs', 'buttons', 'fontawesome']
+      }
     },
     error
   });

@@ -1,0 +1,81 @@
+.general-seablue-button {
+  margin-top: 20px;
+  margin-bottom: 40px;
+  background-color: rgba(46, 197, 206, 1);
+  padding: 12px 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  border-radius: 5px;
+  border: 0.4px solid rgba(151, 151, 151, 0.3);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  outline: none;
+}
+.general-seablue-button:hover {
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+.general-seablue-button span {
+  color: rgb(254, 254, 254);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.general-slider-button {
+  width: 27px;
+  height: 16px;
+  padding: 2px;
+  border-radius: 8px;
+  background-color: rgb(196, 196, 196);
+  cursor: pointer;
+}
+.general-slider-button div {
+  width: 12px;
+  height: 12px;
+  border-radius: 6px;
+  background-color: rgb(254, 254, 254);
+  margin-left: 0px;
+}
+.general-slider-button-slide-right-animation-class {
+  animation: slideRight 0.2s ease-in-out 0s 1 forwards;
+  -webkit-animation: slideRight 0.2s ease-in-out 0s 1 forwards;
+}
+.general-slider-button-slide-left-animation-class {
+  animation: slideLeft 0.2s ease-in-out 0s 1 forwards;
+  -webkit-animation: slideLeft 0.2s ease-in-out 0s 1 forwards;
+}
+
+@keyframes slideRight {
+  from {
+    margin-left: 0px;
+  }
+  to {
+    margin-left: 11px;
+  }
+}
+@-webkit-keyframes slideRight {
+  from {
+    margin-left: 0px;
+  }
+  to {
+    margin-left: 11px;
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    margin-left: 11px;
+  }
+  to {
+    margin-left: 0px;
+  }
+}
+@-webkit-keyframes slideLeft {
+  from {
+    margin-left: 11px;
+  }
+  to {
+    margin-left: 0px;
+  }
+}

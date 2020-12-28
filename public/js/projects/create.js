@@ -141,6 +141,29 @@ function createSettingsChoiceInput (value, placeholder, name) {
   document.querySelector('.block-settings-content-wrapper').appendChild(choiceInput);
 }
 
+function createSettingsOneLineInputs (inputs) {
+  const inputsWrapper = document.createElement('div');
+  inputsWrapper.classList.add('block-settings-one-line-inputs-wrapper');
+
+  inputs.forEach(input => {
+    const newInput = document.createElement('input');
+    newInput.classList.add('block-settings-one-line-input');
+    newInput.type = 'text';
+    newInput.value = input.value;
+    newInput.name = input.name;
+    newInput.placeholder = input.placeholder;
+    inputsWrapper.appendChild(newInput);
+  });
+
+  for (let i = 3; i > inputs.length; i--) {
+    const emptyInput = document.createElement('div');
+    emptyInput.classList.add('block-settings-one-line-input-empty-space');
+    inputsWrapper.appendChild(emptyInput);
+  }
+
+  document.querySelector('.block-settings-content-wrapper').appendChild(inputsWrapper);
+}
+
 // Create new content of the settings-content-wrapper
 function createSettingsPageContent (id) {
   currentlyClickedBlock = id;
@@ -195,6 +218,18 @@ function createSettingsPageContent (id) {
         createSettingsEachChoice(choice);
       });
       createSettingsText('Press enter to add a new choice');
+    } else if (blockData[id].type == 'opinion_scale') {
+      createSettingsInputTitle('Label');
+      createSettingsOneLineInputs([
+        {name: 'labelLeft', value: blockData[id].labels.left, placeholder: 'Left'},
+        {name: 'labelMiddle', value: blockData[id].labels.middle, placeholder: 'Middle'},
+        {name: 'labelRight', value: blockData[id].labels.right, placeholder: 'Right'}
+      ]);
+      createSettingsInputTitle('Scale');
+      createSettingsOneLineInputs([
+        {name: 'rangeMin', value: blockData[id].range.min, placeholder: 'Min'},
+        {name: 'rangeMax', value: blockData[id].range.max, placeholder: 'Max'}
+      ]);
     }
   }
 }
@@ -290,8 +325,17 @@ window.onload = () => {
         newData.type = 'opinion_scale';
         newData.question = 'New question';
         newData.required = true;
-        newData.notes = '';
+        newData.details = '';
         newData.image = null;
+        newData.labels = {
+          left: '',
+          middle: '',
+          right: ''
+        };
+        newData.range = {
+          min: '',
+          max: ''
+        };
         blockData[id] = newData;
         createNewEachBlockWrapper(id);
         createSettingsPageContent(id);
@@ -379,21 +423,26 @@ window.onload = () => {
     }
   });
 
-  document.addEventListener('keydown', event => {
+  document.addEventListener('input', event => {
     if (event.target.name == 'opening') { // Welcome opening text input
       blockData['welcome'].opening = event.target.value;
     } else if (event.target.name == 'question') { // Question text input
       blockData[currentlyClickedBlock].question = event.target.value;
+      document.getElementById(currentlyClickedBlock).childNodes[1].childNodes[0].innerHTML = event.target.value;
     } else if (event.target.name == 'details') { // Question details input
       blockData[currentlyClickedBlock].details = event.target.value;
-    } else if (event.target.name == 'choice' && event.key == 'Enter') { // New choice input Enter clicked
+    } else if (event.target.name == 'choice') { // New choice input
+      blockData[currentlyClickedBlock].choiceInputValue = event.target.value;
+    }
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.target.name == 'choice' && event.key == 'Enter' && event.target.value.length) { // New choice input Enter clicked
       createSettingsEachChoice(event.target.value);
       blockData[currentlyClickedBlock].choices.push(event.target.value);
       blockData[currentlyClickedBlock].choiceInputValue = '';
       event.target.value = '';
       event.target.placeholder = 'Choice ' + (document.querySelector('.block-settings-choices-wrapper').childNodes.length + 1);
-    } else if (event.target.name == 'choice') { // New choice input
-      blockData[currentlyClickedBlock].choiceInputValue = event.target.value;
     }
   });
 

@@ -272,7 +272,7 @@
   justify-content: space-between;
   padding: 15px 20px;
   border-radius: 5px;
-  cursor: grab;
+  cursor: move;
 }
 .block-settings-each-choice span {
   color: rgba(78, 75, 102, 1);
@@ -281,7 +281,7 @@
 }
 .block-settings-each-choice i {
   color: rgba(78, 75, 102, 1);
-  font-size: 13px;
+  font-size: 17px;
   cursor: pointer;
 }
 .block-settings-each-choice-input {
@@ -295,6 +295,57 @@
   border-radius: 5px;
   min-height: 50px;
   height: 50px;
+}
+.block-settings-one-line-inputs-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.block-settings-one-line-input {
+  outline: none;
+  border: 1px solid rgba(151, 151, 151, 0.3);
+  padding: 15px 20px;
+  margin-top: 10px;
+  color: rgba(78, 75, 102, 1);
+  font-weight: 600;
+  font-size: 12px;
+  border-radius: 5px;
+  min-height: 50px;
+  height: 50px;
+  width: 140px;
+}
+.block-settings-one-line-input-empty-space {
+  width: 140px;
+  height: 50px;
+  background-color: transparent;
+}
+.block-settings-multiple-type-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+.block-settings-multiple-each-type {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-right: 40px;
+}
+.block-settings-multiple-each-type i {
+  color: rgb(196, 196, 196);
+  margin-right: 10px;
+  font-size: 20px;
+}
+.block-settings-multiple-each-type span {
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: rgb(196, 196, 196);
+}
+.clicked-multiple-type i {
+  color: rgb(46, 197, 206) !important;
+}
+.clicked-multiple-type span {
+  color: rgba(0, 0, 0, 0.65) !important;
 }
 
 .block-preview-wrapper {

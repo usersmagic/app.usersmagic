@@ -1,3 +1,4 @@
+// Data of questions and welcome block
 const blockData = {
   welcome: {
     opening: '',
@@ -6,6 +7,7 @@ const blockData = {
   }
 };
 
+// String names for types
 const typeNames = {
   'yes_no': 'Yes/No',
   'multiple_choice': 'Multiple Choice',
@@ -15,8 +17,9 @@ const typeNames = {
   'multiple': 'Multiple Select'
 };
 
-let currentlyClickedBlock = 'welcome';
+let currentlyClickedBlock = 'welcome'; // ID/Keyword of currently selected block
 
+// Create a new block with id
 function createNewEachBlockWrapper (id) {
   const clickedBlock = document.querySelector('.clicked-each-block');
   if (clickedBlock)
@@ -50,6 +53,7 @@ function createNewEachBlockWrapper (id) {
   document.querySelector('.custom-blocks-wrapper').appendChild(eachBlockWrapper);
 }
 
+// Create an input title on the settings-content-wrapper
 function createSettingsInputTitle (text) {
   const settingsInputTitle = document.createElement('span');
   settingsInputTitle.classList.add('block-settings-input-title');
@@ -57,6 +61,7 @@ function createSettingsInputTitle (text) {
   document.querySelector('.block-settings-content-wrapper').appendChild(settingsInputTitle);
 }
 
+// Create a text on the settings-content-wrapper
 function createSettingsText (text) {
   const span = document.createElement('span');
   span.classList.add('block-settings-text');
@@ -64,6 +69,7 @@ function createSettingsText (text) {
   document.querySelector('.block-settings-content-wrapper').appendChild(span);
 }
 
+// Create a short input on the settings-content-wrapper
 function createSettingsShortInput (value, placeholder, name) {
   const settingsShortInput = document.createElement('input');
   settingsShortInput.classList.add('block-settings-short-input');
@@ -74,6 +80,7 @@ function createSettingsShortInput (value, placeholder, name) {
   document.querySelector('.block-settings-content-wrapper').appendChild(settingsShortInput);
 }
 
+// Create a long input on the settings-content-wrapper
 function createSettingsLongInput (value, placeholder, name) {
   const settingsLongInput = document.createElement('textarea');
   settingsLongInput.classList.add('block-settings-long-input');
@@ -83,6 +90,7 @@ function createSettingsLongInput (value, placeholder, name) {
   document.querySelector('.block-settings-content-wrapper').appendChild(settingsLongInput);
 }
 
+// Create an image picker on the settings-content-wrapper
 function createSettingsImagePicker (text) {
   const settingsImagePicker = document.createElement('span');
   settingsImagePicker.classList.add('block-settings-text');
@@ -91,6 +99,7 @@ function createSettingsImagePicker (text) {
   document.querySelector('.block-settings-content-wrapper').appendChild(settingsImagePicker);
 }
 
+// Create settings choices wrapper on the settings-content-wrapper
 function createSettingsChoicesWrapper () {
   const choicesWrapper = document.createElement('div');
   choicesWrapper.classList.add('block-settings-choices-wrapper');
@@ -98,6 +107,7 @@ function createSettingsChoicesWrapper () {
   document.querySelector('.block-settings-content-wrapper').appendChild(choicesWrapper);
 }
 
+// Create a new choice on the settings-choices-wrapper
 function createSettingsEachChoice (text) {
   const wrapper = document.querySelector('.block-settings-choices-wrapper');
 
@@ -120,6 +130,7 @@ function createSettingsEachChoice (text) {
   wrapper.appendChild(eachChoice);
 }
 
+// Create a settings choice input on the settings-content-wrapper
 function createSettingsChoiceInput (value, placeholder, name) {
   const choiceInput = document.createElement('input');
   choiceInput.classList.add('block-settings-each-choice-input');
@@ -130,6 +141,7 @@ function createSettingsChoiceInput (value, placeholder, name) {
   document.querySelector('.block-settings-content-wrapper').appendChild(choiceInput);
 }
 
+// Create new content of the settings-content-wrapper
 function createSettingsPageContent (id) {
   currentlyClickedBlock = id;
 
@@ -178,7 +190,7 @@ function createSettingsPageContent (id) {
     if (blockData[id].type == 'multiple_choice') {
       createSettingsInputTitle('Choices');
       createSettingsChoicesWrapper();
-      createSettingsChoiceInput('', 'Choice 1', 'choice');
+      createSettingsChoiceInput(blockData[id].choiceInputValue, 'Choice 1', 'choice');
       blockData[id].choices.forEach(choice => {
         createSettingsEachChoice(choice);
       });
@@ -187,6 +199,7 @@ function createSettingsPageContent (id) {
   }
 }
 
+// Save reorder of choices which are below settings-choices-wrapper
 function getChoices () {
   const wrapper = document.querySelector('.block-settings-choices-wrapper');
 
@@ -200,16 +213,15 @@ function getChoices () {
 }
 
 window.onload = () => {
-  dragAndDrop(document);
-  listenSliderButtons(document);
-
-  // Blocks wrapper functions and listeners.
+  dragAndDrop(document); // Lister for drag-and-drop wrappers
+  listenSliderButtons(document); // Listern slider buttons
 
   const addBlockWrapper = document.querySelector('.add-block-wrapper');
   const addBlockButton = document.querySelector('.add-block-button');
   let isAddBlockClicked = false;
 
   document.addEventListener('click', event => {
+    // Open/Close add a new block menu
     if (event.target.classList.contains('add-block-button') || event.target.parentNode.classList.contains('add-block-button') || event.target.parentNode.parentNode.classList.contains('add-block-button')) {
       if (isAddBlockClicked) {
         isAddBlockClicked = false;
@@ -239,6 +251,7 @@ window.onload = () => {
       }
     }
 
+    // Add a new block
     if (event.target.classList.contains('each-add-block-wrapper') || event.target.parentNode.classList.contains('each-add-block-wrapper') || event.target.parentNode.parentNode.classList.contains('each-add-block-wrapper')) {
       let type;
 
@@ -268,6 +281,7 @@ window.onload = () => {
         newData.details = '';
         newData.image = null;
         newData.choices = [];
+        newData.choiceInputValue = '';
         newData.subtype = 'single';
         blockData[id] = newData;
         createNewEachBlockWrapper(id);
@@ -285,7 +299,7 @@ window.onload = () => {
         newData.type = 'open_answer';
         newData.question = 'New question';
         newData.required = true;
-        newData.notes = '';
+        newData.details = '';
         newData.image = null;
         blockData[id] = newData;
         createNewEachBlockWrapper(id);
@@ -306,6 +320,7 @@ window.onload = () => {
       }, 600);
     }
 
+    // Change to the welcome block
     if (event.target.classList.contains('welcome-block-wrapper') || event.target.parentNode.classList.contains('welcome-block-wrapper')) {
       const clickedBlock = document.querySelector('.clicked-each-block');
       if (clickedBlock)
@@ -313,6 +328,7 @@ window.onload = () => {
       createSettingsPageContent('welcome');
     }
 
+    // Change block
     if (event.target.classList.contains('each-block-wrapper')) {
       const clickedBlock = document.querySelector('.clicked-each-block');
       if (clickedBlock)
@@ -335,17 +351,13 @@ window.onload = () => {
       currentlyClickedBlock = event.target.parentNode.parentNode.id;
       createSettingsPageContent(event.target.parentNode.parentNode.id);
     }
-    
-    if (event.target.classList.contains('choice-delete-button')) {
-      event.target.parentNode.remove();
-      getChoices();
-    }
 
+    // Change required option
     if (event.target.classList.contains('required-slide-button') || event.target.parentNode.classList.contains('required-slide-button'))
       blockData[currentlyClickedBlock].required = !blockData[currentlyClickedBlock].required;
 
+    // Delete block
     if (event.target.classList.contains('settings-delete-button')) {
-      
       const selectedDocument = document.getElementById(currentlyClickedBlock);
       if (selectedDocument.previousElementSibling) {
         selectedDocument.previousElementSibling.classList.add('clicked-each-block');
@@ -354,25 +366,40 @@ window.onload = () => {
       }
       selectedDocument.remove();
     }
+
+    // Delete Choice
+    if (event.target.classList.contains('choice-delete-button')) {
+      event.target.parentNode.remove();
+      getChoices();
+    }
+
+    // Auto-Select default 'New question' text inside the input
+    if (event.target.classList.contains('block-settings-short-input') && event.target.value == 'New question') {
+      event.target.select();
+    }
   });
 
-  // Settings wrapper functions and listeners.
   document.addEventListener('keydown', event => {
-    if (event.target.name == 'opening') {
+    if (event.target.name == 'opening') { // Welcome opening text input
       blockData['welcome'].opening = event.target.value;
-    } else if (event.target.name == 'details') {
+    } else if (event.target.name == 'question') { // Question text input
+      blockData[currentlyClickedBlock].question = event.target.value;
+    } else if (event.target.name == 'details') { // Question details input
       blockData[currentlyClickedBlock].details = event.target.value;
-    } else if (event.target.name == 'choice' && event.key == 'Enter') {
+    } else if (event.target.name == 'choice' && event.key == 'Enter') { // New choice input Enter clicked
       createSettingsEachChoice(event.target.value);
       blockData[currentlyClickedBlock].choices.push(event.target.value);
+      blockData[currentlyClickedBlock].choiceInputValue = '';
       event.target.value = '';
       event.target.placeholder = 'Choice ' + (document.querySelector('.block-settings-choices-wrapper').childNodes.length + 1);
+    } else if (event.target.name == 'choice') { // New choice input
+      blockData[currentlyClickedBlock].choiceInputValue = event.target.value;
     }
   });
 
   document.addEventListener('mouseup', event => {
-    if (event.target.classList.contains('block-settings-each-choice')) {
+    // Reorder choices
+    if (event.target.classList.contains('block-settings-each-choice'))
       getChoices();
-    }
   });
 }

@@ -19,6 +19,49 @@ const typeNames = {
 
 let currentlyClickedBlock = 'welcome'; // ID/Keyword of currently selected block
 
+// Upload photo function
+function uploadPhoto (file) {
+  const formdata = new FormData();
+  formdata.append('file', file);
+
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/");
+  xhr.send(formdata);
+  
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      if (xhr.status == 500) {
+        imageSpan.innerHTML = uploadedText;
+        alert("An unknown error occured, please try again later.");
+        photoSelectInput.value = ''
+        if (!/safari/i.test(navigator.userAgent)){
+          photoSelectInput.type = ''
+          photoSelectInput.type = 'file'
+        }
+      } else {
+        imageSpan.innerHTML = uploadedText;
+        photoSelectInput.value = ''
+        if (!/safari/i.test(navigator.userAgent)){
+          photoSelectInput.type = ''
+          photoSelectInput.type = 'file'
+        }
+        campaignPhoto.style.display = "block";
+        campaignNoPhotoIcon.style.display = "none";
+        campaignPhoto.src = xhr.responseText;
+        campaign.photo = xhr.responseText;
+      }
+    };
+  };
+}
+
+// Add required item sign on an item
+function addRequiredItemSign (item) {
+  const newSign = document.createElement('span');
+  newSign.classList.add('required-input-sign');
+  newSign.innerHTML = '*';
+  item.appendChild(newSign);
+}
+
 // Create a new block with id
 function createNewEachBlockWrapper (id) {
   const clickedBlock = document.querySelector('.clicked-each-block');
@@ -40,6 +83,7 @@ function createNewEachBlockWrapper (id) {
 
   const eachTypeTitle = document.createElement('span');
   eachTypeTitle.classList.add('each-type-title');
+  eachTypeTitle.classList.add('custom-block-type-title');
   eachTypeTitle.innerHTML = blockData[id].question;
   eachBlockTextWrapper.appendChild(eachTypeTitle);
 
@@ -54,10 +98,12 @@ function createNewEachBlockWrapper (id) {
 }
 
 // Create an input title on the settings-content-wrapper
-function createSettingsInputTitle (text) {
+function createSettingsInputTitle (text, isRequired) {
   const settingsInputTitle = document.createElement('span');
   settingsInputTitle.classList.add('block-settings-input-title');
   settingsInputTitle.innerHTML = text;
+  if (isRequired)
+    addRequiredItemSign(settingsInputTitle);
   document.querySelector('.block-settings-content-wrapper').appendChild(settingsInputTitle);
 }
 
@@ -141,14 +187,55 @@ function createSettingsChoiceInput (value, placeholder, name) {
   document.querySelector('.block-settings-content-wrapper').appendChild(choiceInput);
 }
 
-function createSettingsOneLineInputs (inputs) {
+// Create multiple type wrapper and its content on the settings-content-wrapper
+function createSettingsMultipleTypeWrapperAndContent (selected) {
+  const multipleWrapper = document.createElement('div');
+  multipleWrapper.classList.add('block-settings-multiple-type-wrapper');
+
+  const eachTypeSingle = document.createElement('div');
+  eachTypeSingle.classList.add('block-settings-multiple-each-type');
+  eachTypeSingle.id = 'single';
+
+  if (selected == 'single')
+    eachTypeSingle.classList.add('clicked-multiple-type');
+  
+  const iSingle = document.createElement('i');
+  iSingle.classList.add('far');
+  iSingle.classList.add('fa-check-circle');
+  const spanSingle = document.createElement('span');
+  spanSingle.innerHTML = 'Single Select';
+  eachTypeSingle.appendChild(iSingle);
+  eachTypeSingle.appendChild(spanSingle);
+  multipleWrapper.appendChild(eachTypeSingle);
+
+  const eachTypeMultiple = document.createElement('div');
+  eachTypeMultiple.classList.add('block-settings-multiple-each-type');
+  eachTypeMultiple.id = 'multiple';
+
+  if (selected == 'multiple')
+    eachTypeMultiple.classList.add('clicked-multiple-type');
+  
+  const iMultiple = document.createElement('i');
+  iMultiple.classList.add('far');
+  iMultiple.classList.add('fa-check-circle');
+  const spanMultiple = document.createElement('span');
+  spanMultiple.innerHTML = 'Multiple Select';
+  eachTypeMultiple.appendChild(iMultiple);
+  eachTypeMultiple.appendChild(spanMultiple);
+  multipleWrapper.appendChild(eachTypeMultiple);
+
+  document.querySelector('.block-settings-content-wrapper').appendChild(multipleWrapper);
+}
+
+// Create one line inputs for opinion scale question on the settings-content-wrapper
+function createSettingsOneLineInputs (inputs, type) {
   const inputsWrapper = document.createElement('div');
   inputsWrapper.classList.add('block-settings-one-line-inputs-wrapper');
 
   inputs.forEach(input => {
     const newInput = document.createElement('input');
     newInput.classList.add('block-settings-one-line-input');
-    newInput.type = 'text';
+    newInput.type = type;
     newInput.value = input.value;
     newInput.name = input.name;
     newInput.placeholder = input.placeholder;
@@ -178,11 +265,11 @@ function createSettingsPageContent (id) {
     blockSettingsHeaderWrapper.childNodes[3].style.display = 'none';
     blockSettingsHeaderWrapper.childNodes[4].style.display = 'none';
 
-    createSettingsInputTitle('Opening Message');
+    createSettingsInputTitle('Opening Message', true);
     createSettingsShortInput(blockData['welcome'].opening, 'Welcome your testers', 'opening');
-    createSettingsInputTitle('Task & Details');
+    createSettingsInputTitle('Task & Details', true);
     createSettingsLongInput(blockData['welcome'].details, 'This is where you give your testers a task. Guide them on what they need to do before answering the questions.', 'details');
-    createSettingsInputTitle('Image');
+    createSettingsInputTitle('Image', false);
     createSettingsImagePicker('Add an image to explain the task. This is optional.')
   } else if (blockData[id]) {
     blockSettingsHeaderWrapper.childNodes[0].src = "/res/images/block_icons/" + blockData[id].type + ".png";
@@ -203,33 +290,35 @@ function createSettingsPageContent (id) {
       blockSettingsHeaderWrapper.childNodes[3].childNodes[0].classList.add('general-slider-button-slide-left-animation-class');
     }
 
-    createSettingsInputTitle('Question');
+    createSettingsInputTitle('Question', true);
     createSettingsShortInput(blockData[id].question, 'Type your question here', 'question');
-    createSettingsInputTitle('Add Notes');
+    createSettingsInputTitle('Add Notes', false);
     createSettingsShortInput(blockData[id].details, 'Type your details here. This is optional', 'details');
-    createSettingsInputTitle('Image');
+    createSettingsInputTitle('Image', false);
     createSettingsImagePicker('Add an image to show while asking the question. This is optional.');
 
     if (blockData[id].type == 'multiple_choice') {
-      createSettingsInputTitle('Choices');
+      createSettingsInputTitle('Choices', true);
       createSettingsChoicesWrapper();
       createSettingsChoiceInput(blockData[id].choiceInputValue, 'Choice 1', 'choice');
       blockData[id].choices.forEach(choice => {
         createSettingsEachChoice(choice);
       });
       createSettingsText('Press enter to add a new choice');
+      createSettingsInputTitle('Type', true)
+      createSettingsMultipleTypeWrapperAndContent(blockData[id].subtype);
     } else if (blockData[id].type == 'opinion_scale') {
-      createSettingsInputTitle('Label');
+      createSettingsInputTitle('Label', false);
       createSettingsOneLineInputs([
         {name: 'labelLeft', value: blockData[id].labels.left, placeholder: 'Left'},
         {name: 'labelMiddle', value: blockData[id].labels.middle, placeholder: 'Middle'},
         {name: 'labelRight', value: blockData[id].labels.right, placeholder: 'Right'}
-      ]);
-      createSettingsInputTitle('Scale');
+      ], 'text');
+      createSettingsInputTitle('Scale', true);
       createSettingsOneLineInputs([
         {name: 'rangeMin', value: blockData[id].range.min, placeholder: 'Min'},
         {name: 'rangeMax', value: blockData[id].range.max, placeholder: 'Max'}
-      ]);
+      ], 'number');
     }
   }
 }
@@ -245,6 +334,10 @@ function getChoices () {
   wrapper.childNodes.forEach(node => {
     blockData[currentlyClickedBlock].choices.push(node.childNodes[0].innerHTML);
   });
+}
+
+function createPreviewPageContent () {
+
 }
 
 window.onload = () => {
@@ -298,7 +391,7 @@ window.onload = () => {
         type = event.target.parentNode.parentNode.id;
 
       const newData = {};
-      const id = Math.random().toString(36).substr(2, 9);
+      const id = Math.random().toString(36).substr(2, 12);
 
       if (type == 'yes_no') {
         newData.type = 'yes_no';
@@ -421,6 +514,17 @@ window.onload = () => {
     if (event.target.classList.contains('block-settings-short-input') && event.target.value == 'New question') {
       event.target.select();
     }
+
+    // Change multiple choice subtype
+    if (event.target.classList.contains('block-settings-multiple-each-type')) {
+      document.querySelector('.clicked-multiple-type').classList.remove('clicked-multiple-type');
+      event.target.classList.add('clicked-multiple-type');
+      blockData[currentlyClickedBlock].subtype = event.target.id;
+    } else if (event.target.parentNode.classList.contains('block-settings-multiple-each-type')) {
+      document.querySelector('.clicked-multiple-type').classList.remove('clicked-multiple-type');
+      event.target.parentNode.classList.add('clicked-multiple-type');
+      blockData[currentlyClickedBlock].subtype = event.target.parentNode.id;
+    }
   });
 
   document.addEventListener('input', event => {
@@ -433,10 +537,21 @@ window.onload = () => {
       blockData[currentlyClickedBlock].details = event.target.value;
     } else if (event.target.name == 'choice') { // New choice input
       blockData[currentlyClickedBlock].choiceInputValue = event.target.value;
+    } else if (event.target.name == 'labelLeft') { // Left label input
+      blockData[currentlyClickedBlock].labels.left = event.target.value;
+    } else if (event.target.name == 'labelMiddle') { // Middle label input
+      blockData[currentlyClickedBlock].labels.middle = event.target.value;
+    } else if (event.target.name == 'labelRight') { // Right label input
+      blockData[currentlyClickedBlock].labels.right = event.target.value;
+    } else if (event.target.name == 'rangeMin') { // Min range input
+      blockData[currentlyClickedBlock].range.min = event.target.value;
+    } else if (event.target.name == 'rangeMax') { // Max range input
+      blockData[currentlyClickedBlock].range.max = event.target.value;
     }
   });
 
   document.addEventListener('keydown', event => {
+    // Create new choice
     if (event.target.name == 'choice' && event.key == 'Enter' && event.target.value.length) { // New choice input Enter clicked
       createSettingsEachChoice(event.target.value);
       blockData[currentlyClickedBlock].choices.push(event.target.value);

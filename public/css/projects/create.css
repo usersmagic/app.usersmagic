@@ -52,11 +52,13 @@
   letter-spacing: 1px;
   font-weight: 600;
   font-size: 16px;
-  width: 250px;
   overflow: hidden;
   text-overflow: ellipsis;
   word-wrap: break-word;
   white-space: nowrap;
+}
+.custom-block-type-title {
+  width: 250px;
 }
 .each-type-subtitle {
   color: rgba(78, 75, 102, 1);
@@ -110,6 +112,7 @@
   filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.25));
   margin-bottom: 20px;
   cursor: pointer;
+  overflow: hidden;
 }
 .clicked-each-block {
   border: 0.4px solid rgb(46, 197, 206) !important;
@@ -188,7 +191,6 @@
   border-right: 1px solid rgba(0, 0, 0, 0.25);
   padding: 0px 40px;
 }
-
 .block-settings-header-wrapper {
   height: 80px;
   min-height: 80px;
@@ -209,7 +211,6 @@
   color: rgba(78, 75, 102, 1);
   font-size: 21px;
 }
-
 .block-settings-content-wrapper {
   display: flex;
   flex-direction: column;
@@ -225,6 +226,10 @@
   font-size: 16px;
   letter-spacing: 1px;
   margin-top: 30px;
+}
+.required-input-sign {
+  color: rgb(255, 0, 0);
+  margin-left: 3px;
 }
 .block-settings-short-input {
   outline: none;
@@ -312,10 +317,10 @@
   border-radius: 5px;
   min-height: 50px;
   height: 50px;
-  width: 140px;
+  width: 125px;
 }
 .block-settings-one-line-input-empty-space {
-  width: 140px;
+  width: 125px;
   height: 50px;
   background-color: transparent;
 }
@@ -351,6 +356,9 @@
 .block-preview-wrapper {
   flex: 1;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 0px 40px;
 }
 
 .open-bottom-animation-class {

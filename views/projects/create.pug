@@ -49,17 +49,20 @@ block main
         i.far.fa-trash-alt.settings-delete-button(style="display: none;")
       .block-settings-content-wrapper
         span.block-settings-input-title Opening Message
+          span.required-input-sign *
         input.block-settings-short-input(type="text" name="opening" placeholder="Welcome your testers")
         span.block-settings-input-title Task & Details
+          span.required-input-sign *
         textarea.block-settings-long-input(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")
         span.block-settings-input-title Image
         span.block-settings-text.add-image-button Add an image to explain the task. This is optional.
-        //- span.block-settings-input-title Type
-        //- .block-settings-multiple-type-wrapper
-        //-   .block-settings-multiple-each-type.clicked-multiple-type#single
-        //-     i.far.fa-check-circle
-        //-     span Single Select
-        //-   .block-settings-multiple-each-type#multiple
-        //-     i.fas.fa-tasks
-        //-     span Multiple Select
     .block-preview-wrapper
+      //- .block-preview-header
+      //-   span.block-preview-header-title Preview
+      //-   span.block-preview-header-subtitle Here, you can see how your testers will see this block on their screen.
+      //- .block-preview-content
+      //-   span.block-preview-question-text Welcome to our test
+      //-   span.block-preview-question-notes First, download our app. Create your desired shopping cart, and order if you like. Then come back to answer the questions.
+      //-   .block-preview-images-wrapper
+      //-     img.block-each-preview-image(src="https://usersmagic.s3.amazonaws.com/7107e267401c9855d7a6e823ad26adf6" alt="usersmagic question")
+          //- img.each-preview-image(src="https://usersmagic.s3.amazonaws.com/7107e267401c9855d7a6e823ad26adf6" alt="usersmagic question")

@@ -192,7 +192,7 @@ ProjectSchema.statics.findByFields = function (fields, options, callback) {
 ProjectSchema.statics.updateProject = function (id, data, callback) {
   // Update project fields, returns error if it exists or null
 
-  if (!id || !validator.isMongoId(id))
+  if (!id || !validator.isMongoId(id) || !data)
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {

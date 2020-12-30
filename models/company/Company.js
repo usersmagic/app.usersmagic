@@ -9,12 +9,14 @@ const verifyPassword = require('./functions/verifyPassword');
 
 const CompanySchema = new Schema({
   email: {
+    // The email of the account
     type: String,
     unique: true,
     minlength: 1,
     required: true
   },
   password: {
+    // The password, saved hashed
     type: String,
     required: true,
     minlength: 6

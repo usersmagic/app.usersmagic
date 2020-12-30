@@ -27,7 +27,7 @@ const ProjectSchema = new Schema({
   created_at: {
     // UNIX date for the creation time of the object
     type: Date,
-    default: (new Date).now()
+    default: Date.now()
   },
   error: {
     // Error about the project, if there is any
@@ -220,7 +220,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
   });
 }
 
-ProjectScheme.statics.saveQuestions = function (id, data, callback) {
+ProjectSchema.statics.saveQuestions = function (id, data, callback) {
   // Save data.questions on the document with the given id, returns error if it exists
 
   const Project = this;

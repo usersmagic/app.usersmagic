@@ -4,20 +4,23 @@ const Project = require('../../../models/project/Project');
 
 module.exports = (req, res) => {
   Project.findByFields({
-    creator: req.session.creator._id
-  }, {}, (err, projects) => {
-    if (err) return res.redirect('/');
+    creator: req.session.company._id
+  }, {
+    timezone: "Europe/Istanbul"
+  }, (err, projects) => {
+    if (err) return res.redirect('/auth/login');
 
     return res.render('projects/index', {
       page: 'projects/index',
       title: 'Projects',
       includes: {
         external: {
-          css: ['page', 'fontawesome'],
+          css: ['page', 'general', 'header', 'contentHeader', 'logo', 'buttons', 'inputs', 'fontawesome'],
           js: ['page']
         }
       },
-      projects
+      projects,
+      company: req.session.company
     });
   });
 }

@@ -12,10 +12,10 @@ module.exports = (req, res) => {
 
     return res.render('projects/create', {
       page: 'projects/create',
-      title: 'New Project',
+      title: project.name,
       includes: {
         external: {
-          css: ['page', 'general', 'header', 'logo', 'inputs', 'buttons', 'fontawesome'],
+          css: ['page', 'general', 'header', 'contentHeader', 'logo', 'inputs', 'buttons', 'fontawesome'],
           js: ['page', 'duplicateElement', 'dragAndDrop', 'buttonListeners']
         }
       },

@@ -6,6 +6,7 @@ const blockData = {
     image: ''
   }
 };
+let project;
 
 // String names for types
 const typeNames = {
@@ -19,45 +20,120 @@ const typeNames = {
 
 let currentlyClickedBlock = 'welcome'; // ID/Keyword of currently selected block
 
-// Upload photo function
-function uploadPhoto (file) {
+// Get questions data from the blockData object
+function getQuestionsData () {
+  const questionsWrapper = document.querySelector('.custom-blocks-wrapper');
+  const questions = [];
+
+  questionsWrapper.childNodes.forEach(question => {
+    blockData[question.id]._id = question.id;
+    questions.push(blockData[question.id]);
+  });
+
+  return questions;
+}
+
+// Save project
+function saveProject (callback) {
+  const data = {
+    welcome_screen: {
+      opening: blockData['welcome'].opening,
+      details: blockData['welcome'].details,
+      image: blockData['welcome'].image,
+    },
+    questions: getQuestionsData()
+  };
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', `/projects/create/save?id=${project._id}`);
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify(data));
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      const response = JSON.parse(xhr.responseText);
+
+      if (!response.success && response.error) {
+        alert("An error occured while saving. Error message: " + (response.error.message ? response.error.message : response.error));
+        return callback(true);
+      }
+      callback(false);
+    }
+  };
+}
+
+// Initialize the block data with the project informations
+function getBlockData () {
+  blockData['welcome'].opening = project.welcome_screen.opening;
+  blockData['welcome'].details = project.welcome_screen.details;
+  blockData['welcome'].image = project.welcome_screen.image;
+
+  project.questions.forEach(question => {
+    blockData[question._id] = question;
+  });
+
+  createSettingsPageContent(currentlyClickedBlock);
+}
+
+// Automatically call save project every second
+function autoSave () {
+  saveProject(err => {
+    if (err) return;
+
+    setTimeout(() => {
+      autoSave();
+    }, 1000);
+  });
+}
+
+// Deletes the image with the given url from the server
+function deleteImage (url) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/image/delete');
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify({ url }));
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      const response = JSON.parse(xhr.responseText);
+
+      if (!response.success && response.error)
+        return console.log(response.error);
+    }
+  };
+}
+
+// Uploads the file as image and sets the image input value accordingly, deletes the old image if there is any
+function uploadImage (file) {
+  document.querySelector('.general-choose-image-input-text').childNodes[0].innerHTML = 'Uploading...';
+  document.querySelector('.general-choose-image-input-text').childNodes[1].type = 'text';
+  document.querySelector('.general-choose-image-input-text').style.cursor = 'progress';
+
   const formdata = new FormData();
   formdata.append('file', file);
 
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/");
+  xhr.open('POST', '/image/upload');
   xhr.send(formdata);
-  
+
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.responseText) {
-      if (xhr.status == 500) {
-        imageSpan.innerHTML = uploadedText;
-        alert("An unknown error occured, please try again later.");
-        photoSelectInput.value = ''
-        if (!/safari/i.test(navigator.userAgent)){
-          photoSelectInput.type = ''
-          photoSelectInput.type = 'file'
-        }
-      } else {
-        imageSpan.innerHTML = uploadedText;
-        photoSelectInput.value = ''
-        if (!/safari/i.test(navigator.userAgent)){
-          photoSelectInput.type = ''
-          photoSelectInput.type = 'file'
-        }
-        campaignPhoto.style.display = "block";
-        campaignNoPhotoIcon.style.display = "none";
-        campaignPhoto.src = xhr.responseText;
-        campaign.photo = xhr.responseText;
-      }
-    };
+      const response = JSON.parse(xhr.responseText);
+
+      document.querySelector('.general-choose-image-input-text').style.display = 'none';
+
+      if (!response.success)
+        return alert(`An unknown error occured, please try again later. Error Message: ${response.error}`);
+
+      blockData[currentlyClickedBlock].image = response.url;
+      createSettingsPageContent(currentlyClickedBlock);
+    }
   };
 }
 
 // Add required item sign on an item
 function addRequiredItemSign (item) {
   const newSign = document.createElement('span');
-  newSign.classList.add('required-input-sign');
+  newSign.classList.add('general-input-required-sign');
   newSign.innerHTML = '*';
   item.appendChild(newSign);
 }
@@ -84,7 +160,7 @@ function createNewEachBlockWrapper (id) {
   const eachTypeTitle = document.createElement('span');
   eachTypeTitle.classList.add('each-type-title');
   eachTypeTitle.classList.add('custom-block-type-title');
-  eachTypeTitle.innerHTML = blockData[id].question;
+  eachTypeTitle.innerHTML = blockData[id].text;
   eachBlockTextWrapper.appendChild(eachTypeTitle);
 
   const eachTypeSubtitle = document.createElement('span');
@@ -100,7 +176,7 @@ function createNewEachBlockWrapper (id) {
 // Create an input title on the settings-content-wrapper
 function createSettingsInputTitle (text, isRequired) {
   const settingsInputTitle = document.createElement('span');
-  settingsInputTitle.classList.add('block-settings-input-title');
+  settingsInputTitle.classList.add('general-input-title');
   settingsInputTitle.innerHTML = text;
   if (isRequired)
     addRequiredItemSign(settingsInputTitle);
@@ -118,7 +194,7 @@ function createSettingsText (text) {
 // Create a short input on the settings-content-wrapper
 function createSettingsShortInput (value, placeholder, name) {
   const settingsShortInput = document.createElement('input');
-  settingsShortInput.classList.add('block-settings-short-input');
+  settingsShortInput.classList.add('general-input-with-border');
   settingsShortInput.type = "text";
   settingsShortInput.value = value;
   settingsShortInput.placeholder = placeholder;
@@ -129,7 +205,7 @@ function createSettingsShortInput (value, placeholder, name) {
 // Create a long input on the settings-content-wrapper
 function createSettingsLongInput (value, placeholder, name) {
   const settingsLongInput = document.createElement('textarea');
-  settingsLongInput.classList.add('block-settings-long-input');
+  settingsLongInput.classList.add('general-input-with-border-long');
   settingsLongInput.value = value;
   settingsLongInput.placeholder = placeholder;
   settingsLongInput.name = name;
@@ -138,11 +214,43 @@ function createSettingsLongInput (value, placeholder, name) {
 
 // Create an image picker on the settings-content-wrapper
 function createSettingsImagePicker (text) {
-  const settingsImagePicker = document.createElement('span');
-  settingsImagePicker.classList.add('block-settings-text');
-  settingsImagePicker.classList.add('add-image-button');
-  settingsImagePicker.innerHTML = text;
+  const settingsImagePicker = document.createElement('label');
+  settingsImagePicker.classList.add('general-choose-image-input-text');
+
+  const span = document.createElement('span');
+  span.innerHTML = text;
+  settingsImagePicker.appendChild(span);
+
+  const input = document.createElement('input');
+  input.classList.add('display-none');
+  input.id = 'image-input';
+  input.accept = 'image/*';
+  input.type = 'file';
+
+  settingsImagePicker.appendChild(input);
+
   document.querySelector('.block-settings-content-wrapper').appendChild(settingsImagePicker);
+}
+
+// Create the uploaded image
+function createUploadedImage (url) {
+  const imageInputWrapper = document.createElement('div');
+  imageInputWrapper.classList.add('general-image-input-wrapper');
+
+  const imageWrapper = document.createElement('div');
+  imageWrapper.classList.add('general-image-input-wrapper-image');
+  const image = document.createElement('img');
+  image.src = url;
+  image.alt = 'usersmagic';
+  imageWrapper.appendChild(image);
+  imageInputWrapper.appendChild(imageWrapper);
+
+  const i = document.createElement('i');
+  i.classList.add('fas');
+  i.classList.add('fa-times');
+  i.classList.add('delete-image-button');
+  imageInputWrapper.appendChild(i);
+  document.querySelector('.block-settings-content-wrapper').appendChild(imageInputWrapper);
 }
 
 // Create settings choices wrapper on the settings-content-wrapper
@@ -270,7 +378,10 @@ function createSettingsPageContent (id) {
     createSettingsInputTitle('Task & Details', true);
     createSettingsLongInput(blockData['welcome'].details, 'This is where you give your testers a task. Guide them on what they need to do before answering the questions.', 'details');
     createSettingsInputTitle('Image', false);
-    createSettingsImagePicker('Add an image to explain the task. This is optional.')
+    if (!blockData[id].image || !blockData[id].image.length)
+      createSettingsImagePicker('Add an image to explain the task.');
+    else
+      createUploadedImage(blockData[id].image);
   } else if (blockData[id]) {
     blockSettingsHeaderWrapper.childNodes[0].src = "/res/images/block_icons/" + blockData[id].type + ".png";
     blockSettingsHeaderWrapper.childNodes[1].innerHTML = typeNames[blockData[id].type];
@@ -291,11 +402,14 @@ function createSettingsPageContent (id) {
     }
 
     createSettingsInputTitle('Question', true);
-    createSettingsShortInput(blockData[id].question, 'Type your question here', 'question');
+    createSettingsShortInput(blockData[id].text, 'Type your question here', 'question');
     createSettingsInputTitle('Add Notes', false);
-    createSettingsShortInput(blockData[id].details, 'Type your details here. This is optional', 'details');
+    createSettingsShortInput(blockData[id].details, 'Type your details here.', 'details');
     createSettingsInputTitle('Image', false);
-    createSettingsImagePicker('Add an image to show while asking the question. This is optional.');
+    if (!blockData[id].image || !blockData[id].image.length)
+      createSettingsImagePicker('Add an image to show while asking the question.');
+    else
+      createUploadedImage(blockData[id].image);
 
     if (blockData[id].type == 'multiple_choice') {
       createSettingsInputTitle('Choices', true);
@@ -341,8 +455,14 @@ function createPreviewPageContent () {
 }
 
 window.onload = () => {
+  project = JSON.parse(document.getElementById('json-project-data').value); // Get project data
+
   dragAndDrop(document); // Lister for drag-and-drop wrappers
   listenSliderButtons(document); // Listern slider buttons
+  getBlockData();
+  setTimeout(() => {
+    autoSave(); // Automatically save project
+  }, 2000); // Wait for everything on the page to be uploaded
 
   const addBlockWrapper = document.querySelector('.add-block-wrapper');
   const addBlockButton = document.querySelector('.add-block-button');
@@ -390,36 +510,21 @@ window.onload = () => {
       else if (event.target.parentNode.parentNode.classList.contains('each-add-block-wrapper'))
         type = event.target.parentNode.parentNode.id;
 
-      const newData = {};
+      const newData = {
+        type,
+        text: 'New question',
+        details: '',
+        image: null,
+        required: true
+      };
       const id = Math.random().toString(36).substr(2, 12);
 
-      if (type == 'yes_no') {
-        newData.type = 'yes_no';
-        newData.question = 'New question';
-        newData.required = true;
-        newData.details = '';
-        newData.image = null;
-        blockData[id] = newData;
-        createNewEachBlockWrapper(id);
-        createSettingsPageContent(id);
-      } else if (type == 'multiple_choice') {
+      if (type == 'multiple_choice') {
         newData.type = 'multiple_choice';
-        newData.question = 'New question';
-        newData.required = true;
-        newData.details = '';
-        newData.image = null;
         newData.choices = [];
         newData.choiceInputValue = '';
         newData.subtype = 'single';
-        blockData[id] = newData;
-        createNewEachBlockWrapper(id);
-        createSettingsPageContent(id);
       } else if (type == 'opinion_scale') {
-        newData.type = 'opinion_scale';
-        newData.question = 'New question';
-        newData.required = true;
-        newData.details = '';
-        newData.image = null;
         newData.labels = {
           left: '',
           middle: '',
@@ -429,19 +534,11 @@ window.onload = () => {
           min: '',
           max: ''
         };
-        blockData[id] = newData;
-        createNewEachBlockWrapper(id);
-        createSettingsPageContent(id);
-      } else if (type == 'open_answer') {
-        newData.type = 'open_answer';
-        newData.question = 'New question';
-        newData.required = true;
-        newData.details = '';
-        newData.image = null;
-        blockData[id] = newData;
-        createNewEachBlockWrapper(id);
-        createSettingsPageContent(id);
       }
+
+      blockData[id] = newData;
+      createNewEachBlockWrapper(id);
+      createSettingsPageContent(id);
 
       isAddBlockClicked = false;
       addBlockWrapper.classList.add('close-up-animation-class');
@@ -498,8 +595,9 @@ window.onload = () => {
       const selectedDocument = document.getElementById(currentlyClickedBlock);
       if (selectedDocument.previousElementSibling) {
         selectedDocument.previousElementSibling.classList.add('clicked-each-block');
-        currentlyClickedBlock = selectedDocument.previousElementSibling.id;
         createSettingsPageContent(selectedDocument.previousElementSibling.id);
+      } else {
+        createSettingsPageContent('welcome');
       }
       selectedDocument.remove();
     }
@@ -511,7 +609,7 @@ window.onload = () => {
     }
 
     // Auto-Select default 'New question' text inside the input
-    if (event.target.classList.contains('block-settings-short-input') && event.target.value == 'New question') {
+    if (event.target.classList.contains('general-input-with-border') && event.target.value == 'New question') {
       event.target.select();
     }
 
@@ -525,13 +623,28 @@ window.onload = () => {
       event.target.parentNode.classList.add('clicked-multiple-type');
       blockData[currentlyClickedBlock].subtype = event.target.parentNode.id;
     }
+
+    // Delete image
+    if (event.target.classList.contains('delete-image-button')) {
+      event.target.parentNode.remove();
+      deleteImage(blockData[currentlyClickedBlock].image);
+      blockData[currentlyClickedBlock].image = null;
+      createSettingsPageContent(currentlyClickedBlock);
+    }
+  });
+
+  document.addEventListener('change', event => {
+    // Upload an image
+    if (event.target.id == 'image-input' && event.target.files && event.target.files.length && event.target.files[0]) {
+      uploadImage(event.target.files[0]);
+    }
   });
 
   document.addEventListener('input', event => {
     if (event.target.name == 'opening') { // Welcome opening text input
       blockData['welcome'].opening = event.target.value;
     } else if (event.target.name == 'question') { // Question text input
-      blockData[currentlyClickedBlock].question = event.target.value;
+      blockData[currentlyClickedBlock].text = event.target.value;
       document.getElementById(currentlyClickedBlock).childNodes[1].childNodes[0].innerHTML = event.target.value;
     } else if (event.target.name == 'details') { // Question details input
       blockData[currentlyClickedBlock].details = event.target.value;

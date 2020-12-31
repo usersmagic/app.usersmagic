@@ -1,5 +1,6 @@
 extends ../partials/header
 block main
+  input.display-none#json-project-data(type="text" value=JSON.stringify(project))
   .all-content-header-wrapper
     .header-user-logo
       img(src=company.profile_photo alt="usersmagic " + company.name)
@@ -12,6 +13,12 @@ block main
         img.each-type-image(src="/res/images/block_icons/welcome.png" alt="usersmagic welcome block")
         span.each-type-title Welcome Screen
       .custom-blocks-wrapper.drag-and-drop-wrapper
+        each question in project.questions
+          .each-block-wrapper(id=question._id)
+            img.each-type-image(src="/res/images/block_icons/" + question.type + ".png" alt="usersmagic " + question.type)
+            .each-block-text-wrapper
+              span.each-type-title.custom-block-type-title= question.text
+              span.each-type-subtitle= question.type.split('_').map(each => each.substr(0, 1).toUpperCase() + each.substr(1, each.length)).join(' ')
       .add-block-wrapper
         .add-block-button
           .add-block-plus-wrapper
@@ -48,15 +55,18 @@ block main
           div
         i.far.fa-trash-alt.settings-delete-button(style="display: none;")
       .block-settings-content-wrapper
-        span.block-settings-input-title Opening Message
-          span.required-input-sign *
-        input.block-settings-short-input(type="text" name="opening" placeholder="Welcome your testers")
-        span.block-settings-input-title Task & Details
-          span.required-input-sign *
-        textarea.block-settings-long-input(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")
-        span.block-settings-input-title Image
-        span.block-settings-text.add-image-button Add an image to explain the task. This is optional.
+        span.general-input-title Opening Message
+          span.general-input-required-sign *
+        input.general-input-with-border(type="text" name="opening" value=project.welcome_screen.opening placeholder="Welcome your testers")
+        span.general-input-title Task & Details
+          span.general-input-required-sign *
+        textarea.general-input-with-border-long(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")= project.welcome_screen.details
+        span.general-input-title Image
+        label.general-choose-image-input-text
+          span Add an image to explain the task. This is optional.
+          input.display-none#image-input(type="file" accept="image/*")
     .block-preview-wrapper
+      span.preview-will-soon-arrive-text This utility is not ready yet. 
       //- .block-preview-header
       //-   span.block-preview-header-title Preview
       //-   span.block-preview-header-subtitle Here, you can see how your testers will see this block on their screen.

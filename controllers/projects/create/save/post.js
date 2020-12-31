@@ -10,7 +10,7 @@ module.exports = (req, res) => {
       return res.end();
     }
 
-    Project.saveQuestions(req.query ? req.query.id : null, req.body.questions, err => {
+    Project.saveQuestions(req.query ? req.query.id : null, req.body, err => {
       if (err) {
         res.write(JSON.stringify({ error: err, success: false }));
         return res.end();

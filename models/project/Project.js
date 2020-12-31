@@ -51,7 +51,7 @@ const ProjectSchema = new Schema({
     // Description of the project,
     type: String,
     default: '',
-    maxlength: 5000
+    maxlength: 1000
   },
   questions: {
     // Questions array
@@ -72,7 +72,7 @@ const ProjectSchema = new Schema({
 ProjectSchema.statics.createProject = function (data, callback) {
   // Creates a new document under the model Project, returns the created project or an error if there is
 
-  if (!data || !data.creator || !validator.isMongoId(data.creator))
+  if (!data || !data.creator || !validator.isMongoId(data.creator.toString()))
     return callback('bad_request');
 
   const Project = this;
@@ -90,11 +90,13 @@ ProjectSchema.statics.createProject = function (data, callback) {
     const newProjectData = {
       creator: data.creator,
       type: data.type || null,
+      name: data.name,
+      description: data.description,
       status: 'saved',
       image: data.image || null
     };
 
-    if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !data.image || data.image)
+    if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length || !data.image || !data.image.length)
       return callback('bad_request');
 
     const newProject = new Project(newProjectData);
@@ -102,7 +104,7 @@ ProjectSchema.statics.createProject = function (data, callback) {
     newProject.save((err, project) => {
       if (err) return callback(err);
 
-      getProject(projects, (err, project) => {
+      getProject(projects, {}, (err, project) => {
         if (err) return callback(err);
 
         return callback(null, project);
@@ -127,14 +129,13 @@ ProjectSchema.statics.findOneByFields = function (fields, options, callback) {
 
   fieldKeys.forEach((key, iterator) => {
     if (key == '_id' || key == 'creator') {
-      if (!validator.isMongoId(fieldValues[iterator]))
+      if (!validator.isMongoId(fieldValues[iterator].toString()))
         return callback('bad_request');
 
       filters.push({[key]: mongoose.Types.ObjectId(fieldValues[iterator])});
-      continue;
+    } else {
+      filters.push({[key]: fieldValues[iterator]});
     }
-
-    filters.push({[key]: fieldValues[iterator]});
   });
 
   Project.findOne({$and: filters}, (err, project) => {
@@ -164,14 +165,13 @@ ProjectSchema.statics.findByFields = function (fields, options, callback) {
 
   fieldKeys.forEach((key, iterator) => {
     if (key == '_id' || key == 'creator') {
-      if (!validator.isMongoId(fieldValues[iterator]))
+      if (!validator.isMongoId(fieldValues[iterator].toString()))
         return callback('bad_request');
 
       filters.push({[key]: mongoose.Types.ObjectId(fieldValues[iterator])});
-      continue;
+    } else {
+      filters.push({[key]: fieldValues[iterator]});
     }
-
-    filters.push({[key]: fieldValues[iterator]});
   });
 
   Project.find({$and: filters}, (err, projects) => {
@@ -192,7 +192,7 @@ ProjectSchema.statics.findByFields = function (fields, options, callback) {
 ProjectSchema.statics.updateProject = function (id, data, callback) {
   // Update project fields, returns error if it exists or null
 
-  if (!id || !validator.isMongoId(id) || !data)
+  if (!id || !validator.isMongoId(id.toString()) || !data)
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
@@ -225,7 +225,7 @@ ProjectSchema.statics.saveQuestions = function (id, data, callback) {
 
   const Project = this;
 
-  if (!id || !validator.isMongoId(id) || !data)
+  if (!id || !validator.isMongoId(id.toString()) || !data)
     return callback('bad_request');
 
   validateQuestions(data.questions, {}, (err, questions) => {
@@ -244,7 +244,7 @@ ProjectSchema.statics.finishProject = function (id, callback) {
 
   const Project = this;
 
-  if (!id || !validator.isMongoId(id))
+  if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {

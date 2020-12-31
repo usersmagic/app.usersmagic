@@ -15,7 +15,7 @@ module.exports = (project, options, callback) => {
     timezone = options.timezone;
   }
 
-  return {
+  return callback(null, {
     _id: project._id.toString(),
     type: project.type,
     status: project.status,
@@ -25,5 +25,5 @@ module.exports = (project, options, callback) => {
     image: project.image,
     questions: project.questions,
     welcome_screen: project.welcome_screen
-  };
+  });
 }

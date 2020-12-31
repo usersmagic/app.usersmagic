@@ -20,6 +20,11 @@ const CompanySchema = new Schema({
     type: String,
     required: true,
     minlength: 6
+  },
+  profile_photo: {
+    // Profile photo of company
+    type: String,
+    default: '/res/images/default/company.png'
   }
 });
 

@@ -21,3 +21,14 @@ body {
   width: 100vw;
   overflow: hidden;
 }
+
+.display-none {
+  display: none;
+}
+
+span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  white-space: nowrap;
+}

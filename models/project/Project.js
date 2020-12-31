@@ -192,6 +192,8 @@ ProjectSchema.statics.findByFields = function (fields, options, callback) {
 ProjectSchema.statics.updateProject = function (id, data, callback) {
   // Update project fields, returns error if it exists or null
 
+  const Project = this;
+
   if (!id || !validator.isMongoId(id.toString()) || !data)
     return callback('bad_request');
 
@@ -222,7 +224,6 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
 
 ProjectSchema.statics.saveQuestions = function (id, data, callback) {
   // Save data.questions on the document with the given id, returns error if it exists
-
   const Project = this;
 
   if (!id || !validator.isMongoId(id.toString()) || !data)

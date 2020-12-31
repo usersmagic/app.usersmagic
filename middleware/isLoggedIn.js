@@ -11,7 +11,14 @@ module.exports = (req, res, next) => {
       return next();
     });
   } else {
-    req.session.redirect = req.originalUrl;
-    return res.status(401).redirect('/auth/login');
+    if (req.file && req.file.filename) { // If already a file is uploaded on the server
+      fs.unlink('./public/res/uploads/' + req.file.file_name, () => {	
+        req.session.redirect = req.originalUrl;
+        return res.status(401).redirect('/auth/login');
+      });
+    } else {
+      req.session.redirect = req.originalUrl;
+      return res.status(401).redirect('/auth/login');
+    }
   };
 };

@@ -11,11 +11,16 @@ const bodyParser = require('body-parser');
 const i18n = require('i18n');
 
 const MongoStore = require('connect-mongo')(session);
+const CronJob = require('./cron/CronJob');
 
 const numCPUs = 1 || process.env.WEB_CONCURRENCY || require('os').cpus().length;
 
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
+
+  // CronJob.start(() => {
+  //   console.log('Cron jobs are started for every minute');
+  // });
 
   for (let i = 0; i < numCPUs; i++)
     cluster.fork();
@@ -40,8 +45,9 @@ if (cluster.isMaster) {
   const PORT = process.env.PORT || 3000;
   const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/usersmagic";
   
-  const indexRouteController = require('./routes/indexRoute');
   const authRouteController = require('./routes/authRoute');
+  const imageRouteController = require('./routes/imageRoute');
+  const indexRouteController = require('./routes/indexRoute');
   const projectsRouteController = require('./routes/projectsRoute');
   
   app.set("views", path.join(__dirname, "views"));
@@ -82,9 +88,11 @@ if (cluster.isMaster) {
   
   app.use('/', indexRouteController);
   app.use('/auth', authRouteController);
+  app.use('/image', imageRouteController);
   app.use('/projects', projectsRouteController);
 
   server.listen(PORT, () => {
     console.log(`Server is on port ${PORT} as Worker ${cluster.worker.id} running @ process ${cluster.worker.process.pid}`);
+    // job.start();
   });
 }

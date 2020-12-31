@@ -150,6 +150,8 @@
   line-height: 50px;
   text-align: center;
   margin-bottom: 25px;
+  overflow: initial !important;
+  white-space: initial !important;
 }
 .welcome-subtitle {
   font-size: 18px;
@@ -157,6 +159,8 @@
   letter-spacing: 0.75px;
   text-align: center;
   color: rgb(78, 75, 102);
+  overflow: initial !important;
+  white-space: initial !important;
 }
 .start-project-button {
   width: 50% !important;

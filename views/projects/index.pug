@@ -1,0 +1,48 @@
+extends ../partials/header
+block main
+  .create-project-outer-wrapper
+    form.create-project-wrapper(action='/projects' method='POST')
+      span.create-project-title Create a new Project
+      span.general-input-title Project Name
+        span.general-input-required-sign *
+      input.general-input-with-border#project-name-input(type="text" name="name" autocomplete="off" placeholder="Give your project a name")
+      span.general-input-title Project Description
+        span.general-input-required-sign *
+      input.general-input-with-border#project-description-input(type="text" name="description" autocomplete="off" placeholder="Enter a brief description to explain your project to your testers")
+      span.general-input-title Project Image
+        span.general-input-required-sign *
+      label.general-choose-image-input-text
+        span Choose an image or a logo for your project
+        input.display-none#project-image-input(type="file" name="photo")
+      input.display-none#project-image-value-input(type="text" name="image")
+      button.send-new-project-button.general-seablue-button
+        span Create
+      .general-input-error-line#project-error
+        span
+  .all-content-header-wrapper
+    .header-user-logo
+      img(src=company.profile_photo alt="usersmagic " + company.name)
+    a.header-each-step-text(href="/projects") Projects
+  .all-content-inner-wrapper
+    if projects && projects.length
+      .create-project-line
+        .open-create-project-wrapper-button.general-seablue-button
+          span New Project
+      .projects-wrapper
+        each project in projects
+          a.each-project-wrapper(href="/projects/create?id=" + project._id)
+            .each-project-inner-wrapper
+              .each-project-image
+                img(src=project.image alt="usersmagic " + project.name)
+              span.each-project-name= project.name
+              span.each-project-description= project.description
+              span.each-project-created_at created at: #{project.created_at}
+    else
+      .no-project-outer-wrapper
+        .no-project-wrapper
+          span.welcome-title Welcome to Usersmagic
+          span.welcome-subtitle Start your first project or learn how to use Usersmagic by watching our tutorial
+          .start-project-button.general-seablue-button
+            span Start Project
+          a.see-tutorial-link(href="/projects")
+            span See Tutorial

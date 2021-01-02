@@ -17,7 +17,7 @@ block main
           .each-block-wrapper(id=question._id)
             img.each-type-image(src="/res/images/block_icons/" + question.type + ".png" alt="usersmagic " + question.type)
             .each-block-text-wrapper
-              span.each-type-title.custom-block-type-title= question.text
+              span.each-type-title.custom-block-type-title= question.text.length ? question.text : 'New question'
               span.each-type-subtitle= question.type.split('_').map(each => each.substr(0, 1).toUpperCase() + each.substr(1, each.length)).join(' ')
       .add-block-wrapper
         .add-block-button
@@ -53,6 +53,7 @@ block main
         span.required-text(style="display: none;") Required
         .general-slider-button.required-slide-button(style="display: none;")
           div
+        i.far.fa-clone.settings-duplicate-button(style="display: none;")
         i.far.fa-trash-alt.settings-delete-button(style="display: none;")
       .block-settings-content-wrapper
         span.general-input-title Opening Message

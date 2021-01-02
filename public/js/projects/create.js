@@ -160,7 +160,7 @@ function createNewEachBlockWrapper (id) {
   const eachTypeTitle = document.createElement('span');
   eachTypeTitle.classList.add('each-type-title');
   eachTypeTitle.classList.add('custom-block-type-title');
-  eachTypeTitle.innerHTML = blockData[id].text;
+  eachTypeTitle.innerHTML = blockData[id].text.length ? blockData[id].text : 'New question';
   eachBlockTextWrapper.appendChild(eachTypeTitle);
 
   const eachTypeSubtitle = document.createElement('span');
@@ -184,9 +184,9 @@ function createSettingsInputTitle (text, isRequired) {
 }
 
 // Create a text on the settings-content-wrapper
-function createSettingsText (text) {
+function createSettingsInputInfoText (text) {
   const span = document.createElement('span');
-  span.classList.add('block-settings-text');
+  span.classList.add('general-input-info-text');
   span.innerHTML = text;
   document.querySelector('.block-settings-content-wrapper').appendChild(span);
 }
@@ -372,6 +372,7 @@ function createSettingsPageContent (id) {
     blockSettingsHeaderWrapper.childNodes[2].style.display = 'none';
     blockSettingsHeaderWrapper.childNodes[3].style.display = 'none';
     blockSettingsHeaderWrapper.childNodes[4].style.display = 'none';
+    blockSettingsHeaderWrapper.childNodes[5].style.display = 'none';
 
     createSettingsInputTitle('Opening Message', true);
     createSettingsShortInput(blockData['welcome'].opening, 'Welcome your testers', 'opening');
@@ -388,6 +389,7 @@ function createSettingsPageContent (id) {
     blockSettingsHeaderWrapper.childNodes[2].style.display = 'block';
     blockSettingsHeaderWrapper.childNodes[3].style.display = 'block';
     blockSettingsHeaderWrapper.childNodes[4].style.display = 'block';
+    blockSettingsHeaderWrapper.childNodes[5].style.display = 'block';
 
     if (blockData[id].required) {
       blockSettingsHeaderWrapper.childNodes[3].classList.add('clicked');
@@ -418,21 +420,22 @@ function createSettingsPageContent (id) {
       blockData[id].choices.forEach(choice => {
         createSettingsEachChoice(choice);
       });
-      createSettingsText('Press enter to add a new choice');
+      createSettingsInputInfoText('Press enter to add a new choice');
       createSettingsInputTitle('Type', true)
       createSettingsMultipleTypeWrapperAndContent(blockData[id].subtype);
     } else if (blockData[id].type == 'opinion_scale') {
+      createSettingsInputTitle('Scale', true);
+      createSettingsOneLineInputs([
+        {name: 'rangeMin', value: blockData[id].range.min, placeholder: 'Min'},
+        {name: 'rangeMax', value: blockData[id].range.max, placeholder: 'Max'}
+      ], 'number');
+      createSettingsInputInfoText('Your range must be in between 0 and 10, inclusive');
       createSettingsInputTitle('Label', false);
       createSettingsOneLineInputs([
         {name: 'labelLeft', value: blockData[id].labels.left, placeholder: 'Left'},
         {name: 'labelMiddle', value: blockData[id].labels.middle, placeholder: 'Middle'},
         {name: 'labelRight', value: blockData[id].labels.right, placeholder: 'Right'}
       ], 'text');
-      createSettingsInputTitle('Scale', true);
-      createSettingsOneLineInputs([
-        {name: 'rangeMin', value: blockData[id].range.min, placeholder: 'Min'},
-        {name: 'rangeMax', value: blockData[id].range.max, placeholder: 'Max'}
-      ], 'number');
     }
   }
 }
@@ -512,7 +515,7 @@ window.onload = () => {
 
       const newData = {
         type,
-        text: 'New question',
+        text: '',
         details: '',
         image: null,
         required: true
@@ -587,19 +590,32 @@ window.onload = () => {
     }
 
     // Change required option
-    if (event.target.classList.contains('required-slide-button') || event.target.parentNode.classList.contains('required-slide-button'))
+    if (event.target.classList.contains('required-slide-button') || event.target.parentNode.classList.contains('required-slide-button')) {
       blockData[currentlyClickedBlock].required = !blockData[currentlyClickedBlock].required;
+    }
 
     // Delete block
     if (event.target.classList.contains('settings-delete-button')) {
       const selectedDocument = document.getElementById(currentlyClickedBlock);
       if (selectedDocument.previousElementSibling) {
+        console.log("here");
         selectedDocument.previousElementSibling.classList.add('clicked-each-block');
         createSettingsPageContent(selectedDocument.previousElementSibling.id);
       } else {
         createSettingsPageContent('welcome');
       }
       selectedDocument.remove();
+    }
+
+    // Duplicate block
+    if (event.target.classList.contains('settings-duplicate-button')) {
+      const id = Math.random().toString(36).substr(2, 12);
+      blockData[id] = blockData[currentlyClickedBlock];
+      createNewEachBlockWrapper(id);
+      const newBlock = document.getElementById(id);
+      while (newBlock.previousElementSibling && newBlock.previousElementSibling.id != currentlyClickedBlock)
+        newBlock.parentNode.insertBefore(newBlock, newBlock.previousElementSibling);
+      currentlyClickedBlock = id;
     }
 
     // Delete Choice
@@ -645,7 +661,7 @@ window.onload = () => {
       blockData['welcome'].opening = event.target.value;
     } else if (event.target.name == 'question') { // Question text input
       blockData[currentlyClickedBlock].text = event.target.value;
-      document.getElementById(currentlyClickedBlock).childNodes[1].childNodes[0].innerHTML = event.target.value;
+      document.getElementById(currentlyClickedBlock).childNodes[1].childNodes[0].innerHTML = event.target.value.length ? event.target.value : 'New question';
     } else if (event.target.name == 'details') { // Question details input
       blockData[currentlyClickedBlock].details = event.target.value;
     } else if (event.target.name == 'choice') { // New choice input

@@ -32,3 +32,12 @@ span {
   word-wrap: break-word;
   white-space: nowrap;
 }
+
+.general-beta-text {
+  margin-left: auto;
+  color: rgba(78, 75, 102, 1);
+  font-weight: 300;
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+}

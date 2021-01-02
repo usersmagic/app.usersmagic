@@ -47,7 +47,7 @@ module.exports = (questions, options, callback) => {
         if (!question.subtype || (question.subtype != 'single' && question.subtype != 'multiple'))
           return next('unknown_question_type');
 
-        if (options.final && (!question.choices || !question.choices.length))
+        if (options.final && (!question.choices || !question.choices.length) && (!question.choiceInputValue || !question.choiceInputValue.length))
           return next('bad_request');
 
         if (question.choices && question.choices.filter(choice => choice.length > maxQuestionTextLength).length)
@@ -55,6 +55,10 @@ module.exports = (questions, options, callback) => {
         
         newQuestionData.subtype = question.subtype;
         newQuestionData.choices = question.choices || [];
+        if (options.final && question.choiceInputValue && question.choiceInputValue.length)
+          question.choices.push(question.choiceInputValue);
+        else
+          newQuestionData.choiceInputValue = question.choiceInputValue || '';
       } else if (question.type == 'opinion_scale') {
         const range = {
           min: question.range && question.range.min ? question.range.min : '',

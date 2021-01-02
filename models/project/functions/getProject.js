@@ -24,6 +24,10 @@ module.exports = (project, options, callback) => {
     description: project.description,
     image: project.image,
     questions: project.questions,
-    welcome_screen: project.welcome_screen
+    welcome_screen: project.welcome_screen ? {
+      opening: project.welcome_screen.opening,
+      details: project.welcome_screen.details,
+      image: project.welcome_screen.image
+    } : {}
   });
 }

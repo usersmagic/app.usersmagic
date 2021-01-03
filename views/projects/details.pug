@@ -1,0 +1,32 @@
+extends ../partials/header
+block main
+  .general-beta-text beta version 1.0.0
+  .all-content-header-wrapper
+    .header-user-logo
+      img(src=company.profile_photo alt="usersmagic " + company.name)
+    a.header-each-step-text(href="/projects") Projects
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/details?id=" + project._id)= project.name
+  .all-content-inner-wrapper
+    .left-wrapper
+      span.left-title Your test is live 👏
+      span.left-subtitle Share your test link with your own testers, or filter over 100,000 testers to find the exact target segment you want to reach!
+    .right-wrapper
+      a.each-button(href=`/projects/filters?id=${project._id}`)
+        .each-button-icon-wrapper
+          i.fas.fa-users.purple-icon
+        .each-button-text-wrapper
+          span.each-button-title Find testers
+          span.each-button-subtitle Get results from your target customers
+      .each-button.copy-url-button
+        .each-button-icon-wrapper
+          i.fas.fa-clone.green-icon
+        .each-button-text-wrapper
+          span.each-button-title Copy your link
+          span.each-button-subtitle Share your test with your testers
+      a.each-button(href=`/projects/report?id=${project._id}`)
+        .each-button-icon-wrapper
+          i.fas.fa-chart-bar.red-icon
+        .each-button-text-wrapper
+          span.each-button-title See your report
+          span.each-button-subtitle See the report we have prepared for you

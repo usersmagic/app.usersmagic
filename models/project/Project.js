@@ -10,7 +10,7 @@ const Schema = mongoose.Schema;
 const ProjectSchema = new Schema({
   creator: {
     // Creator of the project, a document if from Company model
-    type: mongoose.Types.ObjectId,
+    type: String,
     required: true,
     unique: false
   },
@@ -104,7 +104,7 @@ ProjectSchema.statics.createProject = function (data, callback) {
     newProject.save((err, project) => {
       if (err) return callback(err);
 
-      getProject(projects, {}, (err, project) => {
+      getProject(project, {}, (err, project) => {
         if (err) return callback(err);
 
         return callback(null, project);
@@ -199,6 +199,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
     if (err || !project) return callback('document_not_found');
+    if (project.status != 'saved') return callback('bad_request');
 
     const newData = {
       name: data.name || project.name,

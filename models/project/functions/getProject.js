@@ -17,6 +17,7 @@ module.exports = (project, options, callback) => {
 
   return callback(null, {
     _id: project._id.toString(),
+    is_project: 'true',
     type: project.type,
     status: project.status,
     created_at: timezone ? moment(project.created_at).tz(timezone).format('DD[.]MM[.]YYYY[, ]HH[:]mm') : project.created_at,

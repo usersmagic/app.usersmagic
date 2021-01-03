@@ -6,6 +6,8 @@ const isLoggedIn = require('../middleware/isLoggedIn');
 const indexGetController = require('../controllers/projects/index/get');
 const createIndexGetController = require('../controllers/projects/create/index/get');
 const createFinishGetController = require('../controllers/projects/create/finish/get');
+const detailsGetController = require('../controllers/projects/details/get');
+const reportIndexGetController = require('../controllers/projects/report/index/get');
 
 const indexPostController = require('../controllers/projects/index/post');
 const createSavePostController = require('../controllers/projects/create/save/post');
@@ -24,6 +26,16 @@ router.get(
   '/create/finish',
     isLoggedIn,
     createFinishGetController
+);
+router.get(
+  '/details',
+    isLoggedIn,
+    detailsGetController
+);
+router.get(
+  '/report',
+    isLoggedIn,
+    reportIndexGetController
 );
 
 router.post(

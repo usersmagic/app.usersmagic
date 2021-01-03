@@ -1,0 +1,33 @@
+extends ../partials/header
+block main
+  .general-beta-text beta version 1.0.0
+  .all-content-header-wrapper
+    .header-user-logo
+      img(src=company.profile_photo alt="usersmagic " + company.name)
+    a.header-each-step-text(href="/projects") Projects
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/submit?id=" + project._id)= project.name
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/results?id=" + project._id) Results
+  .all-content-inner-wrapper
+    .all-content-inner-content-wrapper
+      .results-header-wrapper
+        span.results-project-title= project.name
+      .questions-summary-results-wrapper
+        each question in questions
+          .summary-results-each-question-wrapper
+            .summary-results-each-question-inner-wrapper
+              span.summary-results-each-question-text= question.text
+              .summary-results-each-question-info-wrapper
+                if question.type == 'yes_no'
+                  .summary-results-each-question-info-title= (question.answers.yes >= question.answers.no ? 'yes' : 'no')
+                  .summary-results-each-question-info-data #{Math.max(question.answers.yes, question.answers.no)}%
+                else if question.type == 'multiple_choice'
+                  .summary-results-each-question-info-title= question.data.max
+                  .summary-results-each-question-info-data= question.answers[question.data.max]
+                else if question.type == 'opinion_scale'
+                  .summary-results-each-question-info-title mean
+                  .summary-results-each-question-info-data #{question.data.mean}/#{Object.keys(question.answers)[Object.keys(question.answers).length-1]}
+                else if question.type == 'open_answer'
+                  .summary-results-each-question-info-title answers
+                  .summary-results-each-question-info-data= question.answers.length

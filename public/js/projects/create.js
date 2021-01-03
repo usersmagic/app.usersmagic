@@ -6,7 +6,7 @@ const blockData = {
     image: ''
   }
 };
-let project;
+let project; // The Project object taken from the pug file
 
 // String names for types
 const typeNames = {
@@ -18,7 +18,7 @@ const typeNames = {
   'multiple': 'Multiple Select'
 };
 
-let currentlyClickedBlock = 'welcome'; // ID/Keyword of currently selected block
+let currentlyClickedBlock = 'welcome'; // Id or keyword of currently selected block
 
 // Get questions data from the blockData object
 function getQuestionsData () {
@@ -453,19 +453,37 @@ function getChoices () {
   });
 }
 
+// Create the content of the preview page
 function createPreviewPageContent () {
 
+}
+
+// Finish the current project, show the error or redirect user to details page
+function finishProject () {
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', `/projects/create/finish?id=${project._id}`);
+  xhr.send();
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      const response = JSON.parse(xhr.responseText);
+
+      if (!response.success && response.error)
+        return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+      return window.location = `/project/details?id=${project._id.toString()}`;
+    }
+  };
 }
 
 window.onload = () => {
   project = JSON.parse(document.getElementById('json-project-data').value); // Get project data
 
-  dragAndDrop(document); // Lister for drag-and-drop wrappers
-  listenSliderButtons(document); // Listern slider buttons
+  dragAndDrop(document); // Listen for drag-and-drop wrappers
+  listenSliderButtons(document); // Listen slider buttons
   getBlockData();
   setTimeout(() => {
     autoSave(); // Automatically save project
-  }, 2000); // Wait for everything on the page to be uploaded
+  }, 1000); // Wait for everything on the page to be uploaded
 
   const addBlockWrapper = document.querySelector('.add-block-wrapper');
   const addBlockButton = document.querySelector('.add-block-button');
@@ -646,6 +664,11 @@ window.onload = () => {
       deleteImage(blockData[currentlyClickedBlock].image);
       blockData[currentlyClickedBlock].image = null;
       createSettingsPageContent(currentlyClickedBlock);
+    }
+
+    // Finish project
+    if (event.target.classList.contains('finish-project-button') || event.target.parentNode.classList.contains('finish-project-button')) {
+      finishProject();
     }
   });
 

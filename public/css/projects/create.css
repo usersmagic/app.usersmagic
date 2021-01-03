@@ -1,3 +1,14 @@
+.header-buttons-wrapper {
+  margin-left: auto;
+  width: 170px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+.finish-project-button {
+  margin: 0px !important;
+}
+
 .each-type-image {
   width: 40px;
   height: 40px;

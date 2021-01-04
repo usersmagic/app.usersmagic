@@ -45,15 +45,16 @@ block main
       .show-filters-title-wrapper
         span.show-filters-title Selected Filters
       .show-filters-content-wrapper
-        each filter, i in Object.keys(target.filters)
-          if filter == 'age'
-            .show-filter-each-title
-              span.general-input-title Age
-            .selected-filters-wrapper
-              span.each-selected-filter #{Object.values(target.filters)[i].min} - #{Object.values(target.filters)[i].max}
-          else
-            .show-filter-each-title
-              span.general-input-title= filters.find(each => each._id.toString() == filter).name
-            .selected-filters-wrapper
-              each choice in Object.values(target.filters)[i]
-                span.each-selected-filter= choice
+        if target.filters
+          each filter, i in Object.keys(target.filters)
+            if filter == 'age'
+              .show-filter-each-title
+                span.general-input-title Age
+              .selected-filters-wrapper
+                span.each-selected-filter #{Object.values(target.filters)[i].min} - #{Object.values(target.filters)[i].max}
+            else
+              .show-filter-each-title
+                span.general-input-title= filters.find(each => each._id.toString() == filter).name
+              .selected-filters-wrapper
+                each choice in Object.values(target.filters)[i]
+                  span.each-selected-filter= choice

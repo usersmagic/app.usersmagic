@@ -97,7 +97,7 @@ function createSettingsHeaderWrapper () {
     filterSettingsHeaderWrapper.childNodes[2].style.display = 'flex';
     filterSettingsHeaderWrapper.childNodes[3].style.display = 'flex';
 
-    if ((filtersData.age.min && filtersData.age.min.length) || (filtersData.age.max && filtersData.age.max.length)) {
+    if (filtersData.age && ((filtersData.age.min && filtersData.age.min.length) || (filtersData.age.max && filtersData.age.max.length))) {
       filterSettingsHeaderWrapper.childNodes[3].classList.add('clicked');
       filterSettingsHeaderWrapper.childNodes[3].style.backgroundColor = 'rgb(46, 197, 206)';
       filterSettingsHeaderWrapper.childNodes[3].childNodes[0].classList.add('general-slider-button-slide-right-animation-class');
@@ -146,9 +146,9 @@ function createSettingsContentWrapper () {
     createSettingsShortInput(target.description, 'Explain your target group. This will make you job lot easier later', 'description');
   } else if (currentlyClickedFilter == 'age') {
     createSettingsInputTitle('Minimum Age');
-    createSettingsShortInput(filtersData['age'].min, 'Must be at leat 18', 'min_age', 'number');
+    createSettingsShortInput(filtersData.age ? filtersData.age.min : '', 'Must be at leat 18', 'min_age', 'number');
     createSettingsInputTitle('Maximum Age');
-    createSettingsShortInput(filtersData['age'].max, 'Must be less than 80', 'max_age', 'number');
+    createSettingsShortInput(filtersData.age ? filtersData.age.max : '', 'Must be less than 80', 'max_age', 'number');
     // createAddFilterButton();
   } else {
     const filter = filters[currentlyClickedFilter];
@@ -188,7 +188,7 @@ function createShowFiltersWrapper () {
       text.innerHTML = 'Age';
       const selectedText = document.createElement('span');
       selectedText.classList.add('each-selected-filter');
-      selectedText.innerHTML = filtersData.age.min + ' - ' + filtersData.age.max;
+      selectedText.innerHTML = (filtersData.age.min.length ? filtersData.age.min : 18) + ' - ' + (filtersData.age.max.length ? filtersData.age.max : 80);
       selectedFiltersWrapper.appendChild(selectedText);
     } else {
       text.innerHTML = filters[key].name;
@@ -275,6 +275,25 @@ window.onload = () => {
         createSettingsContentWrapper();
         createShowFiltersWrapper();
       }
+    }
+  });
+
+  document.addEventListener('input', event => {
+    if (event.target.name == 'min_age') {
+      filtersData.age = {
+        min: event.target.value,
+        max: filtersData.age ? filtersData.age.max : ''
+      }
+      createShowFiltersWrapper();
+      createSettingsHeaderWrapper();
+    }
+    if (event.target.name == 'max_age') {
+      filtersData.age = {
+        min: filtersData.age ? filtersData.age.min : '',
+        max: event.target.value
+      }
+      createShowFiltersWrapper();
+      createSettingsHeaderWrapper();
     }
   });
 }

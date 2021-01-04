@@ -219,7 +219,7 @@ function getFiltersData () {
 // Get the target json data from the server side
 function getTargetData () {
   target = JSON.parse(document.getElementById('json-target-data').value);
-  filtersData = target.filters;
+  filtersData = {};
 }
 
 window.onload = () => {

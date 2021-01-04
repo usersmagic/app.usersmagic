@@ -24,15 +24,6 @@ module.exports = (req, res) => {
         ]
       }, (err, filters) => {
         if (err) return res.redirect('/projects');
-
-        target.filters = {
-          'age': {
-            min: 20,
-            max: 30
-          },
-          '5f390b0d0fe56c13ca4e46fd': ['2', '5', '6'],
-          '5f390cc6a629311426949918': ['Evet']
-        }
   
         return res.render('projects/filters/create', {
           page: 'projects/filters/create',

@@ -11,8 +11,8 @@ module.exports = (req, res) => {
   }, (err, project) => {
     if (err) return res.redirect('/');
 
-    return res.render('projects/details', {
-      page: 'projects/details',
+    return res.render('projects/details/index', {
+      page: 'projects/details/index',
       title: project.name,
       includes: {
         external: {

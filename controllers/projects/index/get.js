@@ -10,8 +10,8 @@ module.exports = (req, res) => {
   }, (err, projects) => {
     if (err) return res.redirect('/auth/login');
 
-    return res.render('projects/index', {
-      page: 'projects/index',
+    return res.render('projects/index/index', {
+      page: 'projects/index/index',
       title: 'Projects',
       includes: {
         external: {

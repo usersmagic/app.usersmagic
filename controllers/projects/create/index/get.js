@@ -1,4 +1,4 @@
-// Get project/create page with specified id on query
+// Get projects/create page with specified id on query
 
 const Project = require('../../../../models/project/Project');
 
@@ -11,8 +11,8 @@ module.exports = (req, res) => {
   }, (err, project) => {
     if (err) return res.redirect('/');
 
-    return res.render('projects/create', {
-      page: 'projects/create',
+    return res.render('projects/create/index', {
+      page: 'projects/create/index',
       title: project.name,
       includes: {
         external: {

@@ -1,0 +1,59 @@
+extends ../../partials/header
+block main
+  input.display-none#json-filters-data(type="text" value=JSON.stringify(filters))
+  input.display-none#json-target-data(type="text" value=JSON.stringify(target))
+  .general-beta-text beta version 1.0.0
+  .all-content-header-wrapper
+    .header-user-logo
+      img(src=company.profile_photo alt="usersmagic " + company.name)
+    a.header-each-step-text(href="/projects") Projects
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/details?id=" + project._id)= project.name
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/filters?id=" + project._id) Filters
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/filters/create?id=" + target._id)= target.name
+    .header-buttons-wrapper
+      .general-seablue-button.finish-target-button
+        span Start Testing
+  .all-content-inner-wrapper
+    .filters-wrapper
+      .target-settings-wrapper
+        img.each-type-image(src="/res/images/block_icons/filter.png" alt="usersmagic welcome block")
+        span.each-type-title Choose Filters
+      .custom-filters-wrapper
+        .each-filter-wrapper.age-filter-wrapper#age
+            span Age
+        each filter in filters
+          .each-filter-wrapper(id=filter._id.toString())
+            span= filter.name
+    .filter-settings-wrapper
+      .filter-settings-header-wrapper
+        img.each-type-image(src="/res/images/block_icons/filter.png" alt="usersmagic filters")
+        span.each-type-title.settings-title Target Settings
+        span.active-text(style="display: none;") Active
+        .general-slider-button.active-slide-button(style="display: none;")
+          div
+      .filter-settings-content-wrapper
+        span.general-input-title Name
+          span.general-input-required-sign *
+        input.general-input-with-border(type="text" name="name" value=target.name placeholder="Enter a clear name for you target group")
+        span.general-input-title Description
+          span.general-input-required-sign *
+        textarea.general-input-with-border-long(type="text" name="description" placeholder="Explain your target group. This will make you job lot easier later")= target.description
+    .show-filters-wrapper
+      .show-filters-title-wrapper
+        span.show-filters-title Selected Filters
+      .show-filters-content-wrapper
+        each filter, i in Object.keys(target.filters)
+          if filter == 'age'
+            .show-filter-each-title
+              span.general-input-title Age
+            .selected-filters-wrapper
+              span.each-selected-filter #{Object.values(target.filters)[i].min} - #{Object.values(target.filters)[i].max}
+          else
+            .show-filter-each-title
+              span.general-input-title= filters.find(each => each._id.toString() == filter).name
+            .selected-filters-wrapper
+              each choice in Object.values(target.filters)[i]
+                span.each-selected-filter= choice

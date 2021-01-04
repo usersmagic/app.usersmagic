@@ -66,13 +66,18 @@ const ProjectSchema = new Schema({
       details: '',
       image: ''
     }
+  },
+  country: {
+    // The country of testers that the Project will use
+    type: String,
+    default: null
   }
 });
 
 ProjectSchema.statics.createProject = function (data, callback) {
   // Creates a new document under the model Project, returns the created project or an error if there is
 
-  if (!data || !data.creator || !validator.isMongoId(data.creator.toString()))
+  if (!data || !data.creator || !validator.isMongoId(data.creator.toString()) || !data.country)
     return callback('bad_request');
 
   const Project = this;
@@ -92,6 +97,7 @@ ProjectSchema.statics.createProject = function (data, callback) {
       type: data.type || null,
       name: data.name,
       description: data.description,
+      country: data.country,
       status: 'saved',
       image: data.image || null
     };
@@ -129,10 +135,10 @@ ProjectSchema.statics.findOneByFields = function (fields, options, callback) {
 
   fieldKeys.forEach((key, iterator) => {
     if (key == '_id' || key == 'creator') {
-      if (!validator.isMongoId(fieldValues[iterator].toString()))
+      if (!fieldValues[iterator] || !validator.isMongoId(fieldValues[iterator].toString()))
         return callback('bad_request');
 
-      filters.push({[key]: mongoose.Types.ObjectId(fieldValues[iterator])});
+      filters.push({[key]: mongoose.Types.ObjectId(fieldValues[iterator].toString())});
     } else {
       filters.push({[key]: fieldValues[iterator]});
     }
@@ -165,7 +171,7 @@ ProjectSchema.statics.findByFields = function (fields, options, callback) {
 
   fieldKeys.forEach((key, iterator) => {
     if (key == '_id' || key == 'creator') {
-      if (!validator.isMongoId(fieldValues[iterator].toString()))
+      if (!fieldValues[iterator] || !validator.isMongoId(fieldValues[iterator].toString()))
         return callback('bad_request');
 
       filters.push({[key]: mongoose.Types.ObjectId(fieldValues[iterator])});

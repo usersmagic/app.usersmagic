@@ -470,7 +470,7 @@ function finishProject () {
 
       if (!response.success && response.error)
         return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
-      return window.location = `/project/details?id=${project._id.toString()}`;
+      return window.location = `/projects/details?id=${project._id.toString()}`;
     }
   };
 }

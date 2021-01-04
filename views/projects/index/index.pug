@@ -1,4 +1,4 @@
-extends ../partials/header
+extends ../../partials/header
 block main
   .general-beta-text beta version 1.0.0
   .create-project-outer-wrapper
@@ -6,10 +6,14 @@ block main
       span.create-project-title Create a new Project
       span.general-input-title Project Name
         span.general-input-required-sign *
-      input.general-input-with-border#project-name-input(type="text" name="name" autocomplete="off" placeholder="Give your project a name")
+      input.general-input-with-border#project-name-input(type="text" name="name" autocomplete="none" placeholder="Give your project a name")
       span.general-input-title Project Description
         span.general-input-required-sign *
-      input.general-input-with-border#project-description-input(type="text" name="description" autocomplete="off" placeholder="Enter a brief description to explain your project to your testers")
+      input.general-input-with-border#project-description-input(type="text" name="description" autocomplete="none" placeholder="Enter a brief description to explain your project to your testers")
+      span.general-input-title Project Country
+        span.general-input-required-sign *
+      input.general-input-with-border#project-country-input(type="text" autocomplete="none" placeholder="Please write Turkey or USA for the country you will use.")
+      input.display-none#project-country-value-input(type="text" name="country")
       span.general-input-title Project Image
         span.general-input-required-sign *
       label.general-choose-image-input-text

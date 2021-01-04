@@ -126,9 +126,10 @@ textarea {
   color: rgba(196, 196, 196, 1);
   font-weight: 500;
   font-size: 12px;
-  height: 16px;
-  min-height: 16px;
-  overflow: hidden;
+  height: fit-content;
+  min-height: fit-content;
+  overflow: visible !important;
+  white-space: initial;
   letter-spacing: 1px;
   margin-bottom: 20px;
   margin-top: -10px;

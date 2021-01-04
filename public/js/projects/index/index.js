@@ -76,6 +76,8 @@ window.onload = () => {
   const projectCreateForm = document.querySelector('.create-project-wrapper');
   const projectNameInput = document.getElementById('project-name-input');
   const projectDescriptionInput = document.getElementById('project-description-input');
+  const projectCountryInput = document.getElementById('project-country-input');
+  const projectCountryValueInput = document.getElementById('project-country-value-input');
   const projectImageInput = document.getElementById('project-image-input');
   const projectImageValueInput = document.getElementById('project-image-value-input');
   const projectError = document.getElementById('project-error');
@@ -118,8 +120,13 @@ window.onload = () => {
   projectCreateForm.onsubmit = event => {
     event.preventDefault();
 
-    if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length || !projectImageValueInput.value || !projectImageValueInput.value.length)
+    if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length || !projectImageValueInput.value || !projectImageValueInput.value.length || !projectCountryInput.value || !projectCountryInput.value.length)
       return projectError.childNodes[0].innerHTML = "Please enter all the fields";
+
+    if (projectCountryInput.value.trim().toLowerCase() != 'turkey' && projectCountryInput.value.trim().toLowerCase() != 'usa')
+      return projectError.childNodes[0].innerHTML = "You should write only Turkey or USA to select the country.";
+
+    projectCountryValueInput.value = projectCountryInput.value.trim().toLowerCase() == 'turkey' ? 'tr' : 'us';
 
     if (projectNameInput.value.length > 1000 || projectDescriptionInput.value.length > 1000)
       return projectError.childNodes[0].innerHTML = "Project name and description cannot be longer than 1000 characters";

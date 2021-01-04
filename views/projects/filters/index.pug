@@ -1,0 +1,39 @@
+extends ../../partials/header
+block main
+  .general-beta-text beta version 1.0.0
+  .create-target-outer-wrapper
+    form.create-target-wrapper(action=`/projects/filters?project_id=${project._id}` method='POST')
+      span.create-target-title Create a new target
+      span.general-input-title Target Name
+        span.general-input-required-sign *
+      input.general-input-with-border#target-name-input(type="text" name="name" autocomplete="off" placeholder="Enter a clear name for you target group")
+      span.general-input-title Target Description
+        span.general-input-required-sign *
+      input.general-input-with-border#target-description-input(type="text" name="description" autocomplete="off" placeholder="Explain your target group. This will make you job lot easier later")
+      button.send-new-target-button.general-seablue-button
+        span Create
+      .general-input-error-line#target-error
+        span
+  .all-content-header-wrapper
+    .header-user-logo
+      img(src=company.profile_photo alt="usersmagic " + company.name)
+    a.header-each-step-text(href="/projects") Projects
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/details?id=" + project._id)= project.name
+    i.fas.fa-chevron-right.header-each-step-arrow
+    a.header-each-step-text(href="/projects/filters?id=" + project._id) Filters
+  .all-content-inner-wrapper
+    .create-target-line
+      .open-create-target-wrapper-button.general-seablue-button
+        span New Target
+    if targets && targets.length
+      .targets-wrapper
+        each target in targets
+          a.each-target-wrapper(href=(target.status == 'saved' ? `/projects/filters/create?id=${target._id}` :  `/projects/details?id=${target._id}`))
+            .each-target-inner-wrapper
+              span.each-target-name= target.name
+              span.each-target-description= target.description
+              //- span.each-target-created_at created at: #{target.created_at}
+    else
+      .no-target-wrapper
+        span.no-target-text You didn't create any target group yet. Create one to start testing!

@@ -1,8 +1,8 @@
 // Get project results index page
 
 module.exports = (req, res) => {
-  return res.render('projects/results', {
-    page: 'projects/results',
+  return res.render('projects/report/index', {
+    page: 'projects/report/index',
     title: 'Results',
     includes: {
       external: {

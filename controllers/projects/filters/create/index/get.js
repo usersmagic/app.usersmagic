@@ -16,7 +16,7 @@ module.exports = (req, res) => {
       if (err) return res.redirect('/projects');
 
       Question.find({
-        country: target.country,
+        countries: target.country,
         $or: [
           {type: 'radio'},
           {type: 'checked'},

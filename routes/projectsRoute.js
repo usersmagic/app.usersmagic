@@ -14,6 +14,7 @@ const reportIndexGetController = require('../controllers/projects/report/index/g
 const indexPostController = require('../controllers/projects/index/post');
 const createSavePostController = require('../controllers/projects/create/save/post');
 const filtersIndexPostController = require('../controllers/projects/filters/index/post');
+const filtersCreateSavePostController = require('../controllers/projects/filters/create/save/post');
 
 router.get(
   '/',
@@ -65,6 +66,11 @@ router.post(
   '/filters',
     isLoggedIn,
     filtersIndexPostController
+);
+router.post(
+  '/filters/create/save',
+    isLoggedIn,
+    filtersCreateSavePostController
 );
 
 module.exports = router;

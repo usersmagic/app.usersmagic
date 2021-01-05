@@ -15,16 +15,9 @@ module.exports = (req, res) => {
     }, {}, (err, project) => {
       if (err) return res.redirect('/projects');
 
-      Question.find({
-        countries: target.country,
-        $or: [
-          {type: 'radio'},
-          {type: 'checked'},
-          {type: 'range'}
-        ]
-      }, (err, filters) => {
+      Question.getFiltersByCountry(target.country, (err, filters) => {
         if (err) return res.redirect('/projects');
-  
+
         return res.render('projects/filters/create', {
           page: 'projects/filters/create',
           title: project.name,

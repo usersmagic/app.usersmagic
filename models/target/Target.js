@@ -2,7 +2,8 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const getFilters = require('./functions/getFilters');
+const filterArrayToObject = require('./functions/filterArrayToObject');
+const filterObjectToArray = require('./functions/filterObjectToArray');
 const getTarget = require('./functions/getTarget');
 
 const Schema = mongoose.Schema;
@@ -41,7 +42,7 @@ const TargetSchema = new Schema({
     required: true,
     length: 2
   },
-  filter: {
+  filters: {
     // The filters that are used to find testers
     type: Array,
     required: true
@@ -148,10 +149,35 @@ TargetSchema.statics.findOneByFields = function (fields, options, callback) {
   Target.findOne({$and: filters}, (err, target) => {
     if (err) return callback(err);
 
-    getTarget(target, options, (err, target) => {
+    filterArrayToObject(target.filters, (err, filters) => {
+      if (err) return callback(err);
+      
+      getTarget(target, { filters }, (err, target) => {
+        if (err) return callback(err);
+  
+        return callback(null, target)
+      });
+    });
+  });
+}
+
+TargetSchema.statics.saveFilters = function (id, data, callback) {
+  // Save the given filters on the Target with the given id, returns an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  filterObjectToArray(data.filters, (err, filters) => {
+    if (err) return callback(err);
+  
+    Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+      filters
+    }}, err => {
       if (err) return callback(err);
 
-      return callback(null, target)
+      return callback(null);
     });
   });
 }

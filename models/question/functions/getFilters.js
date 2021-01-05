@@ -11,6 +11,7 @@ module.exports = (questions, callback) => {
     if (question.type && question.type == 'range') {
       filters.push({
         _id: question._id,
+        text: question.text,
         name: question.name,
         type: question.type,
         choices: Array.from({length: parseInt(question.max_value) - parseInt(question.min_value) + 1}, (_, i) => (parseInt(question.min_value) + i).toString())
@@ -18,6 +19,7 @@ module.exports = (questions, callback) => {
     } else if (question.type && (question.type == 'radio' || question.type == 'checked')) {
       filters.push({
         _id: question._id,
+        text: question.text,
         name: question.name,
         type: question.type,
         choices: question.choices

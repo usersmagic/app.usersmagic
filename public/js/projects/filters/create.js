@@ -215,24 +215,23 @@ function createSettingsContentWrapper () {
     createSettingsInputTitle('Description', true);
     createSettingsShortInput(target.description, 'Explain your target group. This will make you job lot easier later', 'description');
   } else if (currentlyClickedFilter == 'age') {
-    console.log(filtersData.age);
     createSettingsInputTitle('Minimum Age');
     createSettingsShortInput(filtersData.age ? filtersData.age.min : '', 'Must be at leat 18', 'min_age', 'number');
     createSettingsInputTitle('Maximum Age');
     createSettingsShortInput(filtersData.age ? filtersData.age.max : '', 'Must be less than 80', 'max_age', 'number');
   } else {
     const filter = filters[currentlyClickedFilter];
+    createSettingsInputInfoText(filter.text);
+    createSettingsInputTitle('Accepted Answers', true);
 
     if (filter.type == 'radio') {
-      createSettingsInputTitle('Accepted Answers', true);
+      
       createSettingsInputInfoText('The users who have selected one of the selected answers will pass the filter');
       createFilterChoicesWrapperAndContent(filter.choices);
     } else if (filter.type == 'checked') {
-      createSettingsInputTitle('Accepted Answers', true);
       createSettingsInputInfoText('The users who have selected any number of the selected answers will pass the filter');
       createFilterChoicesWrapperAndContent(filter.choices);
     } else if (filter.type == 'range') {
-      createSettingsInputTitle('Accepted Answers', true);
       createSettingsInputInfoText('The users who have selected one of the selected answers will pass the filter');
       createFilterChoicesWrapperAndContent(filter.choices);
     }

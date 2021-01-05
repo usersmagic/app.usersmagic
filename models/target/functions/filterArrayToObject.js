@@ -15,7 +15,7 @@ const getFilter = (filter, callback) => {
     const max = value[0].birth_year.lte;
     const min = value[1].birth_year.gte;
 
-    return callback(null, 'age', Array.from({length: max - min + 1}, (_, i) => (min + i).toString()));
+    return callback(null, 'age', { min, max });
   } else {
     return callback(null, key.split('.')[1], value.in);
   }

@@ -10,21 +10,24 @@ module.exports = (req, res) => {
   }, {}, (err, target) => {
     if (err) return res.redirect('/projects');
 
+    if (target.status != 'saved')
+      return res.redirect(`/projects/filters?id=${target.project_id}`);
+
     Project.findOneByFields({
       _id: target.project_id
     }, {}, (err, project) => {
-      if (err) return res.redirect('/projects');
+      if (err) return res.redirect(`/projects/filters?id=${target.project_id}`);
 
       Question.getFiltersByCountry(target.country, (err, filters) => {
-        if (err) return res.redirect('/projects');
+        if (err) return res.redirect(`/projects/filters?id=${target.project_id}`);
 
         return res.render('projects/filters/create', {
           page: 'projects/filters/create',
           title: project.name,
           includes: {
             external: {
-              css: ['page', 'general', 'header', 'contentHeader', 'logo', 'inputs', 'buttons', 'fontawesome'],
-              js: ['page', 'buttonListeners']
+              css: ['page', 'general', 'header', 'confirm', 'contentHeader', 'logo', 'inputs', 'buttons', 'fontawesome'],
+              js: ['page', 'buttonListeners', 'confirm']
             }
           },
           company: req.session.company,

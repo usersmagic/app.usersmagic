@@ -587,33 +587,35 @@ function checkDataBeforeFinish (callback) {
 
 // Finish the current project, show the error or redirect user to details page
 function finishProject () {
-  checkDataBeforeFinish(res => {
-    if (res) {
-      console.log("here");
-      createConfirm({
-        title: 'Are you sure you want to start testing?',
-        text: 'Once you start testing, you cannot edit your questions anymore. You cannot take this action back.',
-        reject: 'Cancel',
-        accept: 'Continue'
-      }, res => {
-        console.log(res);
-        if (res) {
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', `/projects/create/finish?id=${project._id}`);
-          xhr.send();
+  saveProject(err => {
+    if (err) return;
 
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.responseText) {
-              const response = JSON.parse(xhr.responseText);
-
-              if (!response.success && response.error)
-                return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
-              return window.location = `/projects/details?id=${project._id.toString()}`;
-            }
-          };
-        }
-      });
-    }
+    checkDataBeforeFinish(res => {
+      if (res) {
+        createConfirm({
+          title: 'Are you sure you want to start testing?',
+          text: 'Once you start testing, you cannot edit your questions anymore. You cannot take this action back.',
+          reject: 'Cancel',
+          accept: 'Continue'
+        }, res => {
+          if (res) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/projects/create/finish?id=${project._id}`);
+            xhr.send();
+  
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState == 4 && xhr.responseText) {
+                const response = JSON.parse(xhr.responseText);
+  
+                if (!response.success && response.error)
+                  return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+                return window.location = `/projects/details?id=${project._id.toString()}`;
+              }
+            };
+          }
+        });
+      }
+    });
   });
 }
 
@@ -751,7 +753,6 @@ window.onload = () => {
         if (res) {
           const selectedDocument = document.getElementById(currentlyClickedBlock);
           if (selectedDocument.previousElementSibling) {
-            console.log("here");
             selectedDocument.previousElementSibling.classList.add('clicked-each-block');
             createSettingsPageContent(selectedDocument.previousElementSibling.id);
           } else {

@@ -9,6 +9,7 @@ const createFinishGetController = require('../controllers/projects/create/finish
 const detailsGetController = require('../controllers/projects/details/get');
 const filtersIndexGetController = require('../controllers/projects/filters/index/get');
 const filtersCreateGetController = require('../controllers/projects/filters/create/index/get');
+const filtersCreateFinishGetController = require('../controllers/projects/filters/create/finish/get');
 const reportIndexGetController = require('../controllers/projects/report/index/get');
 
 const indexPostController = require('../controllers/projects/index/post');
@@ -45,6 +46,11 @@ router.get(
   '/filters/create',
     isLoggedIn,
     filtersCreateGetController
+);
+router.get(
+  '/filters/create/finish',
+    isLoggedIn,
+    filtersCreateFinishGetController
 );
 router.get(
   '/report',

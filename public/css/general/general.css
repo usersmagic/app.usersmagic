@@ -28,7 +28,6 @@ body {
 
 span {
   overflow: hidden;
-  overflow: visible;
   text-overflow: ellipsis;
   word-wrap: break-word;
   white-space: nowrap;
@@ -38,7 +37,8 @@ span {
   margin-left: auto;
   color: rgba(78, 75, 102, 1);
   font-weight: 300;
+  font-size: 14px;
   position: absolute;
-  right: 20px;
-  bottom: 20px;
+  right: 30px;
+  bottom: 30px;
 }

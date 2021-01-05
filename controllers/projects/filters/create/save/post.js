@@ -1,4 +1,5 @@
 // Save the data of filters on the target with id from the query
+// XMLHTTP request
 
 const Target = require('../../../../../models/target/Target');
 

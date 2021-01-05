@@ -11,7 +11,7 @@ let target;
 let currentlyClickedFilter = 'settings';
 
 // Save project
-function saveProject (callback) {
+function saveFilters (callback) {
   const data = {
     filters: filtersData
   };
@@ -35,7 +35,7 @@ function saveProject (callback) {
 
 // Automatically call save project every second
 function autoSave () {
-  saveProject(err => {
+  saveFilters(err => {
     if (err) return;
 
     setTimeout(() => {
@@ -215,11 +215,11 @@ function createSettingsContentWrapper () {
     createSettingsInputTitle('Description', true);
     createSettingsShortInput(target.description, 'Explain your target group. This will make you job lot easier later', 'description');
   } else if (currentlyClickedFilter == 'age') {
+    console.log(filtersData.age);
     createSettingsInputTitle('Minimum Age');
     createSettingsShortInput(filtersData.age ? filtersData.age.min : '', 'Must be at leat 18', 'min_age', 'number');
     createSettingsInputTitle('Maximum Age');
     createSettingsShortInput(filtersData.age ? filtersData.age.max : '', 'Must be less than 80', 'max_age', 'number');
-    // createAddFilterButton();
   } else {
     const filter = filters[currentlyClickedFilter];
 
@@ -295,6 +295,36 @@ function getTargetData () {
   createShowFiltersWrapper();
 }
 
+// Finish project
+function finishTarget () {
+  saveFilters(err => {
+    if (err) return;
+
+    createConfirm({
+      title: 'Are you sure you want to finish editing your filters?',
+      text: 'You cannot change your filters once you start testing.',
+      reject: 'Cancel',
+      accept: 'Continue'
+    }, res => {
+      if (res) {
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', `/projects/filters/create/finish?id=${target._id}`);
+        xhr.send();
+  
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && xhr.responseText) {
+            const response = JSON.parse(xhr.responseText);
+  
+            if (!response.success && response.error)
+              return alert("An error occured while finishing the target. Error message: " + (response.error.message ? response.error.message : response.error));
+            return window.location = `/projects/filters?id=${target.project_id.toString()}`;
+          }
+        };
+      }
+    });
+  });
+}
+
 window.onload = () => {
   getFiltersData(); // Load filters data on reload
   getTargetData(); // Load target data on reload
@@ -352,6 +382,11 @@ window.onload = () => {
         createShowFiltersWrapper();
         createCustomFiltersWrapper();
       }
+    }
+
+    // Click finish target button
+    if (event.target.classList.contains('finish-target-button') || event.target.parentNode.classList.contains('finish-target-button')) {
+      finishTarget();
     }
   });
 

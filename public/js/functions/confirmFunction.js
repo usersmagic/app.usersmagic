@@ -7,6 +7,7 @@ function createConfirm (data, callback) {
 
   const confirmWrapper = document.createElement('div');
   confirmWrapper.classList.add('general-confirm-wrapper');
+  confirmWrapper.classList.add('general-slide-down-animation-class');
 
   const confirmTitle = document.createElement('span');
   confirmTitle.classList.add('general-confirm-title');

@@ -10,8 +10,8 @@ const getFilter = (key, value, callback) => {
     return callback('bad_request');
 
   if (key == 'age') {
-    const min = (value.min && Number.isInteger(value.min) && parseInt(value.min) >= 18) ? parseInt(value.min) : 18;
-    const max = (value.max && Number.isInteger(value.max) && parseInt(value.max) <= 80) ? parseInt(value.max) : 80;
+    const min = (value.min && !isNaN(parseInt(value.min)) && parseInt(value.min) >= 18) ? parseInt(value.min) : 18;
+    const max = (value.max && !isNaN(parseInt(value.max)) && parseInt(value.max) <= 80) ? parseInt(value.max) : 80;
 
     return callback(null, {
       'and': [

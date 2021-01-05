@@ -93,7 +93,7 @@ TargetSchema.statics.createTarget = function (data, callback) {
   });
 }
 
-TargetSchema.statics.findByProjectId = function (project_id, callback) {
+TargetSchema.statics.findByProjectId = function (project_id, options, callback) {
   // Finds and returns the Target documents with the given project_id, sorted by the created_at field decreasing order
 
   if (!project_id || !validator.isMongoId(project_id.toString()))
@@ -107,7 +107,7 @@ TargetSchema.statics.findByProjectId = function (project_id, callback) {
     .then(targets => {
       async.timesSeries(
         targets.length,
-        (time, next) => getTarget(targets[time], {}, (err, target) => next(err, target)),
+        (time, next) => getTarget(targets[time], options, (err, target) => next(err, target)),
         (err, targets) => {
           if (err) return callback(err);
 
@@ -116,7 +116,6 @@ TargetSchema.statics.findByProjectId = function (project_id, callback) {
       );
     })
     .catch(err => {
-      console.log(err);
       return callback('bad_request');
     });
 }
@@ -151,8 +150,10 @@ TargetSchema.statics.findOneByFields = function (fields, options, callback) {
 
     filterArrayToObject(target.filters, (err, filters) => {
       if (err) return callback(err);
+
+      options.filters = filters;
       
-      getTarget(target, { filters }, (err, target) => {
+      getTarget(target, options, (err, target) => {
         if (err) return callback(err);
   
         return callback(null, target)
@@ -177,6 +178,30 @@ TargetSchema.statics.saveFilters = function (id, data, callback) {
     }}, err => {
       if (err) return callback(err);
 
+      return callback(null);
+    });
+  });
+}
+
+TargetSchema.statics.finishTarget = function (id, callback) {
+  // Find and check the target with the given id, if there is no error change its status to finished
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.findById(mongoose.Types.ObjectId(id.toString()), (err, target) => {
+    if (err) return callback(err);
+
+    if (!target.name || !target.name.length || !target.description || !target.description.length)
+      return callback('bad_request');
+
+    Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+      status: 'finished'
+    }}, err => {
+      if (err) return callback(err);
+  
       return callback(null);
     });
   });

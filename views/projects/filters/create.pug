@@ -22,10 +22,10 @@ block main
         img.each-type-image(src="/res/images/block_icons/filter.png" alt="usersmagic welcome block")
         span.each-type-title Choose Filters
       .custom-filters-wrapper
-        .each-filter-wrapper.age-filter-wrapper#age
+        .each-filter-wrapper.age-filter-wrapper#age(class=( ( target.filters && Object.keys(target.filters).includes('age') )  ? "selected-filter" : "") )
             span Age
         each filter in filters
-          .each-filter-wrapper(id=filter._id.toString())
+          .each-filter-wrapper(id=filter._id.toString() class=( ( target.filters && Object.keys(target.filters).includes(filter._id.toString()) )  ? "selected-filter" : "") )
             span= filter.name
     .filter-settings-wrapper
       .filter-settings-header-wrapper
@@ -45,16 +45,3 @@ block main
       .show-filters-title-wrapper
         span.show-filters-title Selected Filters
       .show-filters-content-wrapper
-        if target.filters
-          each filter, i in Object.keys(target.filters)
-            if filter == 'age'
-              .show-filter-each-title
-                span.general-input-title Age
-              .selected-filters-wrapper
-                span.each-selected-filter #{Object.values(target.filters)[i].min} - #{Object.values(target.filters)[i].max}
-            else
-              .show-filter-each-title
-                span.general-input-title= filters.find(each => each._id.toString() == filter).name
-              .selected-filters-wrapper
-                each choice in Object.values(target.filters)[i]
-                  span.each-selected-filter= choice

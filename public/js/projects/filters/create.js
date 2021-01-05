@@ -10,6 +10,46 @@ let target;
 // Id or keyword of the currently selected filter
 let currentlyClickedFilter = 'settings';
 
+// Save project
+function saveProject (callback) {
+  const data = {
+    filters: filtersData
+  };
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', `/projects/filters/create/save?id=${target._id}`);
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify(data));
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      const response = JSON.parse(xhr.responseText);
+
+      if (!response.success && response.error) {
+        alert("An error occured while saving. Error message: " + (response.error.message ? response.error.message : response.error));
+        return callback(true);
+      }
+      callback(false);
+    }
+  };
+}
+
+// Automatically call save project every second
+function autoSave () {
+  saveProject(err => {
+    if (err) return;
+
+    setTimeout(() => {
+      autoSave();
+    }, 1000);
+  });
+}
+
+// Sort function for filters by their order in filters
+function sortFilters(filter1, filter2) {
+  const filterKeys = ['age'] + Object.keys(filters);
+  return (filterKeys.indexOf(filter1) < filterKeys.indexOf(filter2) ? -1 : 1);
+}
+
 // Add required item sign on an item
 function addRequiredItemSign (item) {
   const newSign = document.createElement('span');
@@ -77,6 +117,36 @@ function createFilterChoicesWrapperAndContent (choices) {
 
   document.querySelector('.filter-settings-content-wrapper').appendChild(wrapper);
 }
+
+// Create the content of the custom filters wrapper
+function createCustomFiltersWrapper () {
+  const customFiltersWrapper = document.querySelector('.custom-filters-wrapper');
+  const filterKeys = Object.keys(filters);
+
+  customFiltersWrapper.innerHTML = '';
+
+  const ageFilterWrapper = document.createElement('div');
+  ageFilterWrapper.classList.add('each-filter-wrapper');
+  ageFilterWrapper.id = 'age';
+  if (filtersData.age && ((filtersData.age.min && filtersData.age.min.length) || (filtersData.age.max && filtersData.age.max.length)))
+    ageFilterWrapper.classList.add('selected-filter');
+  const text = document.createElement('span');
+  text.innerHTML = 'Age';
+  ageFilterWrapper.appendChild(text);
+  customFiltersWrapper.appendChild(ageFilterWrapper);
+
+  filterKeys.forEach(key => {
+    const eachFilterWrapper = document.createElement('div');
+    eachFilterWrapper.classList.add('each-filter-wrapper');
+    eachFilterWrapper.id = key;
+    if (filtersData[key] && filtersData[key].length)
+      eachFilterWrapper.classList.add('selected-filter');
+    const text = document.createElement('span');
+    text.innerHTML = filters[key].name;
+    eachFilterWrapper.appendChild(text);
+    customFiltersWrapper.appendChild(eachFilterWrapper);
+  });
+} 
 
 // Create the content of settings header using currentlySelectedFilter
 function createSettingsHeaderWrapper () {
@@ -164,7 +234,7 @@ function createSettingsContentWrapper () {
     } else if (filter.type == 'range') {
       createSettingsInputTitle('Accepted Answers', true);
       createSettingsInputInfoText('The users who have selected one of the selected answers will pass the filter');
-      createFilterChoicesWrapperAndContent(Array.from( { length: (parseInt(filter.max_value) - parseInt(filter.min_value) + 1).toString() }, (_, i) =>  parseInt(filter.min_value) + i ));
+      createFilterChoicesWrapperAndContent(filter.choices);
     }
   }
 }
@@ -174,6 +244,7 @@ function createShowFiltersWrapper () {
   const showFiltersContentWrapper = document.querySelector('.show-filters-content-wrapper');
   showFiltersContentWrapper.innerHTML = '';
   const filterKeys = Object.keys(filtersData);
+  filterKeys.sort(sortFilters);
 
   filterKeys.forEach((key, i) => {
     const titleWrapper = document.createElement('div');
@@ -188,15 +259,17 @@ function createShowFiltersWrapper () {
       text.innerHTML = 'Age';
       const selectedText = document.createElement('span');
       selectedText.classList.add('each-selected-filter');
-      selectedText.innerHTML = (filtersData.age.min.length ? filtersData.age.min : 18) + ' - ' + (filtersData.age.max.length ? filtersData.age.max : 80);
+      selectedText.innerHTML = (filtersData.age.min ? filtersData.age.min : 18) + ' - ' + (filtersData.age.max ? filtersData.age.max : 80);
       selectedFiltersWrapper.appendChild(selectedText);
     } else {
       text.innerHTML = filters[key].name;
-      filtersData[key].forEach(choice => {
-        const selectedText = document.createElement('span');
-        selectedText.classList.add('each-selected-filter');
-        selectedText.innerHTML = choice;
-        selectedFiltersWrapper.appendChild(selectedText);
+      filters[key].choices.forEach(choice => {
+        if (filtersData[key].includes(choice)) {
+          const selectedText = document.createElement('span');
+          selectedText.classList.add('each-selected-filter');
+          selectedText.innerHTML = choice;
+          selectedFiltersWrapper.appendChild(selectedText);
+        }
       });
     }
 
@@ -211,21 +284,24 @@ function getFiltersData () {
   const filtersJSON = JSON.parse(document.getElementById('json-filters-data').value);
 
   filtersJSON.forEach(filter => {
-    if (filter && filter._id)
-      filters[filter._id.toString()] = filter;
+    filters[filter._id.toString()] = filter;
   });
 }
 
 // Get the target json data from the server side
 function getTargetData () {
   target = JSON.parse(document.getElementById('json-target-data').value);
-  filtersData = {};
+  filtersData = target.filters;
+  createShowFiltersWrapper();
 }
 
 window.onload = () => {
   getFiltersData(); // Load filters data on reload
   getTargetData(); // Load target data on reload
   listenSliderButtons(document); // Listen slider buttons
+  setTimeout(() => {
+    autoSave(); // Automatically save project
+  }, 1000); // Wait for everything on the page to be uploaded
 
   document.addEventListener('click', event => {
     // Click a filter from filters menu
@@ -251,6 +327,7 @@ window.onload = () => {
         filtersData[currentlyClickedFilter] = [event.target.innerHTML];
       createSettingsHeaderWrapper();
       createShowFiltersWrapper();
+      createCustomFiltersWrapper();
     } else if (event.target.classList.contains('each-filter-choice-selected')) { // deactivate a filter choice
       event.target.classList.add('each-filter-choice');
       event.target.classList.remove('each-filter-choice-selected');
@@ -259,6 +336,7 @@ window.onload = () => {
         delete filtersData[currentlyClickedFilter];
       createSettingsHeaderWrapper();
       createShowFiltersWrapper();
+      createCustomFiltersWrapper();
     }
 
     // Click activate button
@@ -267,13 +345,12 @@ window.onload = () => {
         delete filtersData[currentlyClickedFilter];
         createSettingsContentWrapper();
         createShowFiltersWrapper();
+        createCustomFiltersWrapper();
       } else {
-        if (filters[currentlyClickedFilter].type == 'range')
-          filtersData[currentlyClickedFilter] = Array.from( { length: (parseInt(filters[currentlyClickedFilter].max_value) - parseInt(filters[currentlyClickedFilter].min_value) + 1) }, (_, i) => (parseInt(filters[currentlyClickedFilter].min_value) + i).toString() );
-        else
-          filtersData[currentlyClickedFilter] = filters[currentlyClickedFilter].choices;
+        filtersData[currentlyClickedFilter] = filters[currentlyClickedFilter].choices;
         createSettingsContentWrapper();
         createShowFiltersWrapper();
+        createCustomFiltersWrapper();
       }
     }
   });

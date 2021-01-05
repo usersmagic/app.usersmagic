@@ -20,6 +20,9 @@
   font-size: 16px;
   letter-spacing: 1px;
 }
+.custom-block-type-title {
+  font-weight: 600 !important;
+}
 .each-type-subtitle {
   color: rgba(78, 75, 102, 1);
   letter-spacing: 1px;
@@ -30,6 +33,14 @@
   text-overflow: ellipsis;
   word-wrap: break-word;
   white-space: nowrap;
+}
+.finish-error-text {
+  color: rgb(255, 0, 0);
+  font-weight: 500;
+  font-size: 12px;
+  margin-bottom: 10px;
+  margin-top: -10px;
+  white-space: initial;
 }
 
 .blocks-wrapper {
@@ -349,3 +360,24 @@
   }
 }
 
+.blink-red-animation-class {
+  animation: blinkRed 0.2s ease-in-out 0s 3 forwards;
+  -webkit-animation: blinkRed 0.2s ease-in-out 0s 3 forwards;
+}
+
+@keyframes blinkRed {
+  from {
+    color: rgba(255, 0, 0, 0.4);
+  }
+  to {
+    color: rgba(255, 0, 0, 1);
+  }
+}
+@-webkit-keyframes blinkRed {
+  from {
+    color: rgba(255, 0, 0, 0.4);
+  }
+  to {
+    color: rgba(255, 0, 0, 1);
+  }
+}

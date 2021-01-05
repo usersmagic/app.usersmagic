@@ -12,7 +12,7 @@ module.exports = (questions, options, callback) => {
 
   const allowedQuestionTypes = ['yes_no', 'multiple_choice', 'opinion_scale', 'open_answer'];
   const questionIdLength = 11, maxQuestionTextLength = 1000, maxQuestionLongTextLength = 5000, maxQuestionAnswerLength = 5000;
-  const rangeMinValue = 0, rangeMaxValue = 10;
+  const rangeMinValue = 1, rangeMaxValue = 10;
 
   async.times(
     questions.length,
@@ -61,8 +61,8 @@ module.exports = (questions, options, callback) => {
           newQuestionData.choiceInputValue = question.choiceInputValue || '';
       } else if (question.type == 'opinion_scale') {
         const range = {
-          min: question.range && question.range.min ? question.range.min : '',
-          max: question.range && question.range.max ? question.range.max : ''
+          min: (question.range && question.range.min && !isNaN(parseInt(question.range.min))) ? Math.max(1, parseInt(question.range.min)) : '',
+          max: (question.range && question.range.max && !isNaN(parseInt(question.range.max))) ? Math.min(10, parseInt(question.range.max)) : ''
         };
         const labels = {
           left: question.labels && question.labels.left ? question.labels.left : '',
@@ -70,16 +70,16 @@ module.exports = (questions, options, callback) => {
           right: question.labels && question.labels.right ? question.labels.right : ''
         };
 
-        if (options.final && (!question.range.min.length || !question.range.max.length))
+        if (options.final && (!Number.isInteger(question.range.min) || !Number.isInteger(question.range.max)))
           return next('bad_request');
         
-        if (range.min.length && (!Number.isInteger(range.min) || parseInt(range.min) < rangeMinValue))
+        if (options.final && range.min < rangeMinValue)
           return next('bad_request');
 
-        if (range.max.length && (!Number.isInteger(range.max) || parseInt(range.max) > rangeMaxValue))
+        if (options.final && range.max > rangeMaxValue)
           return next('bad_request');
-        
-        if (range.min.length && range.max.length && parseInt(range.min) >= parseInt(range.max))
+
+        if (options.final && range.min >= range.max)
           return next('bad_request');
 
         if (labels.left.length > maxQuestionTextLength || labels.middle.length > maxQuestionTextLength || labels.right.length > maxQuestionTextLength)

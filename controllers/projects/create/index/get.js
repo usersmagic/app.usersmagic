@@ -16,8 +16,8 @@ module.exports = (req, res) => {
       title: project.name,
       includes: {
         external: {
-          css: ['page', 'general', 'header', 'contentHeader', 'logo', 'inputs', 'buttons', 'fontawesome'],
-          js: ['page', 'duplicateElement', 'dragAndDrop', 'buttonListeners']
+          css: ['page', 'general', 'header', 'confirm', 'contentHeader', 'logo', 'inputs', 'buttons', 'fontawesome'],
+          js: ['page', 'duplicateElement', 'confirm', 'dragAndDrop', 'buttonListeners']
         }
       },
       company: req.session.company,

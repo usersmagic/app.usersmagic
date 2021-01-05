@@ -33,22 +33,22 @@ block main
         .each-add-block-wrapper#yes_no
           img.each-type-image(src="/res/images/block_icons/yes_no.png" alt="usersmagic yes/no")
           .each-block-text-wrapper
-            span.each-type-title Yes/No
+            span.each-type-title.custom-block-type-title Yes/No
             span.each-type-subtitle Pick the next type you need
         .each-add-block-wrapper#multiple_choice
           img.each-type-image(src="/res/images/block_icons/multiple_choice.png" alt="usersmagic multiple choice")
           .each-block-text-wrapper
-            span.each-type-title Multiple Choice
+            span.each-type-title.custom-block-type-title Multiple Choice
             span.each-type-subtitle Pick the next type you need
         .each-add-block-wrapper#opinion_scale
           img.each-type-image(src="/res/images/block_icons/opinion_scale.png" alt="usersmagic opinion scale")
           .each-block-text-wrapper
-            span.each-type-title Opinion Scale
+            span.each-type-title.custom-block-type-title Opinion Scale
             span.each-type-subtitle Pick the next type you need
         .each-add-block-wrapper#open_answer
           img.each-type-image(src="/res/images/block_icons/open_answer.png" alt="usersmagic open answer")
           .each-block-text-wrapper
-            span.each-type-title Open Answer
+            span.each-type-title.custom-block-type-title Open Answer
             span.each-type-subtitle Pick the next type you need
     .block-settings-wrapper
       .block-settings-header-wrapper
@@ -66,6 +66,7 @@ block main
         span.general-input-title Task & Details
           span.general-input-required-sign *
         textarea.general-input-with-border-long(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")= project.welcome_screen.details
+        //- span.finish-error-text.blink-red-animation-class Please enter an opening message
         span.general-input-title Image
         label.general-choose-image-input-text
           span Add an image to explain the task. This is optional.

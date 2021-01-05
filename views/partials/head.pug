@@ -21,6 +21,8 @@ html(lang='tr')
           link(rel='stylesheet' href='/css/general/inputs.css')
         if includes.external.css.includes('buttons')
           link(rel='stylesheet' href='/css/general/buttons.css')
+        if includes.external.css.includes('confirm')
+          link(rel='stylesheet' href='/css/general/confirm.css')
         if includes.external.css.includes('fontawesome')
           link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css', integrity='sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ', crossorigin='anonymous')
       if includes.external.js
@@ -32,5 +34,7 @@ html(lang='tr')
           script(src='/js/functions/dragAndDrop.js')
         if includes.external.js.includes('buttonListeners')
           script(src='/js/functions/buttonListeners.js')
+        if includes.external.js.includes('confirm')
+          script(src='/js/functions/confirm.js')
   body
     block content

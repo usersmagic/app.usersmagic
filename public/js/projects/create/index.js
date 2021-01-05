@@ -359,6 +359,15 @@ function createSettingsOneLineInputs (inputs, type) {
   document.querySelector('.block-settings-content-wrapper').appendChild(inputsWrapper);
 }
 
+// Changes the selected block using currentlySelectedBlock
+function changeSelectedBlock () {
+  const clickedBlock = document.querySelector('.clicked-each-block');
+  if (clickedBlock)
+    clickedBlock.classList.remove('clicked-each-block');
+  if (currentlyClickedBlock != 'welcome')
+    document.getElementById(currentlyClickedBlock).classList.add('clicked-each-block');
+}
+
 // Create new content of the settings-content-wrapper
 function createSettingsPageContent (id) {
   currentlyClickedBlock = id;
@@ -429,7 +438,7 @@ function createSettingsPageContent (id) {
         {name: 'rangeMin', value: blockData[id].range.min, placeholder: 'Min'},
         {name: 'rangeMax', value: blockData[id].range.max, placeholder: 'Max'}
       ], 'number');
-      createSettingsInputInfoText('Your range must be in between 0 and 10, inclusive');
+      createSettingsInputInfoText('Your range must be in between 1 and 10, inclusive');
       createSettingsInputTitle('Label', false);
       createSettingsOneLineInputs([
         {name: 'labelLeft', value: blockData[id].labels.left, placeholder: 'Left'},
@@ -458,29 +467,162 @@ function createPreviewPageContent () {
 
 }
 
+// Create an error message after the given element with the given error message
+function createErrorMessage (element, message) {
+  const errorText = document.createElement('span');
+  errorText.classList.add('finish-error-text');
+  errorText.innerHTML = message;
+  element.after(errorText);
+  errorText.classList.add('blink-red-animation-class');
+}
+
+// Check the current data before finishing the project
+function checkDataBeforeFinish (callback) {
+  if (!blockData['welcome'].opening || !blockData['welcome'].opening.length) {
+    createSettingsPageContent('welcome');
+    changeSelectedBlock();
+    createErrorMessage(document.getElementsByName('opening')[0], 'Please enter an opening message.');
+    return callback(false);
+  } else if (blockData['welcome'].opening.length > 1000) {
+    createSettingsPageContent('welcome');
+    changeSelectedBlock();
+    createErrorMessage(document.getElementsByName('opening')[0], 'Your opening message should be less than 1000 characters.');
+    return callback(false);
+  } else if (!blockData['welcome'].details || !blockData['welcome'].details.length) {
+    createSettingsPageContent('welcome');
+    changeSelectedBlock();
+    createErrorMessage(document.getElementsByName('details')[0], 'Please enter your task.');
+    return callback(false);
+  } else if (blockData['welcome'].details.length > 1000) {
+    createSettingsPageContent('welcome');
+    changeSelectedBlock();
+    createErrorMessage(document.getElementsByName('details')[0], 'Your task & details should be less than 1000 characters.');
+    return callback(false);
+  } else {
+    const questions = getQuestionsData();
+    const maxQuestionTextLength = 1000, maxQuestionLongTextLength = 5000, maxQuestionAnswerLength = 5000;
+    const rangeMinValue = 1, rangeMaxValue = 10;
+
+    for (let i = 0; i < questions.length; i++) {
+      const question = questions[i];
+
+      if (!question || !question._id) {
+        alert("An unknown error occured, please refresh the page and then try again.");
+        return callback(false);
+      }
+      if (!question.text || !question.text.length) {
+        createSettingsPageContent(question._id);
+        changeSelectedBlock();
+        createErrorMessage(document.getElementsByName('question')[0], 'Please enter a question.');
+        return callback(false);
+      }
+      if (question.text.length > maxQuestionTextLength) {
+        createSettingsPageContent(question._id);
+        changeSelectedBlock();
+        createErrorMessage(document.getElementsByName('question')[0], 'Your question should be less than 1000 characters.');
+        return callback(false);
+      }
+      if (question.details && question.details.length > maxQuestionLongTextLength) {
+        createSettingsPageContent(question._id);
+        changeSelectedBlock();
+        createErrorMessage(document.getElementsByName('details')[0], 'Your question details should be less than 5000 characters.');
+        return callback(false);
+      }
+      if (question.type == 'multiple_choice') {
+        if ((!question.choices || !question.choices.length) && (!question.choiceInputValue || !question.choiceInputValue.length)) {
+          createSettingsPageContent(question._id);
+          changeSelectedBlock();
+          createErrorMessage(document.getElementsByName('choice')[0].nextElementSibling, 'Please enter at least one choice for your question.');
+          return callback(false);
+        }
+        if (question.choices && question.choices.filter(choice => choice.length > maxQuestionTextLength).length) {
+          createSettingsPageContent(question._id);
+          changeSelectedBlock();
+          createErrorMessage(document.getElementsByName('choice')[0].nextElementSibling, 'All of your choices should be shorter than 1000 characters.');
+          return callback(false);
+        }
+      } else if (question.type == 'opinion_scale') {
+        const range = {
+          min: (question.range && question.range.min && !isNaN(parseInt(question.range.min))) ? parseInt(question.range.min) : '',
+          max: (question.range && question.range.max && !isNaN(parseInt(question.range.max))) ? parseInt(question.range.max) : ''
+        };
+
+        const labels = {
+          left: question.labels && question.labels.left ? question.labels.left : '',
+          middle: question.labels && question.labels.middle ? question.labels.middle : '',
+          right: question.labels && question.labels.right ? question.labels.right : ''
+        };
+
+        if (!Number.isInteger(question.range.min) || !Number.isInteger(question.range.max)) {
+          createSettingsPageContent(question._id);
+          changeSelectedBlock();
+          createErrorMessage(document.getElementsByName('rangeMin')[0].parentNode.nextElementSibling, 'Please enter a minimum and maximum value.');
+          return callback(false);
+        }
+        if (range.min < rangeMinValue || range.max > rangeMaxValue) {
+          createSettingsPageContent(question._id);
+          changeSelectedBlock();
+          createErrorMessage(document.getElementsByName('rangeMin')[0].parentNode.nextElementSibling, 'Your range should be in between 1 and 10, inclusive.');
+          return callback(false);
+        }
+        if (range.min >= range.max) {
+          createSettingsPageContent(question._id);
+          changeSelectedBlock();
+          createErrorMessage(document.getElementsByName('rangeMin')[0].parentNode.nextElementSibling, 'Your range minimum must be smaller than your range maximum.');
+          return callback(false);
+        }
+        if (labels.left.length > maxQuestionTextLength || labels.middle.length > maxQuestionTextLength || labels.right.length > maxQuestionTextLength) {
+          createSettingsPageContent(question._id);
+          changeSelectedBlock();
+          createErrorMessage(document.getElementsByName('labelLeft')[0].parentNode, 'Your labels can be maximum 1000 characters.');
+          return callback(false);
+        }
+      }
+
+      if (i == questions.length - 1)
+        return callback(true);
+    }
+  }
+}
+
 // Finish the current project, show the error or redirect user to details page
 function finishProject () {
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', `/projects/create/finish?id=${project._id}`);
-  xhr.send();
+  checkDataBeforeFinish(res => {
+    if (res) {
+      console.log("here");
+      createConfirm({
+        title: 'Are you sure you want to start testing?',
+        text: 'Once you start testing, you cannot edit your questions anymore. You cannot take this action back.',
+        reject: 'Cancel',
+        accept: 'Continue'
+      }, res => {
+        console.log(res);
+        if (res) {
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', `/projects/create/finish?id=${project._id}`);
+          xhr.send();
 
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4 && xhr.responseText) {
-      const response = JSON.parse(xhr.responseText);
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.responseText) {
+              const response = JSON.parse(xhr.responseText);
 
-      if (!response.success && response.error)
-        return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
-      return window.location = `/projects/details?id=${project._id.toString()}`;
+              if (!response.success && response.error)
+                return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+              return window.location = `/projects/details?id=${project._id.toString()}`;
+            }
+          };
+        }
+      });
     }
-  };
+  });
 }
 
 window.onload = () => {
   project = JSON.parse(document.getElementById('json-project-data').value); // Get project data
+  getBlockData(); // Initialize block data using project
 
   dragAndDrop(document); // Listen for drag-and-drop wrappers
   listenSliderButtons(document); // Listen slider buttons
-  getBlockData();
   setTimeout(() => {
     autoSave(); // Automatically save project
   }, 1000); // Wait for everything on the page to be uploaded
@@ -577,34 +719,20 @@ window.onload = () => {
 
     // Change to the welcome block
     if (event.target.classList.contains('welcome-block-wrapper') || event.target.parentNode.classList.contains('welcome-block-wrapper')) {
-      const clickedBlock = document.querySelector('.clicked-each-block');
-      if (clickedBlock)
-        clickedBlock.classList.remove('clicked-each-block');
       createSettingsPageContent('welcome');
+      changeSelectedBlock();
     }
 
     // Change block
     if (event.target.classList.contains('each-block-wrapper')) {
-      const clickedBlock = document.querySelector('.clicked-each-block');
-      if (clickedBlock)
-        clickedBlock.classList.remove('clicked-each-block');
-      event.target.classList.add('clicked-each-block');
-      currentlyClickedBlock = event.target.id;
       createSettingsPageContent(event.target.id);
+      changeSelectedBlock();
     } else if (event.target.parentNode.classList.contains('each-block-wrapper')) {
-      const clickedBlock = document.querySelector('.clicked-each-block');
-      if (clickedBlock)
-        clickedBlock.classList.remove('clicked-each-block');
-      event.target.parentNode.classList.add('clicked-each-block');
-      currentlyClickedBlock = event.target.parentNode.id;
       createSettingsPageContent(event.target.parentNode.id);
+      changeSelectedBlock();
     } else if (event.target.parentNode.parentNode.classList.contains('each-block-wrapper')) {
-      const clickedBlock = document.querySelector('.clicked-each-block');
-      if (clickedBlock)
-        clickedBlock.classList.remove('clicked-each-block');
-      event.target.parentNode.parentNode.classList.add('clicked-each-block');
-      currentlyClickedBlock = event.target.parentNode.parentNode.id;
       createSettingsPageContent(event.target.parentNode.parentNode.id);
+      changeSelectedBlock();
     }
 
     // Change required option
@@ -614,15 +742,24 @@ window.onload = () => {
 
     // Delete block
     if (event.target.classList.contains('settings-delete-button')) {
-      const selectedDocument = document.getElementById(currentlyClickedBlock);
-      if (selectedDocument.previousElementSibling) {
-        console.log("here");
-        selectedDocument.previousElementSibling.classList.add('clicked-each-block');
-        createSettingsPageContent(selectedDocument.previousElementSibling.id);
-      } else {
-        createSettingsPageContent('welcome');
-      }
-      selectedDocument.remove();
+      createConfirm({
+        title: 'Are you sure you want to delete this question?',
+        text: 'You cannot take this action back.',
+        reject: 'Cancel',
+        accept: 'Continue'
+      }, res => {
+        if (res) {
+          const selectedDocument = document.getElementById(currentlyClickedBlock);
+          if (selectedDocument.previousElementSibling) {
+            console.log("here");
+            selectedDocument.previousElementSibling.classList.add('clicked-each-block');
+            createSettingsPageContent(selectedDocument.previousElementSibling.id);
+          } else {
+            createSettingsPageContent('welcome');
+          }
+          selectedDocument.remove();
+        }
+      });
     }
 
     // Duplicate block

@@ -207,8 +207,17 @@ TargetSchema.statics.finishTarget = function (id, callback) {
   });
 }
 
-TargetSchema.statics.changeSubmitionLimit = function (data, callback) {
+TargetSchema.statics.changeSubmitionLimit = function (id, data, callback) {
+  // Changes the submition limit of the target with the given id using the limit key in data variable, returns an error if it exists
   
+  if (!id || !validator.isMongoId(id) || !data || !Number.isInteger(data.limit))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+    submition_limit: data.limit
+  }}, err => callback(err));
 }
 
 module.exports = mongoose.model('Target', TargetSchema);

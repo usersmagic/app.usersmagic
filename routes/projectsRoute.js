@@ -10,6 +10,7 @@ const detailsGetController = require('../controllers/projects/details/get');
 const filtersIndexGetController = require('../controllers/projects/filters/index/get');
 const filtersCreateGetController = require('../controllers/projects/filters/create/index/get');
 const filtersCreateFinishGetController = require('../controllers/projects/filters/create/finish/get');
+const filtersSubmitPostController = require('../controllers/projects/filters/submit/post');
 const reportIndexGetController = require('../controllers/projects/report/index/get');
 
 const indexPostController = require('../controllers/projects/index/post');
@@ -77,6 +78,11 @@ router.post(
   '/filters/create/save',
     isLoggedIn,
     filtersCreateSavePostController
+);
+router.post(
+  '/filters/submit',
+    isLoggedIn,
+    filtersSubmitPostController
 );
 
 module.exports = router;

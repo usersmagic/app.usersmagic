@@ -29,23 +29,31 @@ block main
     if targets && targets.length
       .targets-wrapper
         each target in targets
-          a.each-target-wrapper(href=(target.status == 'saved' ? `/projects/filters/create?id=${target._id}` :  `/projects/details?id=${target._id}`))
-            .each-target-inner-wrapper
-              span.each-target-name= target.name
-              span.each-target-description= target.description
-              span.each-target-created_at created at: #{target.created_at}
-              if target.status == 'finished'
-                span.each-target-waiting-user-number Waiting User Number #{target.submition_limit}
-              .each-target-buttons-wrapper
-                .target-tester-number-wrapper
-                  input.target-tester-number-input(type="number" placeholder="Tester number")
-                  span.approve-tester-number-button Start
-                if target.status == 'finished' && target.submition_limit == 0
-                  span.target-start-button Find Testers
-                else if target.status == 'finished'
-                  span.target-finish-button Stop Test
-                else
-                  span.target-continue-button Complete Filters
+          if target.status == 'waiting'
+            a.each-target-wrapper(href=(target.status == 'saved' ? `/projects/filters/create?id=${target._id}` :  `/projects/details?id=${target._id}`))
+              .each-target-inner-wrapper
+                span.each-target-name= target.name
+                span.each-target-created_at created at: #{target.created_at}
+                span.each-target-description= target.description
+                span.each-target-waiting-tester-number
+                .each-target-buttons-wrapper
+                    span.target-continue-button Complete Filters
+          else if target.status == 'finished'
+            .each-target-wrapper
+              .each-target-inner-wrapper
+                span.each-target-name= target.name
+                span.each-target-created_at created at: #{target.created_at}
+                span.each-target-description= target.description
+                span.each-target-waiting-tester-number Waiting tester number: #{target.submition_limit}
+                .each-target-buttons-wrapper
+                  .target-tester-number-wrapper
+                    input.target-tester-number-input(type="number" placeholder="Tester number")
+                    span.approve-tester-number-button(id=target._id.toString()) Start
+                  if target.submition_limit == 0
+                    span.target-start-button Find Testers
+                  else
+                    span.target-stop-button(id=target._id.toString()) Stop Test
+                span.target-report-info-text(href=`/projects/report?id=${target.project_id}`) You can see the results on the report page
     else
       .no-target-wrapper
         span.no-target-text You didn't create any target group yet. Create one to start testing!

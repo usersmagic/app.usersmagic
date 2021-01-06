@@ -6,7 +6,14 @@ module.exports = (questions, callback) => {
   if (!questions || !Array.isArray(questions))
     return callback('bad_request');
 
-  const filters = [];
+  const filters = [{
+    _id: 'gender',
+    text: 'What is your gender?',
+    name: 'Gender',
+    type: 'radio',
+    choices: ['Male', 'Female']
+  }];
+  
   questions.forEach(question => {
     if (question.type && question.type == 'range') {
       filters.push({

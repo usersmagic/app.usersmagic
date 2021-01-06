@@ -16,6 +16,8 @@ const getFilter = (filter, callback) => {
     const min = value[1].birth_year.gte;
 
     return callback(null, 'age', { min, max });
+  } else if (key == 'gender') {
+    return callback(null, key, value.in);
   } else {
     return callback(null, key.split('.')[1], value.in);
   }

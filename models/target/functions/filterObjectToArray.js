@@ -19,6 +19,15 @@ const getFilter = (key, value, callback) => {
         {'birth_year': {gte: min}}
       ]
     })
+  } else if (key == 'gender') {
+    if (!value.length || !Array.isArray(value))
+      return callback('bad_request');
+
+    return callback(null, {
+      [key]: {
+        'in': value
+      }
+    });
   } else {
     if (!value.length || !Array.isArray(value) || !validator.isMongoId(key.toString()))
       return callback('bad_request');

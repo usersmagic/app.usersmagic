@@ -210,7 +210,7 @@ TargetSchema.statics.finishTarget = function (id, callback) {
 TargetSchema.statics.changeSubmitionLimit = function (id, data, callback) {
   // Changes the submition limit of the target with the given id using the limit key in data variable, returns an error if it exists
   
-  if (!id || !validator.isMongoId(id) || !data || !Number.isInteger(data.limit))
+  if (!id || !validator.isMongoId(id) || !data || !Number.isInteger(data.limit) || data.limit > 10)
     return callback('bad_request');
 
   const Target = this;

@@ -462,6 +462,35 @@ function getChoices () {
   });
 }
 
+// Duplicates the block using the currentlySelectedBlock with a new id, opens the new block
+function duplicateBlock () {
+  const block = blockData[currentlyClickedBlock];
+  const newData = {
+    _id: Math.random().toString(36).substr(2, 12),
+    type: block.type,
+    text: block.text,
+    details: block.details,
+    image: null,
+    required: block.required,
+  };
+
+  if (block.type == 'multiple_choice') {
+    newData.choices = block.choices;
+    newData.choiceInputValue = block.choiceInputValue;
+    newData.subtype = block.subtype;
+  } else if (block.type == 'opinion_scale') {
+    newData.labels = block.labels;
+    newData.range = block.range;
+  }
+
+  blockData[newData._id] = newData;
+  createNewEachBlockWrapper(newData._id);
+  const newBlock = document.getElementById(newData._id);
+  while (newBlock.previousElementSibling && newBlock.previousElementSibling.id != currentlyClickedBlock)
+    newBlock.parentNode.insertBefore(newBlock, newBlock.previousElementSibling);
+  createSettingsPageContent(newData._id);
+}
+
 // Create the content of the preview page
 function createPreviewPageContent () {
 
@@ -509,37 +538,34 @@ function checkDataBeforeFinish (callback) {
       if (!question || !question._id) {
         alert("An unknown error occured, please refresh the page and then try again.");
         return callback(false);
-      }
-      if (!question.text || !question.text.length) {
+      } else if (!question.text || !question.text.length) {
         createSettingsPageContent(question._id);
         changeSelectedBlock();
         createErrorMessage(document.getElementsByName('question')[0], 'Please enter a question.');
         return callback(false);
-      }
-      if (question.text.length > maxQuestionTextLength) {
+      } else if (question.text.length > maxQuestionTextLength) {
         createSettingsPageContent(question._id);
         changeSelectedBlock();
         createErrorMessage(document.getElementsByName('question')[0], 'Your question should be less than 1000 characters.');
         return callback(false);
-      }
-      if (question.details && question.details.length > maxQuestionLongTextLength) {
+      } else if (question.details && question.details.length > maxQuestionLongTextLength) {
         createSettingsPageContent(question._id);
         changeSelectedBlock();
         createErrorMessage(document.getElementsByName('details')[0], 'Your question details should be less than 5000 characters.');
         return callback(false);
-      }
-      if (question.type == 'multiple_choice') {
+      } else if (question.type == 'multiple_choice') {
         if ((!question.choices || !question.choices.length) && (!question.choiceInputValue || !question.choiceInputValue.length)) {
           createSettingsPageContent(question._id);
           changeSelectedBlock();
           createErrorMessage(document.getElementsByName('choice')[0].nextElementSibling, 'Please enter at least one choice for your question.');
           return callback(false);
-        }
-        if (question.choices && question.choices.filter(choice => choice.length > maxQuestionTextLength).length) {
+        } else if (question.choices && question.choices.filter(choice => choice.length > maxQuestionTextLength).length) {
           createSettingsPageContent(question._id);
           changeSelectedBlock();
           createErrorMessage(document.getElementsByName('choice')[0].nextElementSibling, 'All of your choices should be shorter than 1000 characters.');
           return callback(false);
+        } else if (i == questions.length - 1) {
+          return callback(true);
         }
       } else if (question.type == 'opinion_scale') {
         const range = {
@@ -553,34 +579,32 @@ function checkDataBeforeFinish (callback) {
           right: question.labels && question.labels.right ? question.labels.right : ''
         };
 
-        if (!Number.isInteger(question.range.min) || !Number.isInteger(question.range.max)) {
+        if (isNaN(parseInt(question.range.min)) || isNaN(parseInt(question.range.max))) {
           createSettingsPageContent(question._id);
           changeSelectedBlock();
           createErrorMessage(document.getElementsByName('rangeMin')[0].parentNode.nextElementSibling, 'Please enter a minimum and maximum value.');
           return callback(false);
-        }
-        if (range.min < rangeMinValue || range.max > rangeMaxValue) {
+        } else if (parseInt(range.min) < rangeMinValue || parseInt(range.max) > rangeMaxValue) {
           createSettingsPageContent(question._id);
           changeSelectedBlock();
-          createErrorMessage(document.getElementsByName('rangeMin')[0].parentNode.nextElementSibling, 'Your range should be in between 1 and 10, inclusive.');
+          createErrorMessage(document.getElementsByName('rangeMin')[0].parentNode.nextElementSibling, 'Your range must be in between 1 and 10, inclusive.');
           return callback(false);
-        }
-        if (range.min >= range.max) {
+        } else if (range.min >= range.max) {
           createSettingsPageContent(question._id);
           changeSelectedBlock();
           createErrorMessage(document.getElementsByName('rangeMin')[0].parentNode.nextElementSibling, 'Your range minimum must be smaller than your range maximum.');
           return callback(false);
-        }
-        if (labels.left.length > maxQuestionTextLength || labels.middle.length > maxQuestionTextLength || labels.right.length > maxQuestionTextLength) {
+        } else if (labels.left.length > maxQuestionTextLength || labels.middle.length > maxQuestionTextLength || labels.right.length > maxQuestionTextLength) {
           createSettingsPageContent(question._id);
           changeSelectedBlock();
           createErrorMessage(document.getElementsByName('labelLeft')[0].parentNode, 'Your labels can be maximum 1000 characters.');
           return callback(false);
+        } else if (i == questions.length - 1) {
+          return callback(true);
         }
-      }
-
-      if (i == questions.length - 1)
+      } else if (i == questions.length - 1) {
         return callback(true);
+      }
     }
   }
 }
@@ -752,26 +776,22 @@ window.onload = () => {
       }, res => {
         if (res) {
           const selectedDocument = document.getElementById(currentlyClickedBlock);
+          
           if (selectedDocument.previousElementSibling) {
             selectedDocument.previousElementSibling.classList.add('clicked-each-block');
             createSettingsPageContent(selectedDocument.previousElementSibling.id);
+            selectedDocument.remove();
           } else {
             createSettingsPageContent('welcome');
+            selectedDocument.remove();
           }
-          selectedDocument.remove();
         }
       });
     }
 
     // Duplicate block
     if (event.target.classList.contains('settings-duplicate-button')) {
-      const id = Math.random().toString(36).substr(2, 12);
-      blockData[id] = blockData[currentlyClickedBlock];
-      createNewEachBlockWrapper(id);
-      const newBlock = document.getElementById(id);
-      while (newBlock.previousElementSibling && newBlock.previousElementSibling.id != currentlyClickedBlock)
-        newBlock.parentNode.insertBefore(newBlock, newBlock.previousElementSibling);
-      currentlyClickedBlock = id;
+     duplicateBlock();
     }
 
     // Delete Choice

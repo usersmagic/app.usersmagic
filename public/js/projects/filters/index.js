@@ -48,11 +48,11 @@ window.onload = () => {
     // Click approve tester number button
     if (event.target.classList.contains('approve-tester-number-button')) {
       const testerNumberInput = document.querySelector('.target-tester-number-input');
-      if (!testerNumberInput.value || isNaN(parseInt(testerNumberInput.value)) || parseInt(testerNumberInput.value) <= 0) {
+      if (!testerNumberInput.value || isNaN(parseInt(testerNumberInput.value)) || !Number.isInteger(parseInt(testerNumberInput.value)) || parseInt(testerNumberInput.value) <= 0 || parseInt(testerNumberInput.value) > 10) {
         testerNumberInput.classList.add('blink-red-animation-class');
         setTimeout(() => {
           testerNumberInput.classList.remove('blink-red-animation-class');
-        }, 1000);
+        }, 600);
       } else {
         postSubmitionLimit(event.target.id, parseInt(testerNumberInput.value), err => {
           if (!err) location.reload();

@@ -213,7 +213,7 @@ function createSettingsContentWrapper () {
     createSettingsInputTitle('Name', true);
     createSettingsShortInput(target.name, 'Enter a clear name for you target group', 'name');
     createSettingsInputTitle('Description', true);
-    createSettingsShortInput(target.description, 'Explain your target group. This will make you job lot easier later', 'description');
+    createSettingsShortInput(target.description, 'Explain your target group. e.g Female college students that are freshmen and interested in sports', 'description');
   } else if (currentlyClickedFilter == 'age') {
     createSettingsInputTitle('Minimum Age');
     createSettingsShortInput(filtersData.age ? filtersData.age.min : '', 'Must be at leat 18', 'min_age', 'number');
@@ -294,31 +294,69 @@ function getTargetData () {
   createShowFiltersWrapper();
 }
 
+// Create an error message after the given element with the given error message
+function createErrorMessage (element, message) {
+  const errorText = document.createElement('span');
+  errorText.classList.add('finish-error-text');
+  errorText.innerHTML = message;
+  element.after(errorText);
+  errorText.classList.add('blink-red-animation-class');
+}
+
+// Check the current data before finishing the target
+function checkDataBeforeFinish (callback) {
+  if (filtersData.age && (filtersData.age.min > filtersData.age.max)) {
+    currentlyClickedFilter = 'age';
+    createSettingsHeaderWrapper();
+    createSettingsContentWrapper();
+    createErrorMessage(document.getElementsByName('max_age')[0], 'Your maximum age should be bigger than your minimum age.');
+    callback(false);
+  } else if (filtersData.age && filtersData.age.min < 18) {
+    currentlyClickedFilter = 'age';
+    createSettingsHeaderWrapper();
+    createSettingsContentWrapper();
+    createErrorMessage(document.getElementsByName('min_age')[0], 'The minimum age must be at least 18.');
+    callback(false);
+  } else if (filtersData.age && filtersData.age.max > 80) {
+    currentlyClickedFilter = 'age';
+    createSettingsHeaderWrapper();
+    createSettingsContentWrapper();
+    createErrorMessage(document.getElementsByName('max_age')[0], 'The maximum age must be at most 80.');
+    callback(false);
+  } else {
+    callback(true);
+  }
+}
+
 // Finish project
 function finishTarget () {
   saveFilters(err => {
     if (err) return;
 
-    createConfirm({
-      title: 'Are you sure you want to finish editing your filters?',
-      text: 'You cannot change your filters once you start testing.',
-      reject: 'Cancel',
-      accept: 'Continue'
-    }, res => {
+    checkDataBeforeFinish(res => {
       if (res) {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', `/projects/filters/create/finish?id=${target._id}`);
-        xhr.send();
-  
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState == 4 && xhr.responseText) {
-            const response = JSON.parse(xhr.responseText);
-  
-            if (!response.success && response.error)
-              return alert("An error occured while finishing the target. Error message: " + (response.error.message ? response.error.message : response.error));
-            return window.location = `/projects/filters?id=${target.project_id.toString()}`;
+        createConfirm({
+          title: 'Are you sure you want to finish editing your filters?',
+          text: 'You cannot change your filters once you start testing.',
+          reject: 'Cancel',
+          accept: 'Continue'
+        }, res => {
+          if (res) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', `/projects/filters/create/finish?id=${target._id}`);
+            xhr.send();
+      
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState == 4 && xhr.responseText) {
+                const response = JSON.parse(xhr.responseText);
+      
+                if (!response.success && response.error)
+                  return alert("An error occured while finishing the target. Error message: " + (response.error.message ? response.error.message : response.error));
+                return window.location = `/projects/filters?id=${target.project_id.toString()}`;
+              }
+            };
           }
-        };
+        });
       }
     });
   });

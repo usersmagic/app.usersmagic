@@ -124,7 +124,7 @@
   text-decoration: none;
 }
 .each-target-waiting-tester-number {
-  color: rgba(133, 92, 248, 1);
+  color: rgb(78, 75, 102);
   font-weight: 600;
   letter-spacing: 0.5px;
   font-size: 14px;
@@ -164,6 +164,14 @@
   justify-content: flex-end;
   width: 100%;
 }
+.target-tester-number-text {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 1px;
+  margin-right: 10px;
+  align-self: center;
+}
 .target-tester-number-input {
   color: rgb(78, 75, 102);
   font-size: 12px;
@@ -172,7 +180,8 @@
   border: 1px solid rgb(196, 196, 196);
   outline: none;
   border-radius: 5px;
-  width: 110px;
+  width: 67px;
+  text-align: center;
 }
 .approve-tester-number-button {
   color: rgba(46, 197, 206, 0.9);

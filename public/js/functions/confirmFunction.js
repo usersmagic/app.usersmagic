@@ -1,9 +1,12 @@
 
 // Create a confirm wrapper with the data given and returns the callback
 // If the wrapper is confirmed returns callback true else false
+
 function createConfirm (data, callback) {
+  const id = Math.random().toString(36).substr(2, 12);
   const confirmOuterWrapper = document.createElement('div');
   confirmOuterWrapper.classList.add('general-confirm-outer-wrapper');
+  confirmOuterWrapper.id = id;
 
   const confirmWrapper = document.createElement('div');
   confirmWrapper.classList.add('general-confirm-wrapper');
@@ -38,10 +41,11 @@ function createConfirm (data, callback) {
   document.querySelector('body').appendChild(confirmOuterWrapper);
 
   document.addEventListener('click', event => {
-    if (event.target.classList.contains('general-confirm-no-button') || event.target.classList.contains('general-confirm-outer-wrapper')) {
+    if ((event.target.classList.contains('general-confirm-no-button') && event.target.parentNode.parentNode.parentNode.id == id) || (event.target.classList.contains('general-confirm-outer-wrapper') && event.target.id == id)) {
       confirmOuterWrapper.remove();
       callback(false);
-    } else if (event.target.classList.contains('general-confirm-yes-button')) {
+    } else if (event.target.classList.contains('general-confirm-yes-button') && event.target.parentNode.parentNode.parentNode.id == id) {
+      sCofirmWrapperEnded = true;
       confirmOuterWrapper.remove();
       callback(true);
     }

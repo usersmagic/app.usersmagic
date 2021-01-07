@@ -216,7 +216,7 @@ function createSettingsContentWrapper () {
     createSettingsShortInput(target.description, 'Explain your target group. e.g Female college students that are freshmen and interested in sports', 'description');
   } else if (currentlyClickedFilter == 'age') {
     createSettingsInputTitle('Minimum Age');
-    createSettingsShortInput(filtersData.age ? filtersData.age.min : '', 'Must be at leat 18', 'min_age', 'number');
+    createSettingsShortInput(filtersData.age ? filtersData.age.min : '', 'Must be at least 18', 'min_age', 'number');
     createSettingsInputTitle('Maximum Age');
     createSettingsShortInput(filtersData.age ? filtersData.age.max : '', 'Must be less than 80', 'max_age', 'number');
   } else {

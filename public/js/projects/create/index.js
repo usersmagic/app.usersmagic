@@ -20,6 +20,147 @@ const typeNames = {
 
 let currentlyClickedBlock = 'welcome'; // Id or keyword of currently selected block
 
+// Create the content of the preview page
+function createPreviewPageContent () {
+  const previewContent = document.querySelector('.block-preview-content');
+  previewContent.innerHTML = "";
+  const block = blockData[currentlyClickedBlock];
+
+  const text = document.createElement('span');
+  text.classList.add('block-preview-question-text');
+  text.innerHTML = currentlyClickedBlock == 'welcome' ? block.opening : block.text;
+  previewContent.appendChild(text);
+
+  const notes = document.createElement('span');
+  notes.classList.add('block-preview-question-notes');
+  notes.innerHTML = block.details;
+  previewContent.appendChild(notes);
+
+  if (block.image) {
+    const imageWrapper = document.createElement('div');
+    imageWrapper.classList.add('block-preview-image-wrapper');
+    const image = document.createElement('img');
+    image.classList.add('block-preview-image');
+    image.src = block.image;
+    image.alt = 'usersmagic preview';
+    imageWrapper.appendChild(image);
+    previewContent.appendChild(imageWrapper);
+  }
+
+  if (currentlyClickedBlock == 'welcome') return;
+  console.log(block.range);
+
+  if (block.type == 'yes_no') {
+    const buttonsWrapper = document.createElement('div');
+    buttonsWrapper.classList.add('block-preview-yesno-buttons-wrapper');
+
+    const noButton = document.createElement('block-preview-no-button');
+    noButton.classList.add('block-preview-no-button');
+    const noI = document.createElement('i');
+    noI.classList.add('fas');
+    noI.classList.add('fa-times');
+    noButton.appendChild(noI);
+    const noText = document.createElement('span');
+    noText.innerHTML = 'NO';
+    noButton.appendChild(noText);
+    buttonsWrapper.appendChild(noButton);
+
+    const yesButton = document.createElement('block-preview-yes-button');
+    yesButton.classList.add('block-preview-yes-button');
+    const yesI = document.createElement('i');
+    yesI.classList.add('fas');
+    yesI.classList.add('fa-check');
+    yesButton.appendChild(yesI);
+    const yesText = document.createElement('span');
+    yesText.innerHTML = 'YES';
+    yesButton.appendChild(yesText);
+    buttonsWrapper.appendChild(yesButton);
+
+    previewContent.appendChild(buttonsWrapper);
+  } else if (block.type == 'multiple_choice') {
+    for (let i = 0; i < block.choices.length; i++) {
+      const newChoiceWrapper = document.createElement('div');
+      newChoiceWrapper.classList.add('block-preview-each-choice');
+      if (block.subtype == 'single') {
+        const choiceIcon = document.createElement('div');
+        choiceIcon.classList.add('block-preview-each-shape-circle');
+        newChoiceWrapper.appendChild(choiceIcon);
+      } else {
+        const choiceIcon = document.createElement('div');
+        choiceIcon.classList.add('block-preview-each-shape-square');
+        newChoiceWrapper.appendChild(choiceIcon);
+      }
+      const choiceText = document.createElement('span');
+      choiceText.classList.add('block-preview-each-choice-text');
+      choiceText.innerHTML = block.choices[i];
+      newChoiceWrapper.appendChild(choiceText);
+      previewContent.appendChild(newChoiceWrapper);
+    }
+    if (block.choiceInputValue && block.choiceInputValue.length) {
+      const newChoiceWrapper = document.createElement('div');
+      newChoiceWrapper.classList.add('block-preview-each-choice');
+      if (block.subtype == 'single') {
+        const choiceIcon = document.createElement('div');
+        choiceIcon.classList.add('block-preview-each-shape-circle');
+        newChoiceWrapper.appendChild(choiceIcon);
+      } else {
+        const choiceIcon = document.createElement('div');
+        choiceIcon.classList.add('block-preview-each-shape-square');
+        newChoiceWrapper.appendChild(choiceIcon);
+      }
+      const choiceText = document.createElement('span');
+      choiceText.classList.add('block-preview-each-choice-text');
+      choiceText.innerHTML = block.choiceInputValue;
+      newChoiceWrapper.appendChild(choiceText);
+      previewContent.appendChild(newChoiceWrapper);
+    }
+  } else if (block.type == 'opinion_scale' && block.range.min && block.range.max) {
+    const opinionScaleWrapper = document.createElement('div');
+    opinionScaleWrapper.classList.add('block-preview-opinion-scale-wrapper');
+    for (let i = Math.max(1, Math.min(parseInt(block.range.min), parseInt(block.range.max))); i <= Math.min(10, Math.max(parseInt(block.range.min), parseInt(block.range.max))); i++) {
+      if (i != Math.max(1, Math.min(parseInt(block.range.min), parseInt(block.range.max)))) {
+        const eachEmptyScale = document.createElement('div');
+        eachEmptyScale.classList.add('block-preview-empty-scale');
+        opinionScaleWrapper.appendChild(eachEmptyScale);
+      }
+      const eachScale = document.createElement('span');
+      eachScale.classList.add('block-preview-each-scale');
+      eachScale.innerHTML = i;
+      opinionScaleWrapper.appendChild(eachScale);
+    }
+    previewContent.appendChild(opinionScaleWrapper);
+
+    const opinionLine = document.createElement('div');
+    opinionLine.classList.add('block-preview-opinion-line');
+    for (let i = 0; i < 3; i++) {
+      const eachOpinionLine = document.createElement('div');
+      eachOpinionLine.classList.add('block-preview-opinion-line-item');
+      opinionLine.appendChild(eachOpinionLine);
+    }
+    previewContent.appendChild(opinionLine);
+
+    const opinionTextWrapper = document.createElement('div');
+    opinionTextWrapper.classList.add('block-preview-opinion-text-wrapper');
+    const leftOpinionText = document.createElement('span');
+    leftOpinionText.classList.add('block-preview-opinion-text-left');
+    leftOpinionText.innerHTML = block.labels.left;
+    opinionTextWrapper.appendChild(leftOpinionText);
+    const middleOpinionText = document.createElement('span');
+    middleOpinionText.classList.add('block-preview-opinion-text-middle');
+    middleOpinionText.innerHTML = block.labels.middle;
+    opinionTextWrapper.appendChild(middleOpinionText);
+    const rightOpinionText = document.createElement('span');
+    rightOpinionText.classList.add('block-preview-opinion-text-right');
+    rightOpinionText.innerHTML = block.labels.right;
+    opinionTextWrapper.appendChild(rightOpinionText);
+    previewContent.appendChild(opinionTextWrapper);
+  } else if (block.type == 'open_answer') {
+    const textInput = document.createElement('span');
+    textInput.classList.add('block-preview-input');
+    textInput.innerHTML = 'Type your answer here';
+  } 
+}
+
 // Get questions data from the blockData object
 function getQuestionsData () {
   const questionsWrapper = document.querySelector('.custom-blocks-wrapper');
@@ -49,14 +190,29 @@ function saveProject (callback) {
   xhr.send(JSON.stringify(data));
 
   xhr.onreadystatechange = function () {
-    if (xhr.readyState == 4 && xhr.responseText) {
+    if (xhr.readyState == 4 && xhr.status != 200) {
+      createConfirm({
+        title: 'An error occured while saving',
+        text: 'Please reload the page',
+        accept: 'Continue'
+      }, res => {
+        return callback(true);
+      });
+    } else if (xhr.readyState == 4 && xhr.responseText) {
       const response = JSON.parse(xhr.responseText);
 
       if (!response.success && response.error) {
-        alert("An error occured while saving. Error message: " + (response.error.message ? response.error.message : response.error));
-        return callback(true);
+        createConfirm({
+          title: 'An error occured while saving',
+          text: 'Please reload the page',
+          accept: 'Continue'
+        }, res => {
+          return callback(true);
+        });
+      } else {
+        createPreviewPageContent();
+        return callback(false);
       }
-      callback(false);
     }
   };
 }
@@ -77,7 +233,7 @@ function getBlockData () {
 // Automatically call save project every second
 function autoSave () {
   saveProject(err => {
-    if (err) return;
+    if (err) return location.reload();
 
     setTimeout(() => {
       autoSave();
@@ -491,11 +647,6 @@ function duplicateBlock () {
   createSettingsPageContent(newData._id);
 }
 
-// Create the content of the preview page
-function createPreviewPageContent () {
-
-}
-
 // Create an error message after the given element with the given error message
 function createErrorMessage (element, message) {
   const errorText = document.createElement('span');
@@ -791,18 +942,13 @@ window.onload = () => {
 
     // Duplicate block
     if (event.target.classList.contains('settings-duplicate-button')) {
-     duplicateBlock();
+      duplicateBlock();
     }
 
     // Delete Choice
     if (event.target.classList.contains('choice-delete-button')) {
       event.target.parentNode.remove();
       getChoices();
-    }
-
-    // Auto-Select default 'New question' text inside the input
-    if (event.target.classList.contains('general-input-with-border') && event.target.value == 'New question') {
-      event.target.select();
     }
 
     // Change multiple choice subtype

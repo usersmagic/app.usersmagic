@@ -25,15 +25,19 @@ function createConfirm (data, callback) {
   const confirmButtonWrapper = document.createElement('div');
   confirmButtonWrapper.classList.add('general-confirm-button-wrapper');
 
-  const noButton = document.createElement('span');
-  noButton.classList.add('general-confirm-no-button');
-  noButton.innerHTML = data.reject;
-  confirmButtonWrapper.appendChild(noButton);
+  if (data.reject) {
+    const noButton = document.createElement('span');
+    noButton.classList.add('general-confirm-no-button');
+    noButton.innerHTML = data.reject;
+    confirmButtonWrapper.appendChild(noButton);
+  }
 
-  const yesButton = document.createElement('span');
-  yesButton.classList.add('general-confirm-yes-button');
-  yesButton.innerHTML = data.accept;
-  confirmButtonWrapper.appendChild(yesButton);
+  if (data.accept) {
+    const yesButton = document.createElement('span');
+    yesButton.classList.add('general-confirm-yes-button');
+    yesButton.innerHTML = data.accept;
+    confirmButtonWrapper.appendChild(yesButton);
+  }
 
   confirmWrapper.appendChild(confirmButtonWrapper);
 

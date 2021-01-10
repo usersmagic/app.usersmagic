@@ -37,17 +37,17 @@ block main
                 span.each-target-description= target.description
                 span.each-target-waiting-tester-number
                 .each-target-buttons-wrapper
-                    span.target-continue-button Complete Filters
+                    span.target-continue-button Edit Filters
           else if target.status == 'finished'
             .each-target-wrapper
               .each-target-inner-wrapper
                 span.each-target-name= target.name
                 span.each-target-created_at created at: #{target.created_at}
                 span.each-target-description= target.description
-                span.each-target-waiting-tester-number Waiting tester number: #{target.submition_limit}
+                span.each-target-waiting-tester-number Waiting for answers from #{target.submition_limit} testers
                 .each-target-buttons-wrapper
                   .target-tester-number-wrapper
-                    span.target-tester-number-text Tester Number: 
+                    span.target-tester-number-text How many testers do you need?: 
                     input.target-tester-number-input(type="number" placeholder="max 10")
                     span.approve-tester-number-button(id=target._id.toString()) Start
                   if target.submition_limit == 0

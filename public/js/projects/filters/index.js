@@ -63,8 +63,8 @@ window.onload = () => {
     // Click stop test button
     if (event.target.classList.contains('target-stop-button')) {
       createConfirm({
-        title: 'Are you sure you want to stop your test?',
-        text: 'Please confirm you want to stop your test. You may not get a full refund for your credits.',
+        title: 'Are you sure you want to pause your test?',
+        text: 'Please confirm that you want to pause your test. You will only be refunded for tests that have not been completed.',
         reject: 'Cancel',
         accept: 'Continue'
       }, res => {

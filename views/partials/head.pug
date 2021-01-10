@@ -9,6 +9,8 @@ html(lang='tr')
       if includes.external.css
         if includes.external.css.includes('page')
           link(rel='stylesheet' href=`/css/${page}.css`)
+        if includes.external.css.includes('admin')
+          link(rel='stylesheet' href='/css/general/admin.css')
         if includes.external.css.includes('general')
           link(rel='stylesheet' href='/css/general/general.css')
         if includes.external.css.includes('header')

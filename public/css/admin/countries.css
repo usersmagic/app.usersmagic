@@ -1,0 +1,167 @@
+.admin-all-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.all-content-header {
+  flex: 1;
+  background-color: rgb(255, 255, 255);
+  border-bottom: 2px solid rgb(236, 236, 236);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 20px;
+}
+.title-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+.title {
+  font-size: 16px;
+  color: rgb(78, 75, 102);
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+.subtitle {
+  font-size: 100%;
+  color: rgb(78, 75, 102);
+  font-weight: 300;
+  white-space: initial !important;
+  font-size: 14px;
+}
+.new-country-button {
+  padding: 10px 50px;
+  background-color: rgb(248, 248, 248);
+  border: 2px solid rgb(236, 236, 236);
+  color: rgb(78, 75, 102);
+  font-size: 200%;
+  font-weight: 700;
+  border-radius: 15px;
+  cursor: pointer;
+}
+
+.all-content-inner-wrapper {
+  flex: 7;
+  padding: 0px 20px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.countries-wrapper {
+  width: 100%;
+  min-height: fit-content;
+  display: flex;
+  flex-direction: column;
+}
+.each-country {
+  background-color: rgb(254, 254, 254);
+  border: 2px solid rgb(236, 236, 236);
+  margin-top: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 15px;
+}
+.country-name {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 14px;
+}
+.country-code {
+  color: rgb(78, 75, 102);
+  font-weight: 300;
+  font-size: 14px;
+  margin-left: 10px;
+}
+
+
+.new-form-wrapper {
+  flex: 7;
+  display: none;
+  padding: 0px 20px;
+  overflow: scroll;
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+.form-inner-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: fit-content;
+  padding-bottom: 100px;
+  width: 100%;
+}
+.form-title {
+  font-size: 125%;
+  color: rgb(78, 75, 102);
+  font-weight: 700;
+  margin: 15px 0px;
+}
+.form-subtitle {
+  font-size: 100%;
+  color: rgb(78, 75, 102);
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.form-info {
+  font-size: 100%;
+  color: rgb(78, 75, 102);
+  font-weight: 300;
+  margin-bottom: 10px;
+}
+.form-input {
+  border: 2px solid rgb(236, 236, 236);
+  box-shadow: 0px;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: rgb(78, 75, 102);
+}
+.form-textarea {
+  border: 2px solid rgb(236, 236, 236);
+  box-shadow: 0px;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  color: rgb(78, 75, 102);
+  height: 100px;
+  width: 100%;
+}
+.input-line {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.input-line span {
+  margin-left: 10px;
+  color: rgb(78, 75, 102);
+  font-weight: 300;
+}
+.buttons-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.back-button {
+  align-self: flex-end;
+  border: 2px solid rgb(236, 236, 236);
+  background-color: rgb(255, 255, 255);
+  padding: 15px 20px;
+  border-radius: 15px;
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 125%;
+  cursor: pointer;
+  margin-right: 10px;
+}
+.form-button {
+  align-self: flex-end;
+  border: 2px solid rgb(236, 236, 236);
+  background-color: rgb(248, 248, 248);
+  padding: 15px 20px;
+  border-radius: 15px;
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 125%;
+  cursor: pointer;
+}

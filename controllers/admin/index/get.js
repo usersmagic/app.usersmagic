@@ -1,8 +1,8 @@
 // Get /admin page
 
 module.exports = (req, res) => {
-  return res.render('admin/index', {
-    page: 'admin/index',
+  return res.render('admin/index/index', {
+    page: 'admin/index/index',
     title: 'Admin',
     includes: {
       external: {

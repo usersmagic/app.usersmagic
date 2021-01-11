@@ -1,3 +1,7 @@
+// Get /auth/register page with the countries list
+
+const Country = require('../../../models/country/Country');
+
 module.exports = (req, res) => {
   let error = null;
   if (req.session && req.session.error) {

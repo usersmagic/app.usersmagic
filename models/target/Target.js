@@ -15,9 +15,15 @@ const TargetSchema = new Schema({
     required: true
   },
   status: {
-    // The status of the Project: [saved, finished]
+    // The status of the Project: [saved, waiting, approved, rejected]
     type: String,
     default: 'saved'
+  },
+  error: {
+    // Error about the target, if there is any
+    type: String,
+    default: null,
+    maxlength: 1000
   },
   created_at: {
     // UNIX date for the creation time of the object
@@ -162,6 +168,55 @@ TargetSchema.statics.findOneByFields = function (fields, options, callback) {
   });
 }
 
+TargetSchema.statics.findByFields = function (fields, options, callback) {
+  // Returns a target with given fields or an error if it exists.
+  // Returns error if '_id' or 'project_id' field is not a mongodb object id
+
+  const Target = this;
+
+  const fieldKeys = Object.keys(fields);
+
+  if (!fieldKeys.length)
+    return callback('bad_request');
+
+  const filters = [];
+
+  fieldKeys.forEach((key, iterator) => {
+    if (key == '_id' || key == 'project_id') {
+      if (!fields[key] || !validator.isMongoId(fields[key].toString()))
+        return callback('bad_request');
+
+      filters.push({[key]: mongoose.Types.ObjectId(fields[key].toString())});
+    } else {
+      filters.push({[key]: fields[key]});
+    }
+  });
+
+  Target.find({$and: filters}, (err, targets) => {
+    if (err) return callback(err);
+
+    async.times(
+      targets.length,
+      (time, next) => {
+        const target = targets[time];
+
+        filterArrayToObject(target.filters, (err, filters) => {
+          if (err) return next(err);
+    
+          options.filters = filters;
+          
+          getTarget(target, options, (err, target) => {
+            if (err) return next(err);
+      
+            return next(null, target)
+          });
+        });
+      },
+      (err, targets) => callback(err, targets)
+    );
+  });
+}
+
 TargetSchema.statics.saveFilters = function (id, data, callback) {
   // Save the given filters on the Target with the given id, returns an error if it exists
 
@@ -218,6 +273,31 @@ TargetSchema.statics.changeSubmitionLimit = function (id, data, callback) {
   Target.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
     submition_limit: data.limit
   }}, err => callback(err));
+}
+
+TargetSchema.statics.updateTargetStatus = function (id, data, callback) {
+  // Gets an id and updates status of the document with the given id. Returns the target or an error if it exists
+
+  if (!id || !validator.isMongoId(id) || !data)
+    return callback('bad_request');
+
+  const Target = this;
+
+  if (!data.approved && !data.reject_message)
+    return callback('bad_request');
+  
+  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+    status: data.approved ? 'approved' : 'rejected',
+    error: data.approved ? null : data.reject_message
+  }}, {new: true}, (err, target) => {
+    if (err) return callback(err);
+
+    getTarget(target, {}, (err, target) => {
+      if (err) return callback(err);
+
+      return callback(null, target);
+    });
+  });
 }
 
 module.exports = mongoose.model('Target', TargetSchema);

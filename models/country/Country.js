@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
+const checkTimezone = require('./functions/checkTimezone');
+const getTimezones = require('./functions/getTimezones');
+
 const CountrySchema = new Schema({
   name: {
     type: String,
@@ -57,6 +60,38 @@ CountrySchema.statics.getCountries = function (callback) {
     .catch(err => {
       return callback(err);
     });
+}
+
+CountrySchema.statics.getCountryWithAlphe2Code = function (code, callback) {
+  // Finds and returns the country with the given alpha 2 code or an error if exists
+
+  if (!code || code.length != 2)
+    return callback('bad_request');
+
+  const Country = this;
+
+  Country.findOne({
+    alpha2_code: code
+  }, (err, country) => {
+    if (err) return callback(err);
+
+    return callback(null, country);
+  });
+}
+
+CountrySchema.statics.isTimezoneExists = function (timezone) {
+  // Checks if the given timezone exists, returns true or false without a callback
+
+  if (!timezone || !timezone.length)
+    return false;
+
+  return checkTimezone(timezone);
+}
+
+CountrySchema.statics.getTimezonesList = function (callback) {
+  // Returns list of all timezones
+
+  return callback(getTimezones());
 }
 
 module.exports = mongoose.model('Country', CountrySchema);

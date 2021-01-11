@@ -20,7 +20,7 @@ const ProjectSchema = new Schema({
     required: true
   },
   status: {
-    // Status of the project: [saved, waiting, approved, deleted]
+    // Status of the project: [saved, finished, deleted]
     type: String,
     default: 'saved'
   },
@@ -28,12 +28,6 @@ const ProjectSchema = new Schema({
     // UNIX date for the creation time of the object
     type: Date,
     default: Date.now()
-  },
-  error: {
-    // Error about the project, if there is any
-    type: String,
-    default: null,
-    maxlength: 1000
   },
   name: {
     // Name of the project

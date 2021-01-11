@@ -1,0 +1,81 @@
+extends ../partials/header
+block main
+  input.display-none#company-data-json(value=JSON.stringify(company))
+  .general-beta-text beta version 1.0.0
+  .change-password-outer-wrapper
+    .change-password-wrapper
+      span.change-password-title Change your Password
+      span.general-input-title Old Password
+        span.general-input-required-sign *
+      input.general-input-with-border#company-old-password-input(type="password" name="old_password" autocomplete="none" placeholder="Enter your old password")
+      span.general-input-title New Password
+        span.general-input-required-sign *
+      input.general-input-with-border#company-new-password-input(type="password" name="new_password" autocomplete="none" placeholder="Choose your new password")
+      span.general-input-title Confirm Password
+        span.general-input-required-sign *
+      input.general-input-with-border#company-confirm-password-input(type="password" name="confirm_password" autocomplete="none" placeholder="Repeat your new password")
+      button.save-new-password-button.general-seablue-button
+        span Save
+      .general-input-error-line#password-error
+        span
+  .all-content-header-wrapper
+    .header-user-logo
+      img(src=company.profile_photo alt="usersmagic " + company.name)
+    a.header-each-step-text(href="/settings") Settings
+  .all-content-inner-wrapper
+    .settings-inner-wrapper
+      .settings-buttons-wrapper
+        span.unsaved-changes-text You have unsaved changes
+        .general-seablue-button.settings-save-changes-button
+          span Save Changes
+      span.settings-each-division-title Personal Information
+      .settings-each-input-outer-wrapper
+        .settings-each-input-wrapper
+          span.general-input-title Company Name
+            span.general-input-required-sign *
+          input.general-input-with-border#company-name-input(type="text" name="company_name" value=company.company_name autocomplete="off" placeholder="Name of your company")
+        .settings-each-input-wrapper
+          span.general-input-title Country
+            span.general-input-required-sign *
+          .general-drop-down-list-outer-wrapper(style="z-index: 5;")
+            .general-drop-down-list-wrapper(style="z-index: 5;")
+              input.general-drop-down-list-input#company-country-visible-input(type="text" autocomplete="none" value=company.country_name placeholder="The country your company is registered")
+              input.general-drop-down-list-input-not-visible#company-country-input(type="text" name="country" value=company.country)
+              input.general-drop-down-list-items-json(type="text" value=JSON.stringify(countries.map(country => { return {name: country.name, id: country.alpha2_code} })))
+              .general-drop-down-choices-wrapper
+                each country in countries
+                  span.general-drop-down-list-each-item(id=country.alpha2_code)= country.name
+        .settings-each-input-wrapper
+          span.general-input-title Phone Number
+          input.general-input-with-border#company-phone-number-input(type="text" name="phone_number" value=company.phone_number autocomplete="off" placeholder="Please spesify the country code as well")
+        //- .settings-each-input-wrapper
+          span.general-input-title Profile Photo
+          label.general-choose-image-input-text
+            span Choose a profile photo
+            input.display-none#image-input(type="file" accept="image/*")
+        .settings-each-input-wrapper
+          span.general-input-title Account Holder Name
+          input.general-input-with-border#company-account-holder-name-input(type="text" name="account_holder_name" value=company.account_holder_name autocomplete="off" placeholder="Name of the account holder")
+        .settings-each-input-wrapper
+          span.general-input-title Timezone
+          .general-drop-down-list-outer-wrapper
+            .general-drop-down-list-wrapper
+              input.general-drop-down-list-input(type="text" autocomplete="none" value=company.timezone placeholder="The timezone you prefer to see your dates. Default to the timezone of your country")
+              input.general-drop-down-list-input-not-visible#country-timezone-input(type="text" name="timezone" value=company.timezone)
+              input.general-drop-down-list-items-json(type="text" value=JSON.stringify(timezones.map(timezone => { return {name: timezone, id: timezone} })))
+              .general-drop-down-choices-wrapper
+                each timezone in timezones
+                  span.general-drop-down-list-each-item(id=timezone)= timezone
+      span.settings-each-division-title Account Settings
+      .settings-each-input-outer-wrapper
+        .settings-each-input-wrapper
+          span.general-input-title Email
+          span.general-input-with-border-no-change= company.email
+        .settings-each-input-wrapper
+          span.general-input-title Password
+          .general-seablue-border-button.change-password-button
+            span Change Password
+        .settings-each-input-wrapper
+          span.general-input-title Authentication
+          .general-red-border-button.logout-button
+            span Logout

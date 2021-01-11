@@ -1,3 +1,5 @@
+// Create a new country with the given data
+
 const Company = require('../../../models/company/Company');
 
 module.exports = (req, res) => {

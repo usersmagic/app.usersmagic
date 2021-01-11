@@ -1,6 +1,6 @@
 module.exports = (req, res) => {
-  res.render('admin/auth', {
-    page: 'admin/auth',
+  res.render('admin/auth/index', {
+    page: 'admin/auth/index',
     title: 'Admin Login',
     includes: {
       external: {

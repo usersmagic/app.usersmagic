@@ -1,0 +1,12 @@
+extends ../../partials/admin
+block main
+  .all-content-header
+    .title-wrapper
+      span.title Özel Projeler
+      span.subtitle Bu sayfadan yaratılan projeleri görebilir ve onlara onay verebilirsiniz. 
+  .all-content-inner-wrapper
+    .targets-wrapper
+      each target in targets 
+        .each-target
+          span.target-name= target.name
+          span.target-code (#{country.alpha2_code})

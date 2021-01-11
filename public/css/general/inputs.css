@@ -63,6 +63,23 @@ textarea {
   outline-width: 0.5px;
   margin-bottom: 20px;
 }
+.general-input-with-border-no-change {
+  height: 55px;
+  min-height: 55px;
+  width: 100%;
+  padding: 0px 22px;
+  color: rgb(78, 75, 102);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid rgba(151, 151, 151, 0.3);
+  border-radius: 5px;
+  outline-color: rgba(46, 197, 206, 0.6);
+  outline-width: 0.5px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  cursor: not-allowed;
+}
 
 .general-choose-image-input-text {
   height: 55px;
@@ -143,4 +160,85 @@ textarea {
   letter-spacing: 1px;
   margin-bottom: 20px;
   margin-top: -10px;
+}
+
+.general-drop-down-list-outer-wrapper {
+  height: 55px;
+  width: 100%;
+  margin-bottom: 20px;
+  overflow: visible;
+  z-index: 2;
+}
+.general-drop-down-list-wrapper {
+  height: 55px; /* 55px 175px */
+  background-color: rgb(254, 254, 254);
+  border: 1px solid rgba(151, 151, 151, 0.3);
+  border-radius: 5px;
+  width: 100%;
+  overflow: hidden;
+  z-index: 2;
+}
+.general-drop-down-list-input {
+  background-color: rgb(254, 254, 254);
+  box-shadow: 0px;
+  width: 100%;
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 12px;
+  outline: none;
+  border: none;
+  padding: 0px 20px;
+  height: 55px;
+  border-radius: 5px;
+}
+.general-drop-down-list-input-not-visible, .general-drop-down-list-items-json {
+  display: none;
+}
+.general-drop-down-choices-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 120px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.general-drop-down-list-each-item {
+  padding: 10px 0px;
+  min-height: 35px;
+  height: 35px;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(78, 75, 102);
+  width: 100%;
+  text-align: center;
+  cursor: pointer;
+}
+.general-drop-down-list-each-item:hover {
+  background-color: rgb(248, 248, 248);
+}
+.general-drop-down-list-open-bottom-animation-class {
+  animation: generalDropDownOpenBottom 0.5s ease-in-out 0s 1 forwards;
+  -webkit-animation: generalDropDownOpenBottom 0.5s ease-in-out 0s 1 forwards;
+}
+.general-drop-down-list-close-up-animation-class {
+  animation: generalDropDownCloseUp 0.5s ease-in-out 0s 1 forwards;
+  -webkit-animation: generalDropDownCloseUp 0.5s ease-in-out 0s 1 forwards;
+}
+
+@keyframes generalDropDownOpenBottom {
+  from {
+    height: 55px;
+  }
+  to {
+    height: 175px;
+  }
+}
+@keyframes generalDropDownCloseUp {
+  from {
+    height: 175px;
+  }
+  to {
+    height: 55px;
+  }
 }

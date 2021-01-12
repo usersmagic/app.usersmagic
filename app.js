@@ -94,9 +94,9 @@ if (cluster.isMaster) {
   server.listen(PORT, () => {
     console.log(`Server is on port ${PORT} as Worker ${cluster.worker.id} running @ process ${cluster.worker.process.pid}`);
     if (cluster.worker.id == 1) { // Call CronJobs only for the first worker
-      CronJob.start(() => {
-        console.log('Cron jobs are started for every minute');
-      });
+      // CronJob.start(() => {
+      //   console.log('Cron jobs are started for every minute');
+      // });
     }
   });
 }

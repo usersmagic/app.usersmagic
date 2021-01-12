@@ -6,6 +6,7 @@ const updateTargets = require('./functions/updateTargets');
 
 const CronJob = {
   start: callback => {
+    updateTargets();
     const job = cron.schedule('* * * * *', () => {
       // deleteImage(); Set Image used when you use it.......
       updateTargets();

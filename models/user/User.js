@@ -174,11 +174,19 @@ UserSchema.statics.getUsersByFilters = function (filters, callback) {
 
   const User = this;
 
-  User.find(filters, (err, users) => {
-    if (err) return callback(err);
-
-    return callback(null, users.map(user => user._id.toString()));
-  });
+  if (filters.$and && filters.$and.length) {
+    User.find(filters, (err, users) => {
+      if (err) return callback(err);
+  
+      return callback(null, users.map(user => user._id.toString()));
+    });
+  } else {
+    User.find({}, (err, users) => {
+      if (err) return callback(err);
+  
+      return callback(null, users.map(user => user._id.toString()));
+    });
+  }
 }
 
 

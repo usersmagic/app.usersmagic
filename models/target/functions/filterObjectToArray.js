@@ -15,8 +15,8 @@ const getFilter = (key, value, callback) => {
 
     return callback(null, {
       'and': [
-        {'birth_year': {lte: max}},
-        {'birth_year': {gte: min}}
+        {'birth_year': {gte: ((new Date).getFullYear())-max}},
+        {'birth_year': {lte: ((new Date).getFullYear())-min}}
       ]
     })
   } else if (key == 'gender') {

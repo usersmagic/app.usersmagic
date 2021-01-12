@@ -11,7 +11,7 @@ module.exports = (questions, callback) => {
     text: 'What is your gender?',
     name: 'Gender',
     type: 'radio',
-    choices: ['Male', 'Female']
+    choices: ['male', 'female']
   }];
   
   questions.forEach(question => {

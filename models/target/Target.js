@@ -4,7 +4,10 @@ const validator = require('validator');
 
 const filterArrayToObject = require('./functions/filterArrayToObject');
 const filterObjectToArray = require('./functions/filterObjectToArray');
+const filtersArrayToSearchQuery = require('./functions/filtersArrayToSearchQuery');
 const getTarget = require('./functions/getTarget');
+
+const User = require('../user/User');
 
 const Schema = mongoose.Schema;
 
@@ -297,6 +300,43 @@ TargetSchema.statics.updateTargetStatus = function (id, data, callback) {
 
       return callback(null, target);
     });
+  });
+}
+
+TargetSchema.statics.updateTargetsUsersList = function (callback) {
+  // Finds all the targets that's status is approved, updates their users_list
+
+  const Target = this;
+
+  Target.find({
+    status: 'approved',
+    submition_limit: {$gt: 0}
+  }, (err, targets) => {
+    if (err) return callback(err);
+
+    async.timesSeries(
+      targets.length,
+      (time, next) => {
+        const target = targets[time];
+
+        filtersArrayToSearchQuery(target.filters, (err, filters) => {
+          if (err) return next(err);
+
+          User.getUsersByFilters(filters, (err, users) => {
+            if (err) return next(err);
+
+            Target.findByIdAndUpdate(mongoose.Types.ObjectId(target._id), {$set: {
+              users_list: target.users_list.concat(users)
+            }}, {}, err => next(err));
+          });
+        });
+      },
+      err => {
+        if (err) return callback(err);
+
+        return callback(null);
+      }
+    );
   });
 }
 

@@ -18,10 +18,6 @@ const numCPUs = 1 || process.env.WEB_CONCURRENCY || require('os').cpus().length
 if (cluster.isMaster) {
   console.log(`Master ${process.pid} is running`);
 
-  // CronJob.start(() => {
-  //   console.log('Cron jobs are started for every minute');
-  // });
-
   for (let i = 0; i < numCPUs; i++)
     cluster.fork();
 
@@ -97,6 +93,10 @@ if (cluster.isMaster) {
 
   server.listen(PORT, () => {
     console.log(`Server is on port ${PORT} as Worker ${cluster.worker.id} running @ process ${cluster.worker.process.pid}`);
-    // job.start();
+    if (cluster.worker.id == 1) { // Call CronJobs only for the first worker
+      CronJob.start(() => {
+        console.log('Cron jobs are started for every minute');
+      });
+    }
   });
 }

@@ -49,6 +49,7 @@ ImageSchema.statics.deleteOldImages = function (callback) {
   
   const currTime = (new Date()).getTime();
   const autoDeleteTime = 7200000; // 2 hours
+
   const Image = this;
 
   Image
@@ -58,6 +59,7 @@ ImageSchema.statics.deleteOldImages = function (callback) {
     })
     .limit(100)
     .then(images => {
+      console.log(images);
       async.timesSeries(
         images.length,
         (time, next) => Image.findByIdAndDelete(mongoose.Types.ObjectId(images[time]._id), err => next(err)),

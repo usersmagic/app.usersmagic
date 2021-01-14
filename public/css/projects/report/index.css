@@ -12,7 +12,7 @@
 .results-header-wrapper {
   display: flex;
   flex-direction: column;
-  padding: 35px;
+  padding: 30px 60px;
 }
 .results-project-title {
   color: rgba(46, 197, 206, 1);
@@ -24,16 +24,18 @@
 
 .questions-summary-results-wrapper {
   width: 100%;
-  padding-left: 35px;
+  padding-left: 60px;
+  padding-right: 35px;
+  margin-bottom: 30px;
 }
 .summary-results-each-question-wrapper {
   display: inline-block;
-  width: 400px;
+  width: 375px;
   height: 150px;
   box-shadow: 0px 0px 10px rgba(136, 136, 136, 0.4);
   border-radius: 5px;
-  margin-right: 35px;
-  margin-bottom: 35px;
+  margin-right: 25px;
+  margin-bottom: 20px;
   padding: 20px 30px;
   overflow: hidden;
   cursor: pointer;
@@ -53,10 +55,10 @@
   margin-right: 10px;
   white-space: initial !important;
   line-height: 25px;
-  font-style: 14px;
+  font-size: 14px;
   letter-spacing: 0.25px;
   color: rgb(3, 17, 73);
-  font-weight: 500;
+  font-weight: 600;
 }
 .summary-results-each-question-info-wrapper {
   width: 90px;
@@ -76,5 +78,278 @@
   max-width: 90px;
   font-size: 25px;
   color: rgba(46, 197, 206, 1);
+  font-weight: 600;
+}
+
+.questions-all-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: fit-content;
+  min-height: fit-content;
+  padding: 0px 60px;
+}
+.each-question-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 60px;
+}
+.each-question-number {
+  font-size: 60px;
+  font-weight: 700;
+  color: rgb(3, 17, 73);
+  line-height: 50px;
+}
+.each-question-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: rgb(3, 17, 73);
+  letter-spacing: 0.25px;
+  margin-left: 40px;
+  white-space: initial;
+}
+.each-question-details {
+  font-size: 16px;
   font-weight: 500;
+  color: rgb(3, 17, 73);
+  margin-left: 40px;
+  white-space: initial;
+  margin-bottom: 40px;
+}
+
+.histogram-wrapper {
+  align-self: center;
+  width: 400px;
+  height: fit-content;
+  min-height: fit-content;
+  background-color: rgb(254, 254, 254);
+  box-shadow: 0px 0px 10px rgba(176, 190, 197, 0.3);
+  border-radius: 9px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+.histogram-title-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.histogram-title-text {
+  color: rgb(38, 50, 56);
+  font-weight: 400;
+  font-size: 18px;
+  letter-spacing: 0.5px;
+}
+.histogram-title-info {
+  color: rgb(3, 17, 73);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.25px;
+}
+.histogram-inner-wrapper {
+  height: 200px;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.histogram-each-column {
+  background-color: rgb(220, 222, 223);
+  flex: 1;
+  max-width: 30px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 1px;
+  color: rgb(38, 50, 56);
+  font-weight: 400;
+  letter-spacing: 0.35px;
+  font-size: 12px;
+}
+.histogram-column-seperator {
+  width: 2px;
+  min-width: 2px;
+  height: 100%;
+}
+.histogram-inner-line-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+.histogram-each-column-explanation {
+  flex: 1;
+  max-width: 30px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  color: rgb(3, 17, 73);
+  font-weight: 500;
+  letter-spacing: 0.35px;
+  font-size: 12px;
+}
+
+.yes-no-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.yes-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
+}
+.no-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 20px;
+}
+.yes-outer-wrapper, .no-outer-wrapper {
+  border: 1px solid rgb(196, 196, 196);
+  height: 200px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 5px;
+}
+.yes-inner-wrapper {
+  width: 100%;
+  background-color: rgb(218, 238, 255);
+}
+.no-inner-wrapper {
+  width: 100%;
+  background-color: rgb(255, 228, 214);
+}
+.yes-no-icon-outer-wrapper {
+  margin-top: -100px;
+  transform: translateY(-50%);
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.yes-icon-wrapper {
+  background-color: rgba(107, 188, 255, 0.25);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+}
+.yes-icon-wrapper i {
+  color: rgb(0, 117, 255);
+  font-size: 18px;
+}
+.yes-text, .no-text {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 18px;
+  margin-top: 5px;
+}
+.no-icon-wrapper {
+  background-color: rgba(255, 149, 89, 0.25);
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 25px;
+}
+.no-icon-wrapper i {
+  color: rgb(255, 138, 72);
+  font-size: 18px;
+}
+.yes-no-text-wrapper {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.yes-no-percentage-text {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 16px;
+}
+.yes-no-number-text {
+  color: rgb(46, 197, 206);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.open-answer-title {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 16px;
+  margin-left: auto;
+  margin-bottom: 10px;
+}
+.open-answer-wrapper {
+  width: 400px;
+  height: 300px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.each-answer {
+  display: block;
+  padding: 15px 20px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  color: rgb(3, 17, 73);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.25px;
+  height: fit-content;
+  min-height: fit-content;
+  width: 100%;
+  margin-bottom: 15px;
+  white-space: initial;
+}
+
+.multiple-choice-answer-title {
+  color: rgb(78, 75, 102);
+  font-weight: 600;
+  font-size: 16px;
+  margin-left: auto;
+  margin-bottom: 10px;
+}
+.multiple-choice-answers-wrapper {
+  width: 400px;
+  height: 300px;
+  overflow: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+.each-multiple-choice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border: 1px solid rgb(196, 196, 196);
+  border-radius: 5px;
+  color: rgb(3, 17, 73);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.25px;
+  height: fit-content;
+  min-height: fit-content;
+  width: 100%;
+  margin-bottom: 15px;
+  white-space: initial;
+}
+.each-multiple-choice-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(3, 17, 73);
+  letter-spacing: 0.25px;
+}
+.each-multiple-choice-number {
+  font-size: 20px;
+  font-weight: 700;
+  color: rgb(46, 197, 206);
+  letter-spacing: 1px;
 }

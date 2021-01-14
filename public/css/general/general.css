@@ -25,6 +25,9 @@ body {
 .display-none {
   display: none;
 }
+.seablue {
+  color: rgb(46, 197, 206) !important;
+}
 
 span {
   overflow: hidden;

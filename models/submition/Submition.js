@@ -88,7 +88,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id,
           _id: question._id,
           type: question.type,
           text: question.text,
-          details: question.details
+          details: question.details || ''
         }
 
         if (question.type == 'yes_no') {
@@ -104,13 +104,14 @@ SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id,
           newQuestion.answers = {};
           for (let i = 0; i < question.choices.length; i++)
             newQuestion.answers[question.choices[i]] = 0;
-          newQuestion.data = {};
+          newQuestion.data = { total: 0 };
         } else if (question.type == 'opinion_scale') {
           newQuestion.answers = {};
           newQuestion.answer_percentages = {};
           newQuestion.data = {};
           for (let i = question.range.min; i <= question.range.max; i++)
             newQuestion.answers[i] = newQuestion.answer_percentages[i] = 0;
+          newQuestion.range = question.range;
         } else if (question.type == 'open_answer') {
           newQuestion.answers = [];
         }
@@ -121,8 +122,11 @@ SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id,
       for (let i = 0; i < submitions.length; i++) {
         const submition = submitions[i];
 
-        for (let j = 0; j < submition.answers.length; j++) {
-          const answer = submitions.answers[j];
+        for (let j = 0; j < Object.values(submition.answers).length; j++) {
+          let answer = Object.values(submition.answers)[j];
+
+          if (answer.toLowerCase() == 'hayır' || answer.toLowerCase() == 'evet')
+            answer = answer.toLowerCase() == 'hayır' ? 'no' : 'yes';
 
           if (questions[j].type == 'yes_no' && (answer == 'yes' || answer == 'no')) {
             questions[j].data[`${answer}_number`]++;
@@ -141,13 +145,13 @@ SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id,
 
         if (question.type == 'yes_no') {
           question.answers = {
-            'yes': question.data.yes_number / (question.data.yes_number + question.data.no_number) * 100,
-            'no': question.data.no_number / (question.data.yes_number + question.data.no_number) * 100
+            'yes': Math.round(question.data.yes_number / (question.data.yes_number + question.data.no_number) * 1000) / 10,
+            'no': Math.round(question.data.no_number / (question.data.yes_number + question.data.no_number) * 1000) / 10
           }
         } else if (question.type == 'multiple_choice') {
           let max = null, max_value = 0, total = 0;
 
-          for (let j = 0; j < Object.keys(question.answers); j++) {
+          for (let j = 0; j < Object.keys(question.answers).length; j++) {
             if (Object.values(question.answers)[j] > max_value) {
               max_value = Object.values(question.answers)[j];
               max = Object.keys(question.answers)[j];
@@ -155,33 +159,35 @@ SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id,
             total += Object.values(question.answers)[j];
           }
 
-          newQuestion.data = {
+          question.data = {
             max: max,
             total: total
           };
         } else if (question.type == 'opinion_scale') {
-          let total = 0, value_total = 0; median, mean, median_distance = 0;
+          let total = 0, value_total = 0, median, mean, median_distance = 0;
 
           for (let j = question.range.min; j <= question.range.max; j++) {
             total += question.answers[j];
             value_total += j * question.answers[j];
           }
 
-          mean = parseInt(value_total / value_total * 100) / 100.0;
+          mean = Math.round(value_total / total * 10) / 10;
           
-          for (let j = question.range.min; j <= question.range.max && median_distance <= total/2; j++) {
+          for (let j = question.range.min; j <= question.range.max && median_distance < total/2; j++) {
             median_distance += question.answers[j];
-            if (median_distance >= total/2)
+            if (median_distance > total/2)
               median = j;
+            else if (median_distance == total/2)
+              median = (j + j+1) / 2;
           }
 
           for (let j = question.range.min; j <= question.range.max; j++) {
-            newQuestion.answer_percentages[j] = question.answers[j] / total * 100;
+            question.answer_percentages[j] = question.answers[j] / total * 100;
           }
 
-          newQuestion.data = {
+          question.data = {
             mean: mean,
-            media: median,
+            median: median,
             total_number: total
           };
         }

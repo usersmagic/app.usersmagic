@@ -1,15 +1,15 @@
 // Get project results index page
 
 const Project = require('../../../../models/project/Project');
-const Target = require('../../../../models/target/Target');
+const Submition = require('../../../../models/submition/Submition');
 
 module.exports = (req, res) => {
-  Target.findSubmitionsCumulativeDataByCampaignId(req.query ? req.query.id : null, (err, questions) => {
+  Submition.findSubmitionsCumulativeDataByCampaignId(req.query ? req.query.id : null, (err, questions) => {
     if (err) return res.redirect('/');
 
     Project.findOneByFields({
       _id: req.query.id
-    }, (err, project) => {
+    }, {}, (err, project) => {
       if (err) return res.redirect('/');
 
       return res.render('projects/report/index', {

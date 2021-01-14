@@ -169,25 +169,5 @@ UserSchema.statics.getUserById = function (id, callback) {
   });
 }
 
-UserSchema.statics.getUsersByFilters = function (filters, callback) {
-  // Find all users with the given filters, returns the user id list or an error if it exists
-
-  const User = this;
-
-  if (filters.$and && filters.$and.length) {
-    User.find(filters, (err, users) => {
-      if (err) return callback(err);
-  
-      return callback(null, users.map(user => user._id.toString()));
-    });
-  } else {
-    User.find({}, (err, users) => {
-      if (err) return callback(err);
-  
-      return callback(null, users.map(user => user._id.toString()));
-    });
-  }
-}
-
 
 module.exports = mongoose.model('User', UserSchema);

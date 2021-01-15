@@ -394,3 +394,13 @@
   color: rgb(46, 197, 206);
   letter-spacing: 1px;
 }
+
+.no-info-text {
+  color: rgb(196, 196, 196);
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0px 60px;
+  width: 100%;
+  text-align: center;
+  margin-top: 60px;
+}

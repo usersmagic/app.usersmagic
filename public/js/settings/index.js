@@ -114,13 +114,133 @@ function saveNewPassword (callback) {
   };
 }
 
+// Create the new profile image
+function createProfileImageWrapper (url) {
+  const wrapper = document.getElementById('image-input-outer-wrapper');
+
+  const innerWrapper = document.createElement('div');
+  innerWrapper.classList.add('settings-each-input-wrapper');
+
+  const inputTitle = document.createElement('span');
+  inputTitle.classList.add('general-input-title');
+  inputTitle.innerHTML = 'Profile Photo';
+  innerWrapper.appendChild(inputTitle);
+  
+  const imageInputWrapper = document.createElement('div');
+  imageInputWrapper.classList.add('general-image-input-wrapper');
+
+  const imageWrapper = document.createElement('div');
+  imageWrapper.classList.add('general-image-input-wrapper-image');
+  const image = document.createElement('img');
+  image.src = url;
+  image.alt = 'usersmagic';
+  imageWrapper.appendChild(image);
+  imageInputWrapper.appendChild(imageWrapper);
+
+  const i = document.createElement('i');
+  i.classList.add('fas');
+  i.classList.add('fa-times');
+  i.classList.add('delete-company-image-button');
+  imageInputWrapper.appendChild(i);
+
+  innerWrapper.appendChild(imageInputWrapper);
+  wrapper.appendChild(innerWrapper);
+  wrapper.insertBefore(innerWrapper, innerWrapper.previousElementSibling);
+  wrapper.insertBefore(innerWrapper, innerWrapper.previousElementSibling);
+}
+
+// Create the image input wrapper
+function createImageInputWrapper () {
+  const wrapper = document.getElementById('image-input-outer-wrapper');
+
+  const innerWrapper = document.createElement('div');
+  innerWrapper.classList.add('settings-each-input-wrapper');
+
+  const inputTitle = document.createElement('span');
+  inputTitle.classList.add('general-input-title');
+  inputTitle.innerHTML = 'Profile Photo';
+  innerWrapper.appendChild(inputTitle);
+  
+  const imageInputWrapper = document.createElement('label');
+  imageInputWrapper.classList.add('general-choose-image-input-text');
+
+  const imageSpan = document.createElement('span');
+  imageSpan.innerHTML = 'Choose a profile photo';
+  imageInputWrapper.appendChild(imageSpan);
+
+  const imageInput = document.createElement('input');
+  imageInput.classList.add('display-none');
+  imageInput.id = 'image-input';
+  imageInput.type = 'file';
+  imageInput.accept = 'image/*';
+  imageInputWrapper.appendChild(imageInput);
+
+  innerWrapper.appendChild(imageInputWrapper);
+  wrapper.appendChild(innerWrapper);
+  wrapper.insertBefore(innerWrapper, innerWrapper.previousElementSibling);
+  wrapper.insertBefore(innerWrapper, innerWrapper.previousElementSibling);
+}
+
+// Save new profile image
+function saveCompanyProfileImage (url, callback) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', `/settings?id=${companyId}`);
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify({
+    profile_photo: url
+  }));
+
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.responseText) {
+      const response = JSON.parse(xhr.responseText);
+
+      if (!response.success && response.error)
+        return callback(response.error);
+
+      return callback(null);
+    }
+  };
+}
+
 window.onload = () => {
   listenDropDownListInputs(document); // Listen for drop down items
   companyId = JSON.parse(document.getElementById('company-data-json').value)._id.toString();
 
   document.addEventListener('input', event => {
-    isDataChanged = true;
-    document.querySelector('.unsaved-changes-text').style.display = 'block';
+    if (event.target.id == 'image-input') {
+      const imageInput = event.target;
+      const file = imageInput.files[0];
+      imageInput.parentNode.childNodes[0].innerHTML = 'Uploading...';
+      imageInput.type = 'text';
+      imageInput.parentNode.style.cursor = 'progress';
+  
+      uploadImage(file, (err, url) => {
+        if (err) {
+          return createConfirm({
+            title: 'Upload Error',
+            text: 'An error occured while we are uploading your image, please try again.',
+            reject: 'Continue'
+          }, res => {});
+        }
+  
+        saveCompanyProfileImage(url, err => {
+          if (err) {
+            return createConfirm({
+              title: 'Upload Error',
+              text: 'An error occured while we are uploading your image, please try again.',
+              reject: 'Continue'
+            }, res => {});
+          }
+  
+          imageInput.parentNode.parentNode.remove();
+          createProfileImageWrapper(url);
+          document.querySelector('.header-user-logo').childNodes[0].src = url;
+        });
+      });
+    } else {
+      isDataChanged = true;
+      document.querySelector('.unsaved-changes-text').style.display = 'block';
+    }
   });
 
   document.addEventListener('click', event => {
@@ -129,7 +249,7 @@ window.onload = () => {
       document.querySelector('.unsaved-changes-text').style.display = 'block';
     }
 
-    if (event.target.classList.contains('settings-save-changes-button') || event.target.parentNode.classList.contains('settings-save-changes-button')) {
+    if (event.target.classList.contains('settings-save-changes-button') || (event.target.parentNode && event.target.parentNode.classList.contains('settings-save-changes-button'))) {
       checkCompanyData(res => {
         if (res) {
           isSaving = true;
@@ -175,7 +295,7 @@ window.onload = () => {
       });
     }
 
-    if (event.target.classList.contains('logout-button') || event.target.parentNode.classList.contains('logout-button')) {
+    if (event.target.classList.contains('logout-button') || (event.target.parentNode && event.target.parentNode.classList.contains('logout-button'))) {
       createConfirm({
         title: 'Are you sure you want to logout',
         text: 'Please confirm you want to logout',
@@ -186,7 +306,7 @@ window.onload = () => {
       });
     }
 
-    if (event.target.classList.contains('change-password-button') || event.target.parentNode.classList.contains('change-password-button')) {
+    if (event.target.classList.contains('change-password-button') || (event.target.parentNode && event.target.parentNode.classList.contains('change-password-button'))) {
       document.querySelector('.change-password-outer-wrapper').style.display = 'flex';
     }
 
@@ -211,6 +331,30 @@ window.onload = () => {
           });
         }
       })
+    }
+
+    if (event.target.classList.contains('delete-company-image-button')) {
+      createConfirm({
+        title: 'Are you sure you want to delete your profile photo?',
+        text: 'Please confirm you want to delete your profile photo',
+        reject: 'Cancel',
+        accept: 'Continue'
+      }, res => {
+        if (!res) return;
+
+        saveCompanyProfileImage(null, err => {
+          if (err) {
+            return createConfirm({
+              title: 'Upload Error',
+              text: 'An error occured while we are uploading your image, please try again.',
+              reject: 'Continue'
+            }, res => {});
+          }
+          event.target.parentNode.parentNode.remove();
+          createImageInputWrapper();
+          document.querySelector('.header-user-logo').childNodes[0].src = '/res/images/default/company.png';
+        });
+      });
     }
   });
 }

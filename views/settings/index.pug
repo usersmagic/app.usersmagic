@@ -29,7 +29,7 @@ block main
         .general-seablue-button.settings-save-changes-button
           span Save Changes
       span.settings-each-division-title Personal Information
-      .settings-each-input-outer-wrapper
+      .settings-each-input-outer-wrapper#image-input-outer-wrapper
         .settings-each-input-wrapper
           span.general-input-title Company Name
             span.general-input-required-sign *
@@ -48,11 +48,18 @@ block main
         .settings-each-input-wrapper
           span.general-input-title Phone Number
           input.general-input-with-border#company-phone-number-input(type="text" name="phone_number" value=company.phone_number autocomplete="off" placeholder="Please spesify the country code as well")
-        //- .settings-each-input-wrapper
-          span.general-input-title Profile Photo
-          label.general-choose-image-input-text
-            span Choose a profile photo
-            input.display-none#image-input(type="file" accept="image/*")
+        .settings-each-input-wrapper
+          if company.profile_photo == '/res/images/default/company.png'
+            span.general-input-title Profile Photo
+            label.general-choose-image-input-text
+              span Choose a profile photo
+              input.display-none#image-input(type="file" accept="image/*")
+          else
+            span.general-input-title Profile Photo
+            .general-image-input-wrapper
+              .general-image-input-wrapper-image
+                img(src=company.profile_photo alt="usersmagic " + company.company_name)
+              i.fas.fa-times.delete-company-image-button
         .settings-each-input-wrapper
           span.general-input-title Account Holder Name
           input.general-input-with-border#company-account-holder-name-input(type="text" name="account_holder_name" value=company.account_holder_name autocomplete="off" placeholder="Name of the account holder")

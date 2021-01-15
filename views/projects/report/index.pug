@@ -37,28 +37,7 @@ block main
             span.each-question-number= i+1
             span.each-question-text= question.text
             span.each-question-details= question.details
-            if question.type == 'opinion_scale'
-              .histogram-wrapper
-                .histogram-title-wrapper
-                  span.histogram-title-text Histogram
-                  span.histogram-title-text= question.data.total_number
-                .histogram-title-wrapper
-                  span.histogram-title-info Mean:
-                    span.seablue  #{question.data.mean}
-                  span.histogram-title-info Median:
-                    span.seablue  #{question.data.median}
-                .histogram-inner-wrapper
-                  each key, i in Object.keys(question.answers)
-                    .histogram-each-column(style=`height: ${question.answer_percentages[key]}%`)
-                      span.histogram-each-column-text= question.answers[key]
-                    if i < Object.keys(question.answers).length-1
-                      .histogram-column-seperator
-                .histogram-inner-line-wrapper
-                  each key, i in Object.keys(question.answers)
-                    .histogram-each-column-explanation= key
-                    if i < Object.keys(question.answers).length-1
-                      .histogram-column-seperator
-            else if question.type == 'yes_no'
+            if question.type == 'yes_no'
               .yes-no-wrapper
                 .yes-content-wrapper
                   .yes-outer-wrapper
@@ -80,11 +59,6 @@ block main
                   .yes-no-text-wrapper
                     span.yes-no-percentage-text #{question.answers.no}%
                     span.yes-no-number-text #{question.data.no_number} answers
-            else if question.type == 'open_answer'
-              span.open-answer-title #{question.answers.length} answers
-              .open-answer-wrapper
-                each answer in question.answers
-                  span.each-answer= answer
             else if question.type == 'multiple_choice'
               span.multiple-choice-answer-title #{question.data.total} answers
               .multiple-choice-answers-wrapper
@@ -92,3 +66,37 @@ block main
                   .each-multiple-choice
                     span.each-multiple-choice-text= key
                     span.each-multiple-choice-number= question.answers[key]
+            else if question.type == 'open_answer'
+              span.open-answer-title #{question.answers.length} answers
+              .open-answer-wrapper
+                each answer in question.answers
+                  span.each-answer= answer
+            else if question.type == 'opinion_scale'
+              .histogram-wrapper
+                .histogram-title-wrapper
+                  span.histogram-title-text Histogram
+                  span.histogram-title-answers-text #{question.data.total_number} answers
+                .histogram-title-wrapper
+                  span.histogram-title-info Mean:
+                    span.seablue  #{question.data.mean}
+                  span.histogram-title-info Median:
+                    span.seablue  #{question.data.median}
+                .histogram-inner-wrapper
+                  each key, i in Object.keys(question.answers)
+                    .histogram-each-column(style=`height: ${question.answer_percentages[key]}%`)
+                      span.histogram-each-column-text= question.answers[key]
+                    if i < Object.keys(question.answers).length-1
+                      .histogram-column-seperator
+                .histogram-inner-line-wrapper
+                  each key, i in Object.keys(question.answers)
+                    .histogram-each-column-explanation= key
+                    if i < Object.keys(question.answers).length-1
+                      .histogram-column-seperator
+                .histogram-explanation-line
+                  .histogram-explanation-line-item
+                  .histogram-explanation-line-item
+                  .histogram-explanation-line-item
+                .histogram-explanation-text-wrapper
+                  span.histogram-explanation-text-left= question.labels.left
+                  span.histogram-explanation-text-middle= question.labels.middle
+                  span.histogram-explanation-text-right= question.labels.right

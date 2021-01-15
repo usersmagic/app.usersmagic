@@ -68,19 +68,24 @@ const SubmitionSchema = new Schema({
   }
 });
 
-SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id, callback) {
-  if (!id || !validator.isMongoId(id.toString()))
+SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback) {
+  if (!data || !data.id || !validator.isMongoId(id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
     return callback('bad_request');
 
   const Submition = this;
+  const search_query = [
+    {campaign_id: data.id.toString()},
+    {status: 'approved'},
+    {type: ((data.type && data.type == 'url') ? 'url' : 'target')}
+  ];
+
+  if (data.target_id)
+    search_query.push({ target_id: data.target_id.toString() });
 
   Project.findById(mongoose.Types.ObjectId(id.toString()), (err, project) => {
     if (err || !project) return callback('document_not_found');
 
-    Submition.find({
-      campaign_id: id,
-      status: 'approved'
-    }, (err, submitions) => {
+    Submition.find({ $and: search_query }, (err, submitions) => {
       if (err) return callback(err);
 
       const questions = project.questions.map(question => {
@@ -112,6 +117,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id,
           for (let i = question.range.min; i <= question.range.max; i++)
             newQuestion.answers[i] = newQuestion.answer_percentages[i] = 0;
           newQuestion.range = question.range;
+          newQuestion.labels = question.labels;
         } else if (question.type == 'open_answer') {
           newQuestion.answers = [];
         }
@@ -194,6 +200,33 @@ SubmitionSchema.statics.findSubmitionsCumulativeDataByCampaignId = function (id,
       }
 
       return callback(null, questions);
+    });
+  });
+}
+
+SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback) {
+  // Finds and returns number of submitions with the given filters or an error if it exists
+
+  if (!data || !data.id || !validator.isMongoId(id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
+    return callback('bad_request');
+
+  const Submition = this;
+  const search_query = [
+    {campaign_id: data.id.toString()},
+    {status: 'approved'},
+    {type: ((data.type && data.type == 'url') ? 'url' : 'target')}
+  ];
+
+  if (data.target_id)
+    search_query.push({ target_id: data.target_id.toString() });
+
+  Project.findById(mongoose.Types.ObjectId(id.toString()), (err, project) => {
+    if (err || !project) return callback('document_not_found');
+
+    Submition.find({ $and: search_query }, (err, submitions) => {
+      if (err) return callback(err);
+
+      return callback(null, submitions.length);
     });
   });
 }

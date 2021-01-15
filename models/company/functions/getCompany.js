@@ -12,7 +12,8 @@ module.exports = (company, callback) => {
       profile_photo: company.profile_photo,
       phone_number: company.phone_number,
       account_holder_name: company.account_holder_name,
-      timezone: company.timezone
+      timezone: company.timezone,
+      complete: company.company_name && company.company_name.length && company.country && company.country.length
     });
   } else {
     Country.getCountryWithAlphe2Code(company.country, (err, country) => {
@@ -27,7 +28,8 @@ module.exports = (company, callback) => {
         profile_photo: company.profile_photo,
         phone_number: company.phone_number,
         account_holder_name: company.account_holder_name,
-        timezone: company.timezone
+        timezone: company.timezone,
+        complete: company.company_name && company.company_name.length && company.country && company.country.length
       });
     });
   }

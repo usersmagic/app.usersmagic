@@ -6,7 +6,7 @@ module.exports = (req, res) => {
   Project.findByFields({
     creator: req.session.company._id
   }, {
-    timezone: "Europe/Istanbul"
+    timezone: req.session.company.timezone
   }, (err, projects) => {
     if (err) return res.redirect('/auth/login');
 
@@ -15,8 +15,8 @@ module.exports = (req, res) => {
       title: 'Projects',
       includes: {
         external: {
-          css: ['page', 'general', 'header', 'contentHeader', 'logo', 'buttons', 'inputs', 'fontawesome'],
-          js: ['page']
+          css: ['page', 'general', 'header', 'confirm', 'contentHeader', 'logo', 'buttons', 'inputs', 'fontawesome'],
+          js: ['page', 'confirm']
         }
       },
       projects,

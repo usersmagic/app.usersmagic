@@ -6,7 +6,7 @@ module.exports = (project, options, callback) => {
   if (!project || !project._id)
     return callback('document_not_found');
 
-  let timezone;
+  let timezone = 'Etc/Greenwich';
 
   if ((options && options.timezone)) {
     if (!moment.tz.zone(options.timezone))
@@ -20,7 +20,7 @@ module.exports = (project, options, callback) => {
     type: project.type,
     status: project.status,
     country: project.country,
-    created_at: timezone ? moment(project.created_at).tz(timezone).format('DD[.]MM[.]YYYY[, ]HH[:]mm') : project.created_at,
+    created_at: moment(project.created_at).tz(timezone).format('DD[.]MM[.]YYYY[, ]HH[:]mm'),
     name: project.name,
     description: project.description,
     image: project.image,

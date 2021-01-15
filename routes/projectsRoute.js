@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const isLoggedIn = require('../middleware/isLoggedIn');
+const isAccountComplete = require('../middleware/isAccountComplete');
 
 const indexGetController = require('../controllers/projects/index/get');
 const createIndexGetController = require('../controllers/projects/create/index/get');
@@ -26,62 +27,74 @@ router.get(
 router.get(
   '/create',
     isLoggedIn,
+    isAccountComplete,
     createIndexGetController
 );
 router.get(
   '/create/finish',
     isLoggedIn,
+    isAccountComplete,
     createFinishGetController
 );
 router.get(
   '/details',
     isLoggedIn,
+    isAccountComplete,
     detailsGetController
 );
 router.get(
   '/filters',
     isLoggedIn,
+    isAccountComplete,
     filtersIndexGetController
 );
 router.get(
   '/filters/create',
     isLoggedIn,
+    isAccountComplete,
     filtersCreateGetController
 );
 router.get(
   '/filters/create/finish',
     isLoggedIn,
+    isAccountComplete,
     filtersCreateFinishGetController
 );
 router.get(
   '/report',
     isLoggedIn,
+    isAccountComplete,
     reportIndexGetController
 );
 
 router.post(
   '/',  
     isLoggedIn,
+    isAccountComplete,
     indexPostController
 );
 router.post(
   '/create/save',
     isLoggedIn,
+    isAccountComplete,
     createSavePostController
 );
 router.post(
   '/filters',
     isLoggedIn,
+    isAccountComplete,
     filtersIndexPostController
 );
 router.post(
   '/filters/create/save',
     isLoggedIn,
+    isAccountComplete,
     filtersCreateSavePostController
 );
 router.post(
   '/filters/submit',
     isLoggedIn,
+    isAccountComplete,
     filtersSubmitPostController
 );
 

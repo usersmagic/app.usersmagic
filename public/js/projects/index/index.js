@@ -68,7 +68,27 @@ function uploadImage (file) {
   };
 }
 
+// Check if the account of the company is complete
+function checkIsAccountComplete () {
+  const company = JSON.parse(document.getElementById('company-data-json').value);
+  
+  if (company.complete)
+    return;
+
+  createConfirm({
+    title: 'Your account is not complete',
+    text: 'You must complete your account details before you create a project',
+    reject: 'Remind Later',
+    accept: 'Go to Settings'
+  }, res => {
+    if (!res) return;
+
+    return window.location = '/settings';
+  })
+}
+
 window.onload = () => {
+  checkIsAccountComplete();
   const createProjectOuterWrapper = document.querySelector('.create-project-outer-wrapper');
   const noProjectWrapper = document.querySelector('.no-project-wrapper');
   let isStartProjectOpen = false; // See if this is the first project of the user

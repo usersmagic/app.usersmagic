@@ -89,6 +89,7 @@ function checkIsAccountComplete () {
 
 window.onload = () => {
   checkIsAccountComplete();
+  listenDropDownListInputs(document); // Listen for drop down items
   const createProjectOuterWrapper = document.querySelector('.create-project-outer-wrapper');
   const noProjectWrapper = document.querySelector('.no-project-wrapper');
   let isStartProjectOpen = false; // See if this is the first project of the user
@@ -97,7 +98,6 @@ window.onload = () => {
   const projectNameInput = document.getElementById('project-name-input');
   const projectDescriptionInput = document.getElementById('project-description-input');
   const projectCountryInput = document.getElementById('project-country-input');
-  const projectCountryValueInput = document.getElementById('project-country-value-input');
   const projectImageInput = document.getElementById('project-image-input');
   const projectImageValueInput = document.getElementById('project-image-value-input');
   const projectError = document.getElementById('project-error');
@@ -140,13 +140,8 @@ window.onload = () => {
   projectCreateForm.onsubmit = event => {
     event.preventDefault();
 
-    if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length || !projectImageValueInput.value || !projectImageValueInput.value.length || !projectCountryInput.value || !projectCountryInput.value.length)
-      return projectError.childNodes[0].innerHTML = "Please enter all the fields";
-
-    if (projectCountryInput.value.trim().toLowerCase() != 'turkey' && projectCountryInput.value.trim().toLowerCase() != 'usa')
-      return projectError.childNodes[0].innerHTML = "You should write only Turkey or USA to select the country.";
-
-    projectCountryValueInput.value = projectCountryInput.value.trim().toLowerCase() == 'turkey' ? 'tr' : 'us';
+    if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length || !projectImageValueInput.value || !projectImageValueInput.value.length || !projectCountryInput.value || projectCountryInput.value.length != 2)
+      return projectError.childNodes[0].innerHTML = "Please enter all the fields and select your country";
 
     if (projectNameInput.value.length > 1000 || projectDescriptionInput.value.length > 1000)
       return projectError.childNodes[0].innerHTML = "Project name and description cannot be longer than 1000 characters";

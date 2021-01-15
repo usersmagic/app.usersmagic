@@ -1,5 +1,6 @@
 // Get projects index page
 
+const Country = require('../../../models/country/Country');
 const Project = require('../../../models/project/Project');
 
 module.exports = (req, res) => {
@@ -10,17 +11,22 @@ module.exports = (req, res) => {
   }, (err, projects) => {
     if (err) return res.redirect('/auth/login');
 
-    return res.render('projects/index/index', {
-      page: 'projects/index/index',
-      title: 'Projects',
-      includes: {
-        external: {
-          css: ['page', 'general', 'header', 'confirm', 'contentHeader', 'logo', 'buttons', 'inputs', 'fontawesome'],
-          js: ['page', 'confirm']
-        }
-      },
-      projects,
-      company: req.session.company
+    Country.getCountries((err, countries) => {
+      if (err) return res.redirect('/');
+
+      return res.render('projects/index/index', {
+        page: 'projects/index/index',
+        title: 'Projects',
+        includes: {
+          external: {
+            css: ['page', 'general', 'header', 'confirm', 'contentHeader', 'logo', 'buttons', 'inputs', 'fontawesome'],
+            js: ['page', 'inputListeners', 'confirm']
+          }
+        },
+        projects,
+        countries,
+        company: req.session.company
+      });
     });
   });
 }

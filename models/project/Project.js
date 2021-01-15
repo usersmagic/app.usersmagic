@@ -2,6 +2,8 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
+const Country = require('../country/Country');
+
 const getProject = require('./functions/getProject');
 const validateQuestions = require('./functions/validateQuestions');
 
@@ -86,28 +88,32 @@ ProjectSchema.statics.createProject = function (data, callback) {
     if (projects.length >= maxProjectLimit)
       return callback('too_many_documents');
 
-    const newProjectData = {
-      creator: data.creator,
-      type: data.type || null,
-      name: data.name,
-      description: data.description,
-      country: data.country,
-      status: 'saved',
-      image: data.image || null
-    };
+    Country.getCountryWithAlphe2Code(data.country, (err, country) => {
+      if (err || !country) return callback('country_validation');
 
-    if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length || !data.image || !data.image.length)
-      return callback('bad_request');
-
-    const newProject = new Project(newProjectData);
-
-    newProject.save((err, project) => {
-      if (err) return callback(err);
-
-      getProject(project, {}, (err, project) => {
+      const newProjectData = {
+        creator: data.creator,
+        type: data.type || null,
+        name: data.name,
+        description: data.description,
+        country: data.country,
+        status: 'saved',
+        image: data.image || null
+      };
+  
+      if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length || !data.image || !data.image.length)
+        return callback('bad_request');
+  
+      const newProject = new Project(newProjectData);
+  
+      newProject.save((err, project) => {
         if (err) return callback(err);
-
-        return callback(null, project);
+  
+        getProject(project, {}, (err, project) => {
+          if (err) return callback(err);
+  
+          return callback(null, project);
+        });
       });
     });
   });

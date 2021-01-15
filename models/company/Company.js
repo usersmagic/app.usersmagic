@@ -120,32 +120,40 @@ CompanySchema.statics.updateCompany = function (id, data, callback) {
     Country.getCountryWithAlphe2Code(data.country, (err, country) => {
       if (err || !country) return callback('bad_request');
 
+      Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
+        if (err || !company) return callback('document_not_found');
+
+        Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+          country: data.country,
+          company_name: data.company_name && data.company_name.length ? data.company_name : null,
+          phone_number: data.phone_number && data.phone_number.length ? data.phone_number : null,
+          account_holder_name: data.account_holder_name && data.account_holder_name.length ? data.account_holder_name : null,
+          timezone: data.timezone && data.timezone.length ? data.timezone : null,
+          profile_photo: (data.profile_photo && data.profile_photo.length) ? data.profile_photo : (data.profile_photo ? '/res/images/default/company.png' : company.profile_photo)
+        }}, (err, company) => {
+          if (err) return callback(err);
+          if (!company) return callback('document_not_found');
+    
+          return callback(null);
+        });
+      });
+    });
+  } else {
+    Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
+      if (err || !company) return callback('document_not_found');
+
       Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-        country: data.country,
         company_name: data.company_name && data.company_name.length ? data.company_name : null,
         phone_number: data.phone_number && data.phone_number.length ? data.phone_number : null,
         account_holder_name: data.account_holder_name && data.account_holder_name.length ? data.account_holder_name : null,
         timezone: data.timezone && data.timezone.length ? data.timezone : null,
-        profile_photo: data.profile_photo && data.profile_photo.length ? data.profile_photo : '/res/images/default/company.png'
+        profile_photo: (data.profile_photo && data.profile_photo.length) ? data.profile_photo : (data.profile_photo ? '/res/images/default/company.png' : company.profile_photo)
       }}, (err, company) => {
         if (err) return callback(err);
         if (!company) return callback('document_not_found');
   
         return callback(null);
       });
-    });
-  } else {
-    Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-      company_name: data.company_name && data.company_name.length ? data.company_name : null,
-      phone_number: data.phone_number && data.phone_number.length ? data.phone_number : null,
-      account_holder_name: data.account_holder_name && data.account_holder_name.length ? data.account_holder_name : null,
-      timezone: data.timezone && data.timezone.length ? data.timezone : null,
-      profile_photo: data.profile_photo && data.profile_photo.length ? data.profile_photo : '/res/images/default/company.png'
-    }}, (err, company) => {
-      if (err) return callback(err);
-      if (!company) return callback('document_not_found');
-
-      return callback(null);
     });
   }
 

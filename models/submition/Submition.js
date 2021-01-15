@@ -69,7 +69,7 @@ const SubmitionSchema = new Schema({
 });
 
 SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback) {
-  if (!data || !data.id || !validator.isMongoId(id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
+  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
     return callback('bad_request');
 
   const Submition = this;
@@ -82,7 +82,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
   if (data.target_id)
     search_query.push({ target_id: data.target_id.toString() });
 
-  Project.findById(mongoose.Types.ObjectId(id.toString()), (err, project) => {
+  Project.findById(mongoose.Types.ObjectId(data.id.toString()), (err, project) => {
     if (err || !project) return callback('document_not_found');
 
     Submition.find({ $and: search_query }, (err, submitions) => {
@@ -207,7 +207,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
 SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback) {
   // Finds and returns number of submitions with the given filters or an error if it exists
 
-  if (!data || !data.id || !validator.isMongoId(id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
+  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
     return callback('bad_request');
 
   const Submition = this;
@@ -220,7 +220,7 @@ SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback
   if (data.target_id)
     search_query.push({ target_id: data.target_id.toString() });
 
-  Project.findById(mongoose.Types.ObjectId(id.toString()), (err, project) => {
+  Project.findById(mongoose.Types.ObjectId(data.id.toString()), (err, project) => {
     if (err || !project) return callback('document_not_found');
 
     Submition.find({ $and: search_query }, (err, submitions) => {

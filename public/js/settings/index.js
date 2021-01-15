@@ -342,7 +342,7 @@ window.onload = () => {
       }, res => {
         if (!res) return;
 
-        saveCompanyProfileImage(null, err => {
+        saveCompanyProfileImage('', err => {
           if (err) {
             return createConfirm({
               title: 'Upload Error',

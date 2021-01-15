@@ -170,7 +170,7 @@ CompanySchema.statics.isCompanyDataComplete = function (id, callback) {
     if (!company.company_name || !company.company_name.length || !company.country || !company.country.length)
       return callback(false);
 
-    return true;
+    return callback(true);
   });
 }
 

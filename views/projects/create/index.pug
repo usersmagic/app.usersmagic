@@ -1,7 +1,7 @@
 extends ../../partials/header
 block main
   input.display-none#json-project-data(type="text" value=JSON.stringify(project))
-  .general-beta-text beta version 1.0.0
+  //- .general-beta-text beta version 1.0.0
   .all-content-header-wrapper
     .header-user-logo
       img(src=company.profile_photo alt="usersmagic " + company.name)
@@ -66,7 +66,6 @@ block main
         span.general-input-title Task & Details
           span.general-input-required-sign *
         textarea.general-input-with-border-long(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")= project.welcome_screen.details
-        //- span.finish-error-text.blink-red-animation-class Please enter an opening message
         span.general-input-title Image
         label.general-choose-image-input-text
           span Add an image to explain the task. This is optional.

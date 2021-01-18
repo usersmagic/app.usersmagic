@@ -1,7 +1,7 @@
 extends ../../partials/header
 block main
   input.display-none#company-data-json(type="text" value=JSON.stringify(company))
-  .general-beta-text beta version 1.0.0
+  //- .general-beta-text beta version 1.0.0
   .create-project-outer-wrapper
     form.create-project-wrapper(action='/projects' method='POST')
       span.create-project-title Create a new Project

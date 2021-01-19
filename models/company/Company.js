@@ -78,7 +78,7 @@ CompanySchema.statics.findCompanyById = function (id, callback) {
       return callback(null, company);
     });
   })
-}
+};
 
 CompanySchema.statics.createCompany = function (data, callback) {
   const Company = this;
@@ -99,7 +99,7 @@ CompanySchema.statics.createCompany = function (data, callback) {
       });
     });
   });
-}
+};
 
 CompanySchema.statics.updateCompany = function (id, data, callback) {
   // Updates the data of the document with the given id. If data does not include a field, the field is returned to its default value
@@ -160,7 +160,7 @@ CompanySchema.statics.updateCompany = function (id, data, callback) {
   Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
     country: data.country && data.country.length == 2
   }})
-}
+};
 
 CompanySchema.statics.isCompanyDataComplete = function (id, callback) {
   // Finds the document with the given id and checks if its status is 'complete': its country and company_name fields are complete
@@ -180,7 +180,7 @@ CompanySchema.statics.isCompanyDataComplete = function (id, callback) {
 
     return callback(true);
   });
-}
+};
 
 CompanySchema.statics.findCompany = function (data, callback) {
   if (!data || !data.email || !data.password)
@@ -229,6 +229,31 @@ CompanySchema.statics.changePassword = function (id, data, callback) {
       });
     });
   });
+};
+
+CompanySchema.statics.getAllCompanies = function (data, callback) {
+  // Finds all companies using the given data. Manipulates the data if it doesn't match requirements
+  // Returns an object containing companies and data or an error if it exists
+  if (!data || typeof data != 'object')
+    data = {};
+
+  if (!data.page || isNaN(parseInt(data.page)))
+    data.page = 0;
+  data.page = parseInt(data.page);
+
+  if (!data.limit || isNaN(parseInt(data.limit)))
+    data.limit = 100;
+  data.limit = Math.min(100, parseInt(data.limit));
+
+  const Company = this;
+
+  Company
+    .find({})
+    .sort({ '_id': -1 })
+    .limit(data.limit)
+    .skip(data.page * data.limit)
+    .then(companies => callback(null, { companies, data}))
+    .catch(err => callback(err));
 }
 
 module.exports = mongoose.model('Company', CompanySchema);

@@ -5,6 +5,8 @@ const isAdmin = require('../middleware/isAdmin');
 
 const indexGetController = require('../controllers/admin/index/get');
 const authGetController = require('../controllers/admin/auth/get');
+const companiesIndexGetController = require('../controllers/admin/companies/index/get');
+const companiesDetailsGetController = require('../controllers/admin/companies/details/get');
 const countriesIndexGetController = require('../controllers/admin/countries/index/get');
 const targetsIndexGetController = require('../controllers/admin/targets/index/get');
 const targetsDetailsGetController = require('../controllers/admin/targets/details/get');
@@ -21,6 +23,16 @@ router.get(
 router.get(
   '/auth',
     authGetController
+);
+router.get(
+  '/companies',
+    isAdmin,
+    companiesIndexGetController
+);
+router.get(
+  '/companies/details',
+    isAdmin,
+    companiesDetailsGetController
 );
 router.get(
   '/countries',

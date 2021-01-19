@@ -1,0 +1,46 @@
+extends ../../partials/admin
+block main
+  .all-content-header
+    .title-wrapper
+      span.title= company.email
+      span.subtitle Bu sayfadan hesabın yarattığı projeleri görebilirsiniz. Proje durumu 'Kaydedildi' projenin henüz bitirilmediğini gösterir.
+  .all-content-inner-wrapper
+    .company-info-wrapper
+      span.content-title Şirket Bilgileri:
+      span.content-info E-Posta: #{company.email}
+      span.content-info Şirket Adı: #{company.company_name}
+      span.content-info Telefon Numarası: #{company.phone_number || '-'}
+      span.content-info Profil Fotoğrafı: #{company.profile_photo == '/res/images/default/company.png' ? 'default' : company.profile_photo}
+      span.content-info Hesap Sahibi İsmi: #{company.account_holder_name || '-'}
+      span.content-info Şirketin Tercih Ettiği Zaman Dilimi: #{company.timezone || '-'}
+      span.content-title Şirket Projeleri: (Toplam #{projects.length})
+      each project, i in projects
+        span.content-title Proje #{i+1}
+        span.content-info Proje İsmi: #{project.name || '-'}
+        span.content-info Proje Durumu: #{project.status == 'saved' ? 'Kaydedildi' : 'Bitirildi'}
+        span.content-info Proje Resmi: #{project.image || '-'}
+        span.content-info Projet Açıklaması: #{project.description || '-'}
+        span.content-info Projenin Yaratıldığı Ülke: #{project.country || '-'}
+        span.content-subtitle Açılış Sayfası Detayları:
+        span.content-info Açılış Mesajı: #{project.welcome_screen.opening || '-'}
+        span.content-info Detaylar: #{project.welcome_screen.details || '-'}
+        span.content-info Resim: #{project.welcome_screen.image || '-'}
+        span.content-subtitle Proje Soruları: (Toplam #{project.questions.length})
+        each question, j in project.questions
+          span.content-subtitle Soru #{j+1}
+          span.content-info Soru Metni: #{question.text || '-'}
+          span.content-info Soru Tipi: #{question.type}
+          span.content-info Soru Detayları: #{question.details || '-'}
+          span.content-info Soru Resmi: #{question.image || '-'}
+          span.content-info Soru Zorunlu Mu? #{question.required ? 'Evet' : 'Hayır'}
+          if question.type == 'multiple_choice'
+            span.content-info Soru Alt Tipi: #{question.subtype}
+            each choice, k in question.choices
+              span.content-info Seçenek #{k+1}: #{choice}
+          else if question.type == 'opinion_scale'
+            span.content-info Minimum Değer: #{question.range.min || '-'}
+            span.content-info Maximum Değer: #{question.range.max || '-'}
+            span.content-info Sol Açıklama: #{question.labels.left || '-'}
+            span.content-info Orta Açıklama: #{question.labels.middle || '-'}
+            span.content-info Sağ Açıklama: #{question.labels.right || '-'}
+

@@ -1,0 +1,14 @@
+extends ../../partials/admin
+block main
+  .all-content-header
+    .title-wrapper
+      span.title Şirket Hesapları
+      span.subtitle Bu sayfadan yaratılan şirket hesaplarını görebilirsiniz. Şirketin detaylı bilgilerini görmek için üzerine tıklayın. Şuan #{data.page + 1} numaralı sayfayı görüyorsunuz. Sayfa başına #{data.limit} kayıt gösteriliyor. Bu sayfada #{companies.length} kayıt bulundu.
+    a.next-page-button(href=`/admin/companies?page=${data.page + 1}&limit=${data.limit}`) Bir Sonraki Sayfa
+  .all-content-inner-wrapper
+    .countries-wrapper
+      each company in companies 
+        a.each-company(href="/admin/companies/details?id=" + company._id.toString())
+          span.company-info E-Posta: #{company.email}
+          span.company-info Ülke: #{company.country ? company.country : '-'}
+          span.company-info Şirket İsmi: #{company.company_name ? company.company_name : '-'}

@@ -3,9 +3,10 @@
 const Target = require('../../../../models/target/Target');
 
 module.exports = (req, res) => {
-  Target.findByFields({
-    status: 'waiting'
-  }, {}, (err, targets) => {
+  Target.find({$or: [
+    {status: 'waiting'},
+    {status: 'finished'}
+  ]}, {}, (err, targets) => {
     if (err) return res.redirect('/admin');
 
     return res.render('admin/targets/index', {

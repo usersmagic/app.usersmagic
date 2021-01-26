@@ -256,7 +256,7 @@ TargetSchema.statics.finishTarget = function (id, callback) {
       return callback('bad_request');
 
     Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-      status: 'finished'
+      status: 'waiting'
     }}, err => {
       if (err) return callback(err);
   

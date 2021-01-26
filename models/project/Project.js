@@ -88,7 +88,7 @@ ProjectSchema.statics.createProject = function (data, callback) {
     if (projects.length >= maxProjectLimit)
       return callback('too_many_documents');
 
-    Country.getCountryWithAlphe2Code(data.country, (err, country) => {
+    Country.getCountryWithAlpha2Code(data.country, (err, country) => {
       if (err || !country) return callback('country_validation');
 
       const newProjectData = {
@@ -117,7 +117,7 @@ ProjectSchema.statics.createProject = function (data, callback) {
       });
     });
   });
-}
+};
 
 ProjectSchema.statics.findOneByFields = function (fields, options, callback) {
   // Returns a project with given fields or an error if it exists.
@@ -153,7 +153,7 @@ ProjectSchema.statics.findOneByFields = function (fields, options, callback) {
       return callback(null, project)
     });
   });
-}
+};
 
 ProjectSchema.statics.findByFields = function (fields, options, callback) {
   // Find a project with given fields or an error if it exists.
@@ -193,7 +193,7 @@ ProjectSchema.statics.findByFields = function (fields, options, callback) {
       }
     );
   });
-}
+};
 
 ProjectSchema.statics.updateProject = function (id, data, callback) {
   // Update project fields, returns error if it exists or null
@@ -227,7 +227,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
       return callback(null);
     });
   });
-}
+};
 
 ProjectSchema.statics.saveQuestions = function (id, data, callback) {
   // Save data.questions on the document with the given id, returns error if it exists
@@ -246,7 +246,7 @@ ProjectSchema.statics.saveQuestions = function (id, data, callback) {
       return callback(null);
     });
   });
-}
+};
 
 ProjectSchema.statics.finishProject = function (id, callback) {
   // Sets the status of the project with the given id as 'waiting' if there is no error on fields, else returns error
@@ -275,6 +275,6 @@ ProjectSchema.statics.finishProject = function (id, callback) {
       });
     });
   });
-}
+};
 
 module.exports = mongoose.model('Project', ProjectSchema);

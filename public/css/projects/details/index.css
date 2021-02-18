@@ -23,6 +23,22 @@
   letter-spacing: 1.5px;
   color: rgba(78, 75, 102, 1);
 }
+.left-link-title {
+  margin-top: 10px;
+  white-space: initial;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 35px;
+  letter-spacing: 1.5px;
+  color: rgba(78, 75, 102, 1);
+}
+.left-link {
+  white-space: initial;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 35px;
+  color: rgba(46, 197, 206, 1);
+}
 
 .right-wrapper {
   flex: 1;

@@ -22,7 +22,8 @@ const CompanySchema = new Schema({
     // The password, saved hashed
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6,
+    maxlength: 1000
   },
   country: {
     // Alpha 2 country code of the company
@@ -117,7 +118,7 @@ CompanySchema.statics.updateCompany = function (id, data, callback) {
   const Company = this;
 
   if (data.country && data.country.length) {
-    Country.getCountryWithAlphe2Code(data.country, (err, country) => {
+    Country.getCountryWithAlpha2Code(data.country, (err, country) => {
       if (err || !country) return callback('bad_request');
 
       Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {

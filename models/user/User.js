@@ -19,7 +19,8 @@ const UserSchema = new Schema({
     // Password of the user, saved hashed
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6,
+    maxlength: 1000
   },
   agreement_approved: {
     // If user approved user agreement
@@ -167,7 +168,6 @@ UserSchema.statics.getUserById = function (id, callback) {
 
     return callback(null, user);
   });
-}
-
+};
 
 module.exports = mongoose.model('User', UserSchema);

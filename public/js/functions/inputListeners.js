@@ -58,7 +58,6 @@ function listenDropDownListInputs (document) {
   document.addEventListener('click', event => {
     // Click on a list item, change value and id accordingly
     if (event.target.classList.contains('general-drop-down-list-each-item')) {
-      console.log(event.target.id, event.target.innerHTML);
       event.target.parentNode.parentNode.querySelector('.general-drop-down-list-input').value = event.target.innerHTML;
       event.target.parentNode.parentNode.querySelector('.general-drop-down-list-input-not-visible').value = event.target.id;
     }

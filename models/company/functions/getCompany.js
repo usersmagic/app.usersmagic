@@ -16,7 +16,7 @@ module.exports = (company, callback) => {
       complete: company.company_name && company.company_name.length && company.country && company.country.length
     });
   } else {
-    Country.getCountryWithAlphe2Code(company.country, (err, country) => {
+    Country.getCountryWithAlpha2Code(company.country, (err, country) => {
       if (err || !country) return callback(err || 'bad_request');
 
       return callback(null, {

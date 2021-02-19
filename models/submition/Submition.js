@@ -75,8 +75,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
   const Submition = this;
   const search_query = [
     {campaign_id: data.id.toString()},
-    {status: 'approved'},
-    {type: ((data.type && data.type == 'url') ? 'url' : 'target')}
+    {status: 'approved'}
   ];
 
   if (data.target_id)

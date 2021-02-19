@@ -133,8 +133,8 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
           if (answer.toLowerCase() == 'hayır' || answer.toLowerCase() == 'evet')
             answer = answer.toLowerCase() == 'hayır' ? 'no' : 'yes';
 
-          if (questions[j].type == 'yes_no' && (answer == 'yes' || answer == 'no')) {
-            questions[j].data[`${answer}_number`]++;
+          if (questions[j].type == 'yes_no' && (answer.toLowerCase() == 'yes' || answer.toLowerCase() == 'no')) {
+            questions[j].data[`${answer.toLowerCase()}_number`]++;
           } else if (questions[j].type == 'multiple_choice') {
             questions[j].answers[answer]++;
           } else if (questions[j].type == 'opinion_scale') {
@@ -212,8 +212,7 @@ SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback
   const Submition = this;
   const search_query = [
     {campaign_id: data.id.toString()},
-    {status: 'approved'},
-    {type: ((data.type && data.type == 'url') ? 'url' : 'target')}
+    {status: 'approved'}
   ];
 
   if (data.target_id)
@@ -228,6 +227,6 @@ SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback
       return callback(null, submitions.length);
     });
   });
-}
+};
 
 module.exports = mongoose.model('Submition', SubmitionSchema);

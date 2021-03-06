@@ -2,8 +2,6 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const Country = require('../country/Country');
-
 const getProject = require('./functions/getProject');
 const validateQuestions = require('./functions/validateQuestions');
 
@@ -62,18 +60,30 @@ const ProjectSchema = new Schema({
       details: '',
       image: ''
     }
-  },
-  country: {
-    // The country of testers that the Project will use
-    type: String,
-    default: null
   }
 });
+
+ProjectSchema.statics.findProjectById = function (id, callback) {
+  // Find and return the Project with the given id, or an error if it exists
+  // Do not use getTarget function, DO NOT use while sending to frontend
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Project = this;
+
+  Project.findById(mongoose.Types.ObjectId(id.toString()), (err, project) => {
+    if (err || !project)
+      return callback('document_not_found');
+
+    return callback(null, project);
+  });
+}
 
 ProjectSchema.statics.createProject = function (data, callback) {
   // Creates a new document under the model Project, returns the created project or an error if there is
 
-  if (!data || !data.creator || !validator.isMongoId(data.creator.toString()) || !data.country)
+  if (!data || !data.creator || !validator.isMongoId(data.creator.toString()))
     return callback('bad_request');
 
   const Project = this;
@@ -88,15 +98,11 @@ ProjectSchema.statics.createProject = function (data, callback) {
     if (projects.length >= maxProjectLimit)
       return callback('too_many_documents');
 
-    Country.getCountryWithAlpha2Code(data.country, (err, country) => {
-      if (err || !country) return callback('country_validation');
-
       const newProjectData = {
         creator: data.creator,
         type: data.type || null,
         name: data.name,
         description: data.description,
-        country: data.country,
         status: 'saved',
         image: data.image || null
       };
@@ -115,7 +121,6 @@ ProjectSchema.statics.createProject = function (data, callback) {
           return callback(null, project);
         });
       });
-    });
   });
 };
 

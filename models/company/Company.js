@@ -264,8 +264,8 @@ CompanySchema.statics.getAllCompanies = function (data, callback) {
 
 CompanySchema.statics.updateCredit = function (id, data, callback) {
   // Update the credit of the Company with the given id, return an error if it exists
-
-  if (!id || !validator.isMongoId(id.toString()) || !data || typeof data != 'object' || !data.credit || !Number.isInteger(data.credit))
+  
+  if (!id || !validator.isMongoId(id.toString()) || !data || typeof data != 'object' || !Number.isInteger(data.credit))
     return callback('bad_request');
 
   const Company = this;

@@ -12,7 +12,7 @@ function listenDropDownListInputs (document) {
 
   // Listen for drop down input focus out event
   document.addEventListener('focusout', event => {
-    if (event.target.classList.contains('general-drop-down-list-input')) {
+    if (event.target.classList.contains('general-drop-down-list-input') && event.target.parentNode.classList.contains('general-drop-down-list-open-bottom-animation-class')) {
       event.target.parentNode.classList.remove('general-drop-down-list-open-bottom-animation-class');
       event.target.parentNode.classList.add('general-drop-down-list-close-up-animation-class');
       event.target.parentNode.style.outline = 'none';

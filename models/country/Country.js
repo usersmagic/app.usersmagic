@@ -153,7 +153,7 @@ CountrySchema.statics.getCountries = function (callback) {
     .find({
       completed: true
     })
-    .sort({ name: -1 })
+    .sort({ name: 1 })
     .then(countries => {
       async.timesSeries(
         countries.length,

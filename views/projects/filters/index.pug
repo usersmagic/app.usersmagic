@@ -22,6 +22,9 @@ block main
     a.header-each-step-text(href="/projects/details?id=" + project._id)= project.name
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/filters?id=" + project._id) Filters
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
   .all-content-inner-wrapper
     .create-target-line
       .open-create-target-wrapper-button.general-seablue-button

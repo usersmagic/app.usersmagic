@@ -13,6 +13,7 @@ module.exports = (company, callback) => {
       phone_number: company.phone_number,
       account_holder_name: company.account_holder_name,
       timezone: company.timezone,
+      credit: company.credit || 0,
       complete: company.company_name && company.company_name.length && company.country && company.country.length
     });
   } else {
@@ -29,6 +30,7 @@ module.exports = (company, callback) => {
         phone_number: company.phone_number,
         account_holder_name: company.account_holder_name,
         timezone: company.timezone,
+        credit: company.credit || 0,
         complete: company.company_name && company.company_name.length && company.country && company.country.length
       });
     });

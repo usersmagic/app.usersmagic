@@ -22,6 +22,9 @@ block main
     .header-user-logo
       img(src=company.profile_photo alt="usersmagic " + company.name)
     a.header-each-step-text(href="/settings") Settings
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
   .all-content-inner-wrapper
     .settings-inner-wrapper
       .settings-buttons-wrapper

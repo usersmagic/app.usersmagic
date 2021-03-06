@@ -7,6 +7,9 @@ block main
     a.header-each-step-text(href="/projects") Projects
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/details?id=" + project._id)= project.name
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
   .all-content-inner-wrapper
     .left-wrapper
       span.left-title Your test is live 👏

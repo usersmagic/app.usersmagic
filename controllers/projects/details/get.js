@@ -17,7 +17,7 @@ module.exports = (req, res) => {
       includes: {
         external: {
           css: ['page', 'general', 'header', 'contentHeader', 'logo', 'inputs', 'buttons', 'fontawesome'],
-          js: ['page']
+          js: ['page', 'headerListeners']
         }
       },
       company: req.session.company,

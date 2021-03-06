@@ -798,6 +798,7 @@ window.onload = () => {
   project = JSON.parse(document.getElementById('json-project-data').value); // Get project data
   getBlockData(); // Initialize block data using project
 
+  listenForContentHeader(document); // Listen for content header buttons
   dragAndDrop(document); // Listen for drag-and-drop wrappers
   listenSliderButtons(document); // Listen slider buttons
   setTimeout(() => {

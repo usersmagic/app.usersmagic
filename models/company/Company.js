@@ -57,6 +57,11 @@ const CompanySchema = new Schema({
     // Timezone of the account
     type: String,
     default: null
+  },
+  credit: {
+    // Credit of the account
+    type: Number,
+    default: 0
   }
 });
 
@@ -255,6 +260,24 @@ CompanySchema.statics.getAllCompanies = function (data, callback) {
     .skip(data.page * data.limit)
     .then(companies => callback(null, { companies, data}))
     .catch(err => callback(err));
-}
+};
+
+CompanySchema.statics.updateCredit = function (id, data, callback) {
+  // Update the credit of the Company with the given id, return an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()) || !data || typeof data != 'object' || !data.credit || !Number.isInteger(data.credit))
+    return callback('bad_request');
+
+  const Company = this;
+
+  Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+    credit: data.credit
+  }}, (err, company) => {
+    if (err) return callback('database_error');
+    if (!company) return callback('document_not_found');
+
+    return callback(null);
+  });
+};
 
 module.exports = mongoose.model('Company', CompanySchema);

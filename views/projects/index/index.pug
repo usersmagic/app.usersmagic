@@ -35,6 +35,9 @@ block main
     .header-user-logo
       img(src=company.profile_photo alt="usersmagic " + company.name)
     a.header-each-step-text(href="/projects") Projects
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
   .all-content-inner-wrapper
     if projects && projects.length
       .create-project-line

@@ -365,6 +365,7 @@ function finishTarget () {
 window.onload = () => {
   getFiltersData(); // Load filters data on reload
   getTargetData(); // Load target data on reload
+  listenForContentHeader(document); // Listen for content header buttons
   listenSliderButtons(document); // Listen slider buttons
   setTimeout(() => {
     autoSave(); // Automatically save project

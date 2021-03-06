@@ -20,6 +20,8 @@ function postSubmitionLimit (id, limit, callback) {
 }
 
 window.onload = () => {
+  listenForContentHeader(document); // Listen for content header buttons
+  
   const createTargetOuterWrapper = document.querySelector('.create-target-outer-wrapper');
 
   const targetCreateForm = document.querySelector('.create-target-wrapper');

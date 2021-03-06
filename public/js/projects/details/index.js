@@ -1,4 +1,6 @@
 window.onload = () => {
+  listenForContentHeader(document); // Listen for content header buttons
+  
   document.addEventListener('click', event => {
     if (event.target.classList.contains('copy-url-button') || (event.target.parentNode && event.target.parentNode.classList.contains('copy-url-button')) || (event.target.parentNode && event.target.parentNode.classList.contains('copy-url-button')) || (event.target.parentNode.parentNode && event.target.parentNode.parentNode.classList.contains('copy-url-button'))) {
       let target = event.target;

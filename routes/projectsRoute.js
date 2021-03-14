@@ -13,9 +13,10 @@ const filtersCreateGetController = require('../controllers/projects/filters/crea
 const filtersCreateFinishGetController = require('../controllers/projects/filters/create/finish/get');
 const filtersSubmitPostController = require('../controllers/projects/filters/submit/post');
 const reportIndexGetController = require('../controllers/projects/report/index/get');
+const editIndexGetController = require('../controllers/projects/edit/index/get');
 
 const indexPostController = require('../controllers/projects/index/post');
-const createSavePostController = require('../controllers/projects/create/save/post');
+const createSavePostController = require('../controllers/projects/create/save/post'); //use this route both for projects/create and projects/edit autosave
 const filtersIndexPostController = require('../controllers/projects/filters/index/post');
 const filtersCreateSavePostController = require('../controllers/projects/filters/create/save/post');
 
@@ -68,7 +69,7 @@ router.get(
 );
 
 router.post(
-  '/',  
+  '/',
     isLoggedIn,
     isAccountComplete,
     indexPostController
@@ -97,5 +98,11 @@ router.post(
     isAccountComplete,
     filtersSubmitPostController
 );
+router.get(
+  '/edit',
+  isLoggedIn,
+  isAccountComplete,
+  editIndexGetController
+)
 
 module.exports = router;

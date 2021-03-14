@@ -106,18 +106,18 @@ ProjectSchema.statics.createProject = function (data, callback) {
         status: 'saved',
         image: data.image || null
       };
-  
+
       if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length || !data.image || !data.image.length)
         return callback('bad_request');
-  
+
       const newProject = new Project(newProjectData);
-  
+
       newProject.save((err, project) => {
         if (err) return callback(err);
-  
+
         getProject(project, {}, (err, project) => {
           if (err) return callback(err);
-  
+
           return callback(null, project);
         });
       });
@@ -228,7 +228,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
 
     Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: newData}, err => {
       if (err) return callback(err);
-      
+
       return callback(null);
     });
   });
@@ -236,7 +236,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
 
 ProjectSchema.statics.saveQuestions = function (id, data, callback) {
   // Save data.questions on the document with the given id, returns error if it exists
-  
+
   const Project = this;
 
   if (!id || !validator.isMongoId(id.toString()) || !data)

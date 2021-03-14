@@ -35,3 +35,10 @@ block main
         .each-button-text-wrapper
           span.each-button-title See your report
           span.each-button-subtitle See the report of your results
+      a.each-button(href=`/projects/edit?id=${project._id}`)
+        .each-button-icon-wrapper
+          i.fas.fa-chart-pie.red-icon
+        .each-button-text-wrapper
+          span.each-button-title Update your questions
+          span.each-button-subtitle Update your questions in the test
+          

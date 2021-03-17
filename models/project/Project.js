@@ -41,14 +41,30 @@ const ProjectSchema = new Schema({
     required: true,
     maxlength: 1000
   },
+  image_backup:{
+    type:String,
+    default: '',
+    maxlength: 1000
+  },
   description: {
     // Description of the project,
     type: String,
     default: '',
     maxlength: 1000
   },
+  description_backup:{
+    //if the description edited, this field is used
+    type: String,
+    default: '',
+    maxlength: 1000
+  },
   questions: {
     // Questions array
+    type: Array,
+    default: []
+  },
+  questions_backup: {
+    //if the questions are edited, this field is used
     type: Array,
     default: []
   },
@@ -60,7 +76,18 @@ const ProjectSchema = new Schema({
       details: '',
       image: ''
     }
+  },
+  welcome_screen_backup:{
+    //if the content edited, this field will be used
+    type: Object,
+    default:{
+      opening: '',
+      details: '',
+      image: ''
+    }
   }
+  //Backup fields saves the previous versions of the original fields.
+  //You use backup fields to undo changes
 });
 
 ProjectSchema.statics.findProjectById = function (id, callback) {
@@ -204,13 +231,12 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
   // Update project fields, returns error if it exists or null
 
   const Project = this;
-
   if (!id || !validator.isMongoId(id.toString()) || !data)
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
     if (err || !project) return callback('document_not_found');
-    if (project.status != 'saved') return callback('bad_request');
+    if (project.status != 'saved' && project.status != 'waiting') return callback('bad_request');
 
     const newData = {
       name: data.name || project.name,
@@ -281,5 +307,58 @@ ProjectSchema.statics.finishProject = function (id, callback) {
     });
   });
 };
+
+//backs up the fields before editing
+ProjectSchema.statics.backupProject = function(id, callback){
+
+    const Project = this;
+
+    if(!id || !validator.isMongoId(id.toString() || !data))
+      return callback('bad_request');
+
+    Project.findById(mongoose.Types.ObjectId(id), (err, project) =>{
+        if(err || !project) return callback('document_not_found');
+        if(project.status != 'waiting') return callback('bad_request');
+
+        const backupData = {
+          image_backup: project.image,
+          description_backup: project.description,
+          questions_backup: project.questions,
+          welcome_screen_backup: project.welcome_screen
+        }
+
+        Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: backupData}, err =>{
+          if(err) return callback(err);
+
+          return callback(null);
+        });
+    });
+  }
+
+//for undoing changes
+ProjectSchema.statics.undoChanges = function(id, callback){
+    const Project = this;
+
+    if(!id || !validator.isMongoId(id.toString() || !data))
+      return callback('bad_request');
+
+    Project.findById(mongoose.Types.ObjectId(id), (err, project) =>{
+      if(err || !project) return callback('document_not_found');
+      if(project.status != 'waiting') return callback('bad_request');
+    const undoData = {
+      image: project.image_backup,
+      description: project.description_backup,
+      questions: project.questions_backup,
+      welcome_screen: project.welcome_screen_backup
+    }
+
+    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: undoData}, err =>{
+      if(err) return callback(err);
+
+      return callback(null);
+    });
+  });
+  }
+
 
 module.exports = mongoose.model('Project', ProjectSchema);

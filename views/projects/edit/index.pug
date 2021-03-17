@@ -2,6 +2,7 @@ extends ../../partials/header
 block main
   input.display-none#json-project-data(type="text" value=JSON.stringify(project))
   //- .general-beta-text beta version 1.0.0
+  //- This file uses the css/js codes from projects/create
   .all-content-header-wrapper
     .header-user-logo
       img(src=company.profile_photo alt="usersmagic " + company.name)
@@ -9,6 +10,8 @@ block main
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/edit?id=" + project._id)= project.name
     .header-credit-wrapper
+      //-when I leave out the id, it looks ugly, even though I change css file -cnblgn
+      button.general-seablue-button.undo-button#undo-button Undo Changes 
       span.header-credit-amount #{company.credit} credits
       span.header-get-credit-button Get Credits
     .header-buttons-wrapper

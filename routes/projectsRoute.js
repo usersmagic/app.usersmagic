@@ -14,6 +14,7 @@ const filtersCreateFinishGetController = require('../controllers/projects/filter
 const filtersSubmitPostController = require('../controllers/projects/filters/submit/post');
 const reportIndexGetController = require('../controllers/projects/report/index/get');
 const editIndexGetController = require('../controllers/projects/edit/index/get');
+const editUndoGetController = require('../controllers/projects/edit/undo/get');
 
 const indexPostController = require('../controllers/projects/index/post');
 const createSavePostController = require('../controllers/projects/create/save/post'); //use this route both for projects/create and projects/edit autosave
@@ -103,6 +104,13 @@ router.get(
   isLoggedIn,
   isAccountComplete,
   editIndexGetController
+)
+
+router.get(
+  '/edit/undo',
+  isLoggedIn,
+  isAccountComplete,
+  editUndoGetController
 )
 
 module.exports = router;

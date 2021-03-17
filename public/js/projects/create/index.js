@@ -158,7 +158,7 @@ function createPreviewPageContent () {
     const textInput = document.createElement('span');
     textInput.classList.add('block-preview-input');
     textInput.innerHTML = 'Type your answer here';
-  } 
+  }
 }
 
 // Get questions data from the blockData object
@@ -462,7 +462,7 @@ function createSettingsMultipleTypeWrapperAndContent (selected) {
 
   if (selected == 'single')
     eachTypeSingle.classList.add('clicked-multiple-type');
-  
+
   const iSingle = document.createElement('i');
   iSingle.classList.add('far');
   iSingle.classList.add('fa-check-circle');
@@ -478,7 +478,7 @@ function createSettingsMultipleTypeWrapperAndContent (selected) {
 
   if (selected == 'multiple')
     eachTypeMultiple.classList.add('clicked-multiple-type');
-  
+
   const iMultiple = document.createElement('i');
   iMultiple.classList.add('far');
   iMultiple.classList.add('fa-check-circle');
@@ -777,11 +777,11 @@ function finishProject () {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', `/projects/create/finish?id=${project._id}`);
             xhr.send();
-  
+
             xhr.onreadystatechange = function () {
               if (xhr.readyState == 4 && xhr.responseText) {
                 const response = JSON.parse(xhr.responseText);
-  
+
                 if (!response.success && response.error)
                   return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
                 return window.location = `/projects/details?id=${project._id.toString()}`;
@@ -792,6 +792,23 @@ function finishProject () {
       }
     });
   });
+}
+
+function undoChanges(){ //this function belongs to projects/edit
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', `/projects/edit/undo?id=${project._id}`);
+  xhr.send();
+
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState == 4 && xhr.responseText){
+      var response = JSON.parse(xhr.responseText);
+
+      if (!response.success && response.error)
+        return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+      return window.location = `/projects/edit?id=${project._id.toString()}`;
+    }
+  }
+
 }
 
 window.onload = () => {
@@ -928,7 +945,7 @@ window.onload = () => {
       }, res => {
         if (res) {
           const selectedDocument = document.getElementById(currentlyClickedBlock);
-          
+
           if (selectedDocument.previousElementSibling) {
             selectedDocument.previousElementSibling.classList.add('clicked-each-block');
             createSettingsPageContent(selectedDocument.previousElementSibling.id);
@@ -974,6 +991,11 @@ window.onload = () => {
     // Finish project
     if (event.target.classList.contains('finish-project-button') || event.target.parentNode.classList.contains('finish-project-button')) {
       finishProject();
+    }
+
+    //Undo Changes
+    if (event.target.classList.contains('undo-button') || event.target.parentNode.classList.contains('undo-button')) {
+      undoChanges();
     }
   });
 

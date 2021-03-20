@@ -175,7 +175,8 @@ function getQuestionsData () {
 }
 
 // Save project
-function saveProject (callback) {
+function saveProject (callback, status) { //status: create, edit
+  const xhr = new XMLHttpRequest();
   const data = {
     welcome_screen: {
       opening: blockData['welcome'].opening,
@@ -184,10 +185,22 @@ function saveProject (callback) {
     },
     questions: getQuestionsData()
   };
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', `/projects/create/save?id=${project._id}`);
-  xhr.setRequestHeader('Content-type', 'application/json');
-  xhr.send(JSON.stringify(data));
+
+  if(status == "create"){
+      xhr.open('POST', `/projects/create/save?id=${project._id}`);
+      xhr.setRequestHeader('Content-type', 'application/json');
+      xhr.send(JSON.stringify(data));
+  }
+
+  else if(status == "edit"){
+    xhr.open('POST', `/projects/edit/save?id=${project._id}`);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.send(JSON.stringify(data));
+  }
+
+  else{
+    console.log("couldn't understand call: "+status); //error log to console
+  }
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.status != 200) {
@@ -231,14 +244,14 @@ function getBlockData () {
 }
 
 // Automatically call save project every second
-function autoSave () {
+function autoSave (status) { // status = [create, edit], there are for now 2 status for project
   saveProject(err => {
     if (err) return location.reload();
 
     setTimeout(() => {
-      autoSave();
+      autoSave(status);
     }, 1000);
-  });
+  }, status);
 }
 
 // Deletes the image with the given url from the server
@@ -791,7 +804,7 @@ function finishProject () {
         });
       }
     });
-  });
+  }, "create");
 }
 
 function undoChanges(){ //this function belongs to projects/edit
@@ -819,7 +832,15 @@ window.onload = () => {
   dragAndDrop(document); // Listen for drag-and-drop wrappers
   listenSliderButtons(document); // Listen slider buttons
   setTimeout(() => {
-    autoSave(); // Automatically save project
+    var location = window.location.href; // in due not to copy paste same js code, I use the same js file both projects/create and projects/edit
+
+    if(location.includes("edit")){
+      autoSave("edit");
+    }
+
+    if(location.includes("create")){
+      autoSave("create"); // Automatically save project
+    }
   }, 1000); // Wait for everything on the page to be uploaded
 
   const addBlockWrapper = document.querySelector('.add-block-wrapper');
@@ -993,7 +1014,7 @@ window.onload = () => {
       finishProject();
     }
 
-    //Undo Changes
+    // get back changes to original
     if (event.target.classList.contains('undo-button') || event.target.parentNode.classList.contains('undo-button')) {
       undoChanges();
     }

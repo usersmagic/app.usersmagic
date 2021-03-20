@@ -20,6 +20,7 @@ const indexPostController = require('../controllers/projects/index/post');
 const createSavePostController = require('../controllers/projects/create/save/post'); //use this route both for projects/create and projects/edit autosave
 const filtersIndexPostController = require('../controllers/projects/filters/index/post');
 const filtersCreateSavePostController = require('../controllers/projects/filters/create/save/post');
+const editSavePostController = require('../controllers/projects/edit/save/post');
 
 router.get(
   '/',
@@ -104,13 +105,18 @@ router.get(
   isLoggedIn,
   isAccountComplete,
   editIndexGetController
-)
-
+);
 router.get(
   '/edit/undo',
   isLoggedIn,
   isAccountComplete,
   editUndoGetController
-)
+);
+router.post(
+  '/edit/save',
+    isLoggedIn,
+    isAccountComplete,
+    editSavePostController
+);
 
 module.exports = router;

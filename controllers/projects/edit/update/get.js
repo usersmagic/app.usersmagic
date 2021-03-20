@@ -1,10 +1,8 @@
-//Undo changes in the project with the specified id on query
-//update back_up and original fields in the database
 
 const Project = require('../../../../models/project/Project');
 
 module.exports = (req, res) => {
-  Project.revertToOriginal( req.query ? req.query.id : null, err => {
+  Project.updateChanges( req.query ? req.query.id : null, err => {
     if(err){
       res.write(JSON.stringify({ error: err, success: false }));
       return res.end();

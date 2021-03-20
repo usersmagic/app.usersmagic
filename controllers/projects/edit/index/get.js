@@ -9,11 +9,6 @@ module.exports = (req, res) => {
   }, (err, project) =>{
     if(err) return res.redirect('/');
 
-    Project.backupProject(project._id,
-      (err, project) =>{
-        if(err) return console.log('failure by backup');
-      });
-
     return res.render('projects/edit/index', {
       page: 'projects/create/index',
       title: project.name,

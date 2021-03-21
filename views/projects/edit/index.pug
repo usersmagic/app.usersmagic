@@ -10,12 +10,11 @@ block main
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/edit?id=" + project._id)= project.name
     .header-credit-wrapper
-      //-when I leave out the id, it looks ugly, even though I change css file -cnblgn
-      button.general-seablue-button.undo-button#undo-button Undo Changes 
+      //-when I leave out the id, it looks ugly, even though I change css file -cnblgn 
       span.header-credit-amount #{company.credit} credits
       span.header-get-credit-button Get Credits
     .header-buttons-wrapper
-      .general-seablue-button.finish-project-button
+      .general-seablue-button.update-project-button
         span Update Test
   .all-content-inner-wrapper
     .blocks-wrapper
@@ -23,7 +22,7 @@ block main
         img.each-type-image(src="/res/images/block_icons/welcome.png" alt="usersmagic welcome block")
         span.each-type-title Welcome Screen
       .custom-blocks-wrapper.drag-and-drop-wrapper
-        each question in project.questions
+        each question in project.questions_updated
           .each-block-wrapper(id=question._id)
             img.each-type-image(src="/res/images/block_icons/" + question.type + ".png" alt="usersmagic " + question.type)
             .each-block-text-wrapper
@@ -65,19 +64,11 @@ block main
           div
         i.far.fa-clone.settings-duplicate-button(style="display: none;")
         i.far.fa-trash-alt.settings-delete-button(style="display: none;")
+      //- the content of this block is created dynamically via javascript
       .block-settings-content-wrapper
-        span.general-input-title Opening Message
-          span.general-input-required-sign *
-        input.general-input-with-border(type="text" name="opening" value=project.welcome_screen.opening placeholder="Welcome your testers")
-        span.general-input-title Task & Details
-          span.general-input-required-sign *
-        textarea.general-input-with-border-long(type="text" name="details" placeholder="This is where you give your testers a task. Guide them on what they need to do before answering the questions.")= project.welcome_screen.details
-        span.general-input-title Image
-        label.general-choose-image-input-text
-          span Add an image to explain the task. This is optional.
-          input.display-none#image-input(type="file" accept="image/*")
     .block-preview-wrapper
       .block-preview-header
         span.block-preview-header-title Preview
         span.block-preview-header-subtitle Preview automatically reloads after auto save
       .block-preview-content
+      button.general-seablue-button.undo-button#undo-button Revert changes to live version

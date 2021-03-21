@@ -7,6 +7,7 @@ const blockData = {
   }
 };
 let project; // The Project object taken from the pug file
+let showEdited = false; //shows if there is a change (in editing page)
 
 // String names for types
 const typeNames = {
@@ -167,8 +168,8 @@ function getQuestionsData () {
   const questions = [];
 
   questionsWrapper.childNodes.forEach(question => {
-    blockData[question.id]._id = question.id;
-    questions.push(blockData[question.id]);
+      blockData[question.id]._id = question.id;
+      questions.push(blockData[question.id]);
   });
 
   return questions;
@@ -193,6 +194,16 @@ function saveProject (callback, status) { //status: create, edit
   }
 
   else if(status == "edit"){
+    xhr.open('GET', `/projects/edit/checkForChanges?id=${project._id}`, false);
+    xhr.send();
+    var res = JSON.parse(xhr.responseText);
+    showEdited = res["edited"];
+    var undoButton = document.getElementById("undo-button");
+
+    if(showEdited) undoButton.style.display = "block";
+    else undoButton.style.display = "none";
+
+
     xhr.open('POST', `/projects/edit/save?id=${project._id}`);
     xhr.setRequestHeader('Content-type', 'application/json');
     xhr.send(JSON.stringify(data));
@@ -231,7 +242,8 @@ function saveProject (callback, status) { //status: create, edit
 }
 
 // Initialize the block data with the project informations
-function getBlockData () {
+function getBlockData (status) {
+  if( status == "create"){
   blockData['welcome'].opening = project.welcome_screen.opening;
   blockData['welcome'].details = project.welcome_screen.details;
   blockData['welcome'].image = project.welcome_screen.image;
@@ -239,6 +251,19 @@ function getBlockData () {
   project.questions.forEach(question => {
     blockData[question._id] = question;
   });
+  }
+  else if (status == "edit") {
+    blockData['welcome'].opening = project.welcome_screen_updated.opening;
+    blockData['welcome'].details = project.welcome_screen_updated.details;
+    blockData['welcome'].image = project.welcome_screen_updated.image;
+
+    project.questions_updated.forEach(question => {
+      blockData[question._id] = question;
+    });
+  }
+  else console.log("Unknown status");
+
+
 
   createSettingsPageContent(currentlyClickedBlock);
 }
@@ -782,7 +807,7 @@ function finishProject () {
       if (res) {
         createConfirm({
           title: 'Are you sure you want to start testing?',
-          text: 'Once you start testing, you cannot edit your questions anymore. You cannot take this action back.',
+          text: '',
           reject: 'Cancel',
           accept: 'Continue'
         }, res => {
@@ -808,39 +833,73 @@ function finishProject () {
 }
 
 function undoChanges(){ //this function belongs to projects/edit
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', `/projects/edit/undo?id=${project._id}`);
-  xhr.send();
+  createConfirm({
+    title: 'Are you sure, you want to dismiss your changes?',
+    text: 'Your changes will not be updated and will be lost',
+    reject: 'Cancel',
+    accept: 'Continue'
+  },
+  res => {
+    if(res){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', `/projects/edit/undo?id=${project._id}`);
+      xhr.send();
 
-  xhr.onreadystatechange = function(){
-    if(xhr.readyState == 4 && xhr.responseText){
-      var response = JSON.parse(xhr.responseText);
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4 && xhr.responseText){
+          var response = JSON.parse(xhr.responseText);
 
-      if (!response.success && response.error)
-        return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
-      return window.location = `/projects/edit?id=${project._id.toString()}`;
+          if (!response.success && response.error)
+          return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+          return window.location = `/projects/edit?id=${project._id.toString()}`;
+        }
+      }
     }
-  }
-
+  });
 }
+function updateProject(){
+  console.log("burada")
+  createConfirm({
+    title: 'Are you sure you want to start testing?',
+    text: '',
+    reject: 'Cancel',
+    accept: 'Continue'
+  },res =>{
+    if(res){
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/projects/edit/update?id=${project._id}`);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.responseText) {
+          const response = JSON.parse(xhr.responseText);
+
+          if (!response.success && response.error)
+            return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+          return window.location = `/projects/details?id=${project._id.toString()}`;
+        }
+      };
+    }
+  });
+}
+
 
 window.onload = () => {
   project = JSON.parse(document.getElementById('json-project-data').value); // Get project data
-  getBlockData(); // Initialize block data using project
+  var url = window.location.href; // in due not to copy paste same js code, I use the same js file both projects/create and projects/edit
+  if (url.includes("create")) getBlockData("create"); // Initialize block data using project
+  if (url.includes("edit")) getBlockData("edit");
 
   listenForContentHeader(document); // Listen for content header buttons
   dragAndDrop(document); // Listen for drag-and-drop wrappers
   listenSliderButtons(document); // Listen slider buttons
   setTimeout(() => {
-    var location = window.location.href; // in due not to copy paste same js code, I use the same js file both projects/create and projects/edit
 
-    if(location.includes("edit")){
-      autoSave("edit");
-    }
+    if(url.includes("edit")) autoSave("edit");
 
-    if(location.includes("create")){
-      autoSave("create"); // Automatically save project
-    }
+    else if(location.includes("create")) autoSave("create"); // Automatically save project
+
+    else console.log("auto save failed");
   }, 1000); // Wait for everything on the page to be uploaded
 
   const addBlockWrapper = document.querySelector('.add-block-wrapper');
@@ -1017,6 +1076,10 @@ window.onload = () => {
     // get back changes to original
     if (event.target.classList.contains('undo-button') || event.target.parentNode.classList.contains('undo-button')) {
       undoChanges();
+    }
+
+    if(event.target.classList.contains('update-project-button') || event.target.parentNode.classList.contains('update-project-button')){
+      updateProject();
     }
   });
 

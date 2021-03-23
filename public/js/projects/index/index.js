@@ -42,7 +42,6 @@ function deleteImage (url) {
 
 // Uploads the file as image and sets the image input value accordingly, deletes the old image if there is any
 function uploadImage (file) {
-  alert("buraya kadar geldim");
   document.querySelector('.general-choose-image-input-text').childNodes[0].innerHTML = 'Uploading...';
   document.querySelector('.general-choose-image-input-text').childNodes[1].type = 'text';
   document.querySelector('.general-choose-image-input-text').style.cursor = 'progress';
@@ -135,16 +134,11 @@ window.onload = () => {
   });
 
   projectImageInput.onchange = () => {
-      uploadImage(projectImageInput.files[0]);
-    
-   
-   
+  uploadImage(projectImageInput.files[0]);
   }
 
   projectCreateForm.onsubmit = event => {
     event.preventDefault();
-  
-
     if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length )
       return projectError.childNodes[0].innerHTML = "Please enter all the required fields";
 

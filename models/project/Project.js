@@ -114,7 +114,7 @@ ProjectSchema.statics.findProjectById = function (id, callback) {
 ProjectSchema.statics.createProject = function (data, callback) {
   // Creates a new document under the model Project, returns the created project or an error if there is
  
-    if ( !data|| !data.creator || !validator.isMongoId(data.creator.toString()))
+    if (!data|| !data.creator || !validator.isMongoId(data.creator.toString()))
       return callback('bad_request');
 
   const Project = this;
@@ -141,8 +141,6 @@ ProjectSchema.statics.createProject = function (data, callback) {
       if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length )
         return callback('bad_request');
        
-        
-  
       const newProject = new Project(newProjectData);
 
       newProject.save((err, project) => {

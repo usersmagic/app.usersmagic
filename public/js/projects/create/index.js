@@ -850,7 +850,7 @@ function undoChanges(){ //this function belongs to projects/edit
           const response = JSON.parse(xhr.responseText);
 
           if (!response.success && response.error)
-          return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+           return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
           return window.location = `/projects/edit?id=${project._id.toString()}`;
         }
       }

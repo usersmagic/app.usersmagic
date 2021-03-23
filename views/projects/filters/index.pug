@@ -1,6 +1,6 @@
 extends ../../partials/header
 block main
-  //- .general-beta-text beta version 1.0.0
+  input.display-none#company-json(type="text" value=JSON.stringify(company))
   .create-target-outer-wrapper
     form.create-target-wrapper(action=`/projects/filters?project_id=${project._id}` method='POST')
       span.create-target-title Create a new target
@@ -10,6 +10,17 @@ block main
       span.general-input-title Target Description
         span.general-input-required-sign *
       input.general-input-with-border#target-description-input(type="text" name="description" autocomplete="off" placeholder="Explain your target group. e.g Female college students that are freshmen and interested in sports")
+      span.general-input-title Tester Country
+        span.general-input-required-sign *
+      span.general-input-info-text Choose the country that you will get your testers from. You will be charged by the country you choose.
+      .general-drop-down-list-outer-wrapper(style="z-index: 5;")
+        .general-drop-down-list-wrapper(style="z-index: 5;")
+          input.general-drop-down-list-input(type="text" autocomplete="none" placeholder="Write the country your test will be available")
+          input.general-drop-down-list-input-not-visible#target-country-input(type="text" name="country")
+          input.general-drop-down-list-items-json(type="text" value=JSON.stringify(countries.map(country => { return {name: country.name, id: country.alpha2_code} })))
+          .general-drop-down-choices-wrapper
+            each country in countries
+              span.general-drop-down-list-each-item(id=country.alpha2_code) #{country.name}
       button.send-new-target-button.general-seablue-button
         span Create
       .general-input-error-line#target-error
@@ -22,6 +33,9 @@ block main
     a.header-each-step-text(href="/projects/details?id=" + project._id)= project.name
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/filters?id=" + project._id) Filters
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
   .all-content-inner-wrapper
     .create-target-line
       .open-create-target-wrapper-button.general-seablue-button
@@ -41,20 +55,22 @@ block main
           else
             .each-target-wrapper
               .each-target-inner-wrapper
+                input.display-none(type="text" value=JSON.stringify(target))
                 span.each-target-name= target.name
                 span.each-target-created_at created at: #{target.created_at}
                 span.each-target-description= target.description
-                span.each-target-waiting-tester-number Waiting for answers from #{target.submition_limit} testers
+                span.each-target-waiting-tester-number(style="margin-bottom: -20px") Waiting for answers from #{target.submition_limit} testers
+                span.each-target-waiting-tester-number Calculated credit per tester: #{target.credit_per_user}
                 .each-target-buttons-wrapper
                   .target-tester-number-wrapper
-                    span.target-tester-number-text How many testers do you need?: 
-                    input.target-tester-number-input(type="number" placeholder="max 10")
+                    span.target-tester-number-text How many testers do you need?
+                    input.target-tester-number-input(type="number" placeholder="____")
                     span.approve-tester-number-button(id=target._id.toString()) Start
                   if target.submition_limit == 0
                     span.target-start-button Find Testers
                   else
                     span.target-stop-button(id=target._id.toString()) Stop Test
-                span.target-report-info-text(href=`/projects/report?id=${target.project_id}`) You can see the results on the report page
+                a.target-report-info-text(href=`/projects/report?id=${target.project_id}`) You can see the results on the report page
     else
       .no-target-wrapper
         span.no-target-text You didn't create any target group yet. Create one to start testing!

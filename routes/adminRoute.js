@@ -8,6 +8,7 @@ const authGetController = require('../controllers/admin/auth/get');
 const companiesIndexGetController = require('../controllers/admin/companies/index/get');
 const companiesDetailsGetController = require('../controllers/admin/companies/details/get');
 const countriesIndexGetController = require('../controllers/admin/countries/index/get');
+const countriesDetailsGetController = require('../controllers/admin/countries/details/get');
 const targetsIndexGetController = require('../controllers/admin/targets/index/get');
 const targetsDetailsGetController = require('../controllers/admin/targets/details/get');
 
@@ -38,6 +39,11 @@ router.get(
   '/countries',
     isAdmin,
     countriesIndexGetController
+);
+router.get(
+  '/countries/details',
+    isAdmin,
+    countriesDetailsGetController
 );
 router.get(
   '/targets',

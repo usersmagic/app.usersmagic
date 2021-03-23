@@ -3,7 +3,6 @@
 // If the wrapper is confirmed returns callback true else false
 
 function createConfirm (data, callback) {
-  console.log("here");
   const id = Math.random().toString(36).substr(2, 12);
   const confirmOuterWrapper = document.createElement('div');
   confirmOuterWrapper.classList.add('general-confirm-outer-wrapper');

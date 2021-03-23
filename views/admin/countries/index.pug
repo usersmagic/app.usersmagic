@@ -9,7 +9,7 @@ block main
   .all-content-inner-wrapper
     .countries-wrapper
       each country in countries 
-        .each-country
+        a.each-country(href=`/admin/countries/details?id=${country._id}`)
           span.country-name= country.name
           span.country-code (#{country.alpha2_code})
   form.new-form-wrapper(action="/admin/countries" method="POST")

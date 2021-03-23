@@ -13,7 +13,6 @@ module.exports = (req, res) => {
 
     const data = req.body;
     data.project_id = project._id.toString();
-    data.country = project.country;
 
     Target.createTarget(data, (err, target) => {
       if (err) return res.redirect('/projects');

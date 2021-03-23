@@ -13,10 +13,11 @@ module.exports = (company, callback) => {
       phone_number: company.phone_number,
       account_holder_name: company.account_holder_name,
       timezone: company.timezone,
+      credit: company.credit || 0,
       complete: company.company_name && company.company_name.length && company.country && company.country.length
     });
   } else {
-    Country.getCountryWithAlphe2Code(company.country, (err, country) => {
+    Country.getCountryWithAlpha2Code(company.country, (err, country) => {
       if (err || !country) return callback(err || 'bad_request');
 
       return callback(null, {
@@ -29,6 +30,7 @@ module.exports = (company, callback) => {
         phone_number: company.phone_number,
         account_holder_name: company.account_holder_name,
         timezone: company.timezone,
+        credit: company.credit || 0,
         complete: company.company_name && company.company_name.length && company.country && company.country.length
       });
     });

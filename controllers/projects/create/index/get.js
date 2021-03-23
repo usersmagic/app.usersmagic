@@ -17,7 +17,7 @@ module.exports = (req, res) => {
       includes: {
         external: {
           css: ['page', 'general', 'header', 'confirm', 'contentHeader', 'logo', 'inputs', 'buttons', 'fontawesome'],
-          js: ['page', 'duplicateElement', 'confirm', 'dragAndDrop', 'buttonListeners']
+          js: ['page', 'duplicateElement', 'confirm', 'dragAndDrop', 'buttonListeners', 'headerListeners']
         }
       },
       company: req.session.company,

@@ -20,7 +20,7 @@ module.exports = (req, res) => {
         includes: {
           external: {
             css: ['page', 'general', 'header', 'confirm', 'contentHeader', 'logo', 'buttons', 'inputs', 'fontawesome'],
-            js: ['page', 'inputListeners', 'confirm']
+            js: ['page', 'inputListeners', 'confirm', 'headerListeners']
           }
         },
         projects,

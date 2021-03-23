@@ -75,8 +75,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
   const Submition = this;
   const search_query = [
     {campaign_id: data.id.toString()},
-    {status: 'approved'},
-    {type: ((data.type && data.type == 'url') ? 'url' : 'target')}
+    {status: 'approved'}
   ];
 
   if (data.target_id)
@@ -128,18 +127,24 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
       for (let i = 0; i < submitions.length; i++) {
         const submition = submitions[i];
 
-        for (let j = 0; j < Object.values(submition.answers).length; j++) {
-          let answer = Object.values(submition.answers)[j];
+
+        //if the questions are edited, dont return them
+        const fields = compareReturnValidAnswers(questions, Object.entries(submition.answers));
+        validAnswers = fields;
+
+
+        for (let j = 0; j < validAnswers.length; j++) {
+          let answer = validAnswers[j];
 
           if (answer.toLowerCase() == 'hayır' || answer.toLowerCase() == 'evet')
             answer = answer.toLowerCase() == 'hayır' ? 'no' : 'yes';
 
-          if (questions[j].type == 'yes_no' && (answer == 'yes' || answer == 'no')) {
-            questions[j].data[`${answer}_number`]++;
+          if (questions[j].type == 'yes_no' && (answer.toLowerCase() == 'yes' || answer.toLowerCase() == 'no')) {
+            questions[j].data[`${answer.toLowerCase()}_number`]++;
           } else if (questions[j].type == 'multiple_choice') {
             questions[j].answers[answer]++;
           } else if (questions[j].type == 'opinion_scale') {
-            questions[j].answers[answer]++; 
+            questions[j].answers[answer]++;
           } else if (questions[j].type == 'open_answer') {
             questions[j].answers.push(answer);
           }
@@ -178,7 +183,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
           }
 
           mean = Math.round(value_total / total * 10) / 10;
-          
+
           for (let j = question.range.min; j <= question.range.max && median_distance < total/2; j++) {
             median_distance += question.answers[j];
             if (median_distance > total/2)
@@ -213,8 +218,7 @@ SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback
   const Submition = this;
   const search_query = [
     {campaign_id: data.id.toString()},
-    {status: 'approved'},
-    {type: ((data.type && data.type == 'url') ? 'url' : 'target')}
+    {status: 'approved'}
   ];
 
   if (data.target_id)
@@ -229,6 +233,21 @@ SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback
       return callback(null, submitions.length);
     });
   });
-}
+};
 
 module.exports = mongoose.model('Submition', SubmitionSchema);
+
+//returns only the true/neccessary fields
+function compareReturnValidAnswers(questions, answers){
+  let questions_id_arr = []
+  for(let i = 0; i < questions.length; i++){
+    questions_id_arr.push(questions[i]._id)
+  }
+
+  let valid_answers = []
+  for(const [key,value] of answers){
+    if(questions_id_arr.includes(key)) valid_answers.push(value);
+  }
+
+  return valid_answers;
+}

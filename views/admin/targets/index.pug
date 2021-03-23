@@ -7,6 +7,5 @@ block main
   .all-content-inner-wrapper
     .targets-wrapper
       each target in targets 
-        .each-target
-          span.target-name= target.name
-          span.target-code (#{country.alpha2_code})
+        a.each-target(href=`/admin/targets/details?id=${target._id.toString()}`)
+          span.target-info= target.name

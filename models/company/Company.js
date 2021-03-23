@@ -22,7 +22,8 @@ const CompanySchema = new Schema({
     // The password, saved hashed
     type: String,
     required: true,
-    minlength: 6
+    minlength: 6,
+    maxlength: 1000
   },
   country: {
     // Alpha 2 country code of the company
@@ -56,6 +57,11 @@ const CompanySchema = new Schema({
     // Timezone of the account
     type: String,
     default: null
+  },
+  credit: {
+    // Credit of the account
+    type: Number,
+    default: 0
   }
 });
 
@@ -117,7 +123,7 @@ CompanySchema.statics.updateCompany = function (id, data, callback) {
   const Company = this;
 
   if (data.country && data.country.length) {
-    Country.getCountryWithAlphe2Code(data.country, (err, country) => {
+    Country.getCountryWithAlpha2Code(data.country, (err, country) => {
       if (err || !country) return callback('bad_request');
 
       Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
@@ -254,6 +260,24 @@ CompanySchema.statics.getAllCompanies = function (data, callback) {
     .skip(data.page * data.limit)
     .then(companies => callback(null, { companies, data}))
     .catch(err => callback(err));
-}
+};
+
+CompanySchema.statics.updateCredit = function (id, data, callback) {
+  // Update the credit of the Company with the given id, return an error if it exists
+  
+  if (!id || !validator.isMongoId(id.toString()) || !data || typeof data != 'object' || !Number.isInteger(data.credit))
+    return callback('bad_request');
+
+  const Company = this;
+
+  Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
+    credit: data.credit
+  }}, (err, company) => {
+    if (err) return callback('database_error');
+    if (!company) return callback('document_not_found');
+
+    return callback(null);
+  });
+};
 
 module.exports = mongoose.model('Company', CompanySchema);

@@ -1,0 +1,19 @@
+extends ../../partials/admin
+block main
+  .all-content-header
+    .title-wrapper
+      span.title= country.name
+      span.subtitle Bu sayfadan yarattığınız ülkeleri görebilir ve yeni ülkeler yaratabilirsiniz.
+  .all-content-inner-wrapper
+    form.form-inner-wrapper(action="/admin/countries/details" method="POST")
+      span.form-title Ülkeyi Düzenleyin
+      input.display-none(type="text" name="id" value=country._id.toString())
+      span.form-subtitle Ülke İsmi: *
+      span.form-info Ülkenin ingilizce ismi, lütfen büyük küçük harf dikkat ederek girin.
+      input.form-input(type="text" placeholder="ör: Turkey" value=country.name name="name" required)
+      span.form-subtitle Ülke ISO Kodu: *
+      span.form-info Lütfen ülkenin iki harfli alpha-2 kodunu KÜÇÜK HARF olarak girin. ISO kodlarına bu linkten bakabilirsiniz. https://www.iban.com/country-codes
+      input.form-input(type="text" placeholder="ör: tr" value=country.alpha2_code name="alpha2_code" required)
+      .buttons-wrapper
+        .back-button Geri
+        button.form-button Oluştur

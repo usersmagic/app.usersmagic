@@ -13,6 +13,9 @@ block main
     a.header-each-step-text(href="/projects/filters?id=" + project._id) Filters
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/filters/create?id=" + target._id)= target.name
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
     .header-buttons-wrapper
       .general-seablue-button.finish-target-button
         span Start Testing

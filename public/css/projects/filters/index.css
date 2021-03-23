@@ -171,6 +171,10 @@
   letter-spacing: 1px;
   margin-right: 10px;
   align-self: center;
+  overflow: initial;
+  text-overflow: initial;
+  word-wrap: initial;
+  white-space: initial;
 }
 .target-tester-number-input {
   color: rgb(78, 75, 102);
@@ -196,7 +200,7 @@
 .target-report-info-text {
   color: rgb(196, 196, 196);
   font-size: 12px;
-  width: 100%;
+  align-self: center;
   text-align: center;
   margin-top: 15px;
   text-decoration: none;

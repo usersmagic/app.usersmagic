@@ -7,10 +7,17 @@ block main
     a.header-each-step-text(href="/projects") Projects
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/details?id=" + project._id)= project.name
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
   .all-content-inner-wrapper
     .left-wrapper
       span.left-title Your test is live 👏
       span.left-subtitle Share your test link with your own testers, or filter over 100,000 testers to find the exact target segment you want to reach!
+      span.left-link-title Your Private Test Link:
+      span.left-link#project-custom-url https://usersmagic.com/test/custom?id=#{project._id}
+      a(href=`/projects/edit?id=${project._id}`)
+          span.each-button-title Please click here, if you want to edit questions
     .right-wrapper
       a.each-button(href=`/projects/filters?id=${project._id}`)
         .each-button-icon-wrapper
@@ -18,15 +25,16 @@ block main
         .each-button-text-wrapper
           span.each-button-title Find testers
           span.each-button-subtitle Get results from your target customers
-      //- .each-button.copy-url-button
-      //-   .each-button-icon-wrapper
-      //-     i.fas.fa-clone.green-icon
-      //-   .each-button-text-wrapper
-      //-     span.each-button-title Copy your link
-      //-     span.each-button-subtitle Share your test with your testers
+      .each-button.copy-url-button
+        .each-button-icon-wrapper
+          i.fas.fa-clone.green-icon
+        .each-button-text-wrapper
+          span.each-button-title Copy your link
+          span.each-button-subtitle Share your test with your testers
       a.each-button(href=`/projects/report?id=${project._id}`)
         .each-button-icon-wrapper
           i.fas.fa-chart-pie.red-icon
         .each-button-text-wrapper
           span.each-button-title See your report
           span.each-button-subtitle See the report of your results
+          

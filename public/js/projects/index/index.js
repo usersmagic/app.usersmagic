@@ -89,6 +89,7 @@ function checkIsAccountComplete () {
 
 window.onload = () => {
   checkIsAccountComplete();
+  listenForContentHeader(document); // Listen for content header buttons
   listenDropDownListInputs(document); // Listen for drop down items
   const createProjectOuterWrapper = document.querySelector('.create-project-outer-wrapper');
   const noProjectWrapper = document.querySelector('.no-project-wrapper');

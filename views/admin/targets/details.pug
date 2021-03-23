@@ -1,0 +1,40 @@
+extends ../../partials/admin
+block main
+  .all-content-header
+    .title-wrapper
+      span.title= target.name
+      span.subtitle Bu sayfadan yaratılan projeleri görebilir ve onlara onay verebilirsiniz. 
+  .all-content-inner-wrapper
+    .targets-wrapper
+      .each-target
+        span.content-title Filter Detayları
+        span.content-info Filtre Grubu İsmi: #{target.name}
+        span.content-info Filtre Açıklaması: #{target.description}
+        span.content-info Filtre Boyutu: #{target.submition_limit}
+        span.content-info Filtre Ülkesi: #{target.country}
+        span.content-title Filtre Soruları:
+        each question, i in project.questions
+          span.content-subtitle Soru #{i+1}
+          span.content-info Soru Metni: #{question.text || '-'}
+          span.content-info Soru Tipi: #{question.type}
+          span.content-info Soru Detayları: #{question.details || '-'}
+          span.content-info Soru Resmi: #{question.image || '-'}
+          span.content-info Soru Zorunlu Mu? #{question.required ? 'Evet' : 'Hayır'}
+          if question.type == 'multiple_choice'
+            span.content-info Soru Alt Tipi: #{question.subtype}
+            each choice, k in question.choices
+              span.content-info Seçenek #{k+1}: #{choice}
+          else if question.type == 'opinion_scale'
+            span.content-info Minimum Değer: #{question.range.min || '-'}
+            span.content-info Maximum Değer: #{question.range.max || '-'}
+            span.content-info Sol Açıklama: #{question.labels.left || '-'}
+            span.content-info Orta Açıklama: #{question.labels.middle || '-'}
+            span.content-info Sağ Açıklama: #{question.labels.right || '-'}
+        span.content-title Filtre Detayları:
+        each key, i in Object.keys(filters)
+          if key == 'age'
+            span.content-info Yaş: #{filters[key].min} - #{filters[key].max}
+          else if key == 'gender'
+            span.content-info Cinsiyet: #{Array.isArray(filters[key]) ? filters[key].join(' veya ') : filters[key]}
+          else
+            span.content-info #{questions.find(question => question._id.toString() == key).name}: #{Array.isArray(filters[key]) ? filters[key].join(' veya ') : filters[key]}

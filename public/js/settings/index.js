@@ -203,6 +203,7 @@ function saveCompanyProfileImage (url, callback) {
 }
 
 window.onload = () => {
+  listenForContentHeader(document); // Listen for content header buttons
   listenDropDownListInputs(document); // Listen for drop down items
   companyId = JSON.parse(document.getElementById('company-data-json').value)._id.toString();
 

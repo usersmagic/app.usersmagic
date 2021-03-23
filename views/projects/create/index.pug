@@ -8,6 +8,9 @@ block main
     a.header-each-step-text(href="/projects") Projects
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/create?id=" + project._id)= project.name
+    .header-credit-wrapper
+      span.header-credit-amount #{company.credit} credits
+      span.header-get-credit-button Get Credits
     .header-buttons-wrapper
       .general-seablue-button.finish-project-button
         span Start Testing

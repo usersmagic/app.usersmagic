@@ -7,6 +7,9 @@ const filterObjectToArray = require('./functions/filterObjectToArray');
 const filtersArrayToSearchQuery = require('./functions/filtersArrayToSearchQuery');
 const getTarget = require('./functions/getTarget');
 
+const Company = require('../company/Company');
+const Country = require('../country/Country');
+const Project = require('../project/Project');
 const User = require('../user/User');
 
 const Schema = mongoose.Schema;
@@ -82,25 +85,29 @@ TargetSchema.statics.createTarget = function (data, callback) {
 
   const Target = this;
 
-  const newTargetData = {
-    project_id: data.project_id.toString(),
-    name: data.name,
-    description: data.description,
-    country: data.country
-  };
+  Country.getCountryWithAlpha2Code(data.country, (err, country) => {
+    if (err) return callback(err);
 
-  const newTarget = new Target(newTargetData);
-
-  newTarget.save((err, target) => {
-    if (err) return callback('bad_request');
-
-    getTarget(target, {}, (err, target) => {
-      if (err) return callback(err);
-
-      return callback(null, target);
+    const newTargetData = {
+      project_id: data.project_id.toString(),
+      name: data.name,
+      description: data.description,
+      country: country.alpha2_code
+    };
+  
+    const newTarget = new Target(newTargetData);
+  
+    newTarget.save((err, target) => {
+      if (err) return callback('bad_request');
+  
+      getTarget(target, {}, (err, target) => {
+        if (err) return callback(err);
+  
+        return callback(null, target);
+      });
     });
   });
-}
+};
 
 TargetSchema.statics.findByProjectId = function (project_id, options, callback) {
   // Finds and returns the Target documents with the given project_id, sorted by the created_at field decreasing order
@@ -127,7 +134,7 @@ TargetSchema.statics.findByProjectId = function (project_id, options, callback) 
     .catch(err => {
       return callback('bad_request');
     });
-}
+};
 
 TargetSchema.statics.findOneByFields = function (fields, options, callback) {
   // Returns a target with given fields or an error if it exists.
@@ -169,7 +176,7 @@ TargetSchema.statics.findOneByFields = function (fields, options, callback) {
       });
     });
   });
-}
+};
 
 TargetSchema.statics.findByFields = function (fields, options, callback) {
   // Returns a target with given fields or an error if it exists.
@@ -218,7 +225,7 @@ TargetSchema.statics.findByFields = function (fields, options, callback) {
       (err, targets) => callback(err, targets)
     );
   });
-}
+};
 
 TargetSchema.statics.saveFilters = function (id, data, callback) {
   // Save the given filters on the Target with the given id, returns an error if it exists
@@ -239,7 +246,7 @@ TargetSchema.statics.saveFilters = function (id, data, callback) {
       return callback(null);
     });
   });
-}
+};
 
 TargetSchema.statics.finishTarget = function (id, callback) {
   // Find and check the target with the given id, if there is no error change its status to finished
@@ -256,27 +263,57 @@ TargetSchema.statics.finishTarget = function (id, callback) {
       return callback('bad_request');
 
     Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-      status: 'finished'
+      status: 'waiting'
     }}, err => {
       if (err) return callback(err);
   
       return callback(null);
     });
   });
-}
+};
 
 TargetSchema.statics.changeSubmitionLimit = function (id, data, callback) {
   // Changes the submition limit of the target with the given id using the limit key in data variable, returns an error if it exists
+  // The given submition limit must be able to paid by given Company's credits. 
   
-  if (!id || !validator.isMongoId(id) || !data || !Number.isInteger(data.limit) || data.limit > 10)
+  if (!id || !validator.isMongoId(id.toString()) || !data || !Number.isInteger(data.limit))
     return callback('bad_request');
 
   const Target = this;
 
-  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
-    submition_limit: data.limit
-  }}, err => callback(err));
-}
+  Target.findById(mongoose.Types.ObjectId(id.toString()), (err, target) => {
+    if (err || !target) return callback('document_not_found');
+
+    Project.findProjectById(target.project_id, (err, project) => {
+      if (err) return callback(err);
+
+      Company.findCompanyById(project.creator, (err, company) => {
+        if (err) return callback(err);
+
+        Country.getCountryWithAlpha2Code(target.country, (err, country) => {
+          if (err) return callback(err);
+
+          let credit = company.credit;
+
+          if (credit < parseInt(country.credit_per_user) * data.limit)
+            return callback('request_is_not_payed');
+
+          credit -= parseInt(country.credit_per_user) * data.limit;
+          
+          Company.updateCredit(project.creator, {
+            credit
+          }, err => {
+            if (err) return callback(err);
+
+            Target.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+              submition_limit: data.limit
+            }}, err => callback(err));    
+          }); 
+        });
+      });
+    });
+  });
+};
 
 TargetSchema.statics.updateTargetStatus = function (id, data, callback) {
   // Gets an id and updates status of the document with the given id. Returns the target or an error if it exists
@@ -301,7 +338,7 @@ TargetSchema.statics.updateTargetStatus = function (id, data, callback) {
       return callback(null, target);
     });
   });
-}
+};
 
 TargetSchema.statics.updateTargetsUsersList = function (callback) {
   // Finds all the targets that's status is approved, updates their users_list
@@ -338,6 +375,6 @@ TargetSchema.statics.updateTargetsUsersList = function (callback) {
       }
     );
   });
-}
+};
 
 module.exports = mongoose.model('Target', TargetSchema);

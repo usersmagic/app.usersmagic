@@ -194,11 +194,11 @@ function saveProject (callback, status) { //status: create, edit
   }
 
   else if(status == "edit"){
-    xhr.open('GET', `/projects/edit/checkForChanges?id=${project._id}`, false);
+    xhr.open('GET', `/projects/edit/check_for_changes?id=${project._id}`, false);
     xhr.send();
-    var res = JSON.parse(xhr.responseText);
+    const res = JSON.parse(xhr.responseText);
     showEdited = res["edited"];
-    var undoButton = document.getElementById("undo-button");
+    const undoButton = document.getElementById("undo-button");
 
     if(showEdited) undoButton.style.display = "block";
     else undoButton.style.display = "none";
@@ -841,13 +841,13 @@ function undoChanges(){ //this function belongs to projects/edit
   },
   res => {
     if(res){
-      var xhr = new XMLHttpRequest();
+      const xhr = new XMLHttpRequest();
       xhr.open('GET', `/projects/edit/undo?id=${project._id}`);
       xhr.send();
 
       xhr.onreadystatechange = function(){
         if(xhr.readyState == 4 && xhr.responseText){
-          var response = JSON.parse(xhr.responseText);
+          const response = JSON.parse(xhr.responseText);
 
           if (!response.success && response.error)
           return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
@@ -886,7 +886,7 @@ function updateProject(){
 
 window.onload = () => {
   project = JSON.parse(document.getElementById('json-project-data').value); // Get project data
-  var url = window.location.href; // in due not to copy paste same js code, I use the same js file both projects/create and projects/edit
+  const url = window.location.href; // in due not to copy paste same js code, I use the same js file both projects/create and projects/edit
   if (url.includes("create")) getBlockData("create"); // Initialize block data using project
   if (url.includes("edit")) getBlockData("edit");
 

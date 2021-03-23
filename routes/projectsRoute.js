@@ -15,7 +15,7 @@ const filtersSubmitPostController = require('../controllers/projects/filters/sub
 const reportIndexGetController = require('../controllers/projects/report/index/get');
 const editIndexGetController = require('../controllers/projects/edit/index/get');
 const editUndoGetController = require('../controllers/projects/edit/undo/get');
-const editCheckForChangesGetController = require('../controllers/projects/edit/checkForChanges/get');
+const editCheckForChangesGetController = require('../controllers/projects/edit/check_for_changes/get');
 const editUpdateGetController = require('../controllers/projects/edit/update/get');
 
 const indexPostController = require('../controllers/projects/index/post');
@@ -121,7 +121,7 @@ router.post(
     editSavePostController
 );
 router.get(
-  '/edit/checkForChanges',
+  '/edit/check_for_changes',
   isLoggedIn,
   isAccountComplete,
   editCheckForChangesGetController

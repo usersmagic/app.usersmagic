@@ -1,7 +1,7 @@
 const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
-var isEqual = require('lodash.isequal');
+const _ = require('lodash');
 
 const getProject = require('./functions/getProject');
 const validateQuestions = require('./functions/validateQuestions');
@@ -430,9 +430,9 @@ ProjectSchema.statics.checkForChanges = function(id, callback){
       if (project.status != 'waiting') return callback('bad_request');
 
       let data;
-      
+
       //I wrote this code like that to be make it more readable
-      if(isEqual(project.questions,project.questions_updated) && isEqual(project.welcome_screen,project.welcome_screen_updated) && project.description == project.description_updated && project.image == project.image_updated){
+      if(_.isEqual(project.questions,project.questions_updated) && _.isEqual(project.welcome_screen,project.welcome_screen_updated) && project.description == project.description_updated && project.image == project.image_updated){
         data = {edited: false};
       }
       else {

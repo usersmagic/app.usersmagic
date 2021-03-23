@@ -129,7 +129,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
 
 
         //if the questions are edited, dont return them
-        var fields = compareReturnValidAnswers(questions, Object.entries(submition.answers));
+        const fields = compareReturnValidAnswers(questions, Object.entries(submition.answers));
         validAnswers = fields;
 
 
@@ -237,9 +237,10 @@ SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback
 
 module.exports = mongoose.model('Submition', SubmitionSchema);
 
-function compareReturnValidAnswers(questions, answers){ //returns only the true/neccessary fields
+//returns only the true/neccessary fields
+function compareReturnValidAnswers(questions, answers){
   let questions_id_arr = []
-  for(var i = 0; i < questions.length; i++){
+  for(let i = 0; i < questions.length; i++){
     questions_id_arr.push(questions[i]._id)
   }
 

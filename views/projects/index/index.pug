@@ -11,18 +11,7 @@ block main
       span.general-input-title Project Description
         span.general-input-required-sign *
       input.general-input-with-border#project-description-input(type="text" name="description" autocomplete="none" placeholder="Enter a brief description to explain your project to your testers")
-      span.general-input-title Country
-        span.general-input-required-sign *
-      .general-drop-down-list-outer-wrapper(style="z-index: 5;")
-        .general-drop-down-list-wrapper(style="z-index: 5;")
-          input.general-drop-down-list-input(type="text" autocomplete="none" placeholder="Write the country your test will be available")
-          input.general-drop-down-list-input-not-visible#project-country-input(type="text" name="country")
-          input.general-drop-down-list-items-json(type="text" value=JSON.stringify(countries.map(country => { return {name: country.name, id: country.alpha2_code} })))
-          .general-drop-down-choices-wrapper
-            each country in countries
-              span.general-drop-down-list-each-item(id=country.alpha2_code)= country.name
       span.general-input-title Project Image
-        span.general-input-required-sign *
       label.general-choose-image-input-text
         span Choose an image or a logo for your project
         input.display-none#project-image-input(type="file" accept="image/*")

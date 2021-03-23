@@ -14,6 +14,7 @@ module.exports = (req, res, next) => {
     if (req.file && req.file.filename) { // If already a file is uploaded on the server
       fs.unlink('./public/res/uploads/' + req.file.file_name, () => {	 // Delete the file, as it is not authenticated
         req.session.redirect = req.originalUrl; // Save redirection url
+          
         return res.status(401).redirect('/auth/login');
       });
     } else {

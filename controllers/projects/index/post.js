@@ -3,8 +3,8 @@
 const Project = require('../../../models/project/Project');
 
 module.exports = (req, res) => {
-  console.log(req.body);
   const data = req.body || {};
+
   data.creator = req.session.company._id;
   data.type = 'survey';
 

@@ -38,7 +38,7 @@ const ProjectSchema = new Schema({
   image: {
     // Image of the project
     type: String,
-    required: true,
+    required: false,
     maxlength: 1000
   },
   description: {
@@ -82,9 +82,9 @@ ProjectSchema.statics.findProjectById = function (id, callback) {
 
 ProjectSchema.statics.createProject = function (data, callback) {
   // Creates a new document under the model Project, returns the created project or an error if there is
-
-  if (!data || !data.creator || !validator.isMongoId(data.creator.toString()))
-    return callback('bad_request');
+ 
+    if ( !data|| !data.creator || !validator.isMongoId(data.creator.toString()))
+      return callback('bad_request');
 
   const Project = this;
   const maxProjectLimit = 100; // The maximum project limit allowed per company
@@ -98,17 +98,19 @@ ProjectSchema.statics.createProject = function (data, callback) {
     if (projects.length >= maxProjectLimit)
       return callback('too_many_documents');
 
-      const newProjectData = {
-        creator: data.creator,
-        type: data.type || null,
+    const newProjectData = {
+      creator: data.creator,
+      type: data.type || null,
         name: data.name,
         description: data.description,
         status: 'saved',
         image: data.image || null
       };
   
-      if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length || !data.image || !data.image.length)
+      if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length )
         return callback('bad_request');
+       
+        
   
       const newProject = new Project(newProjectData);
   
@@ -265,7 +267,7 @@ ProjectSchema.statics.finishProject = function (id, callback) {
     if (err || !project)
       return callback('document_not_found');
 
-    if (!project.name.length || !project.description.length || !project.image || !project.welcome_screen.opening.length || !project.welcome_screen.details.length)
+    if (!project.name.length || !project.description.length || !project.welcome_screen.opening.length || !project.welcome_screen.details.length)
       return callback('document_validation');
 
     validateQuestions(project.questions, {final: true}, (err, questions) => {

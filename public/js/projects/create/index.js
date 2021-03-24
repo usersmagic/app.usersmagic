@@ -118,8 +118,8 @@ function createPreviewPageContent () {
   } else if (block.type == 'opinion_scale' && block.range.min && block.range.max) {
     const opinionScaleWrapper = document.createElement('div');
     opinionScaleWrapper.classList.add('block-preview-opinion-scale-wrapper');
-    for (let i = Math.max(1, Math.min(parseInt(block.range.min), parseInt(block.range.max))); i <= Math.min(10, Math.max(parseInt(block.range.min), parseInt(block.range.max))); i++) {
-      if (i != Math.max(1, Math.min(parseInt(block.range.min), parseInt(block.range.max)))) {
+    for (let i = Math.max(0, Math.min(parseInt(block.range.min), parseInt(block.range.max))); i <= Math.min(10, Math.max(parseInt(block.range.min), parseInt(block.range.max))); i++) {
+      if (i != Math.max(0, Math.min(parseInt(block.range.min), parseInt(block.range.max)))) {
         const eachEmptyScale = document.createElement('div');
         eachEmptyScale.classList.add('block-preview-empty-scale');
         opinionScaleWrapper.appendChild(eachEmptyScale);
@@ -632,7 +632,7 @@ function createSettingsPageContent (id) {
         {name: 'rangeMin', value: blockData[id].range.min, placeholder: 'Min'},
         {name: 'rangeMax', value: blockData[id].range.max, placeholder: 'Max'}
       ], 'number');
-      createSettingsInputInfoText('Your range must be in between 1 and 10, inclusive');
+      createSettingsInputInfoText('Your range must be in between 0 and 10, inclusive');
       createSettingsInputTitle('Label', false);
       createSettingsOneLineInputs([
         {name: 'labelLeft', value: blockData[id].labels.left, placeholder: 'Left'},
@@ -719,7 +719,7 @@ function checkDataBeforeFinish (callback) {
   } else {
     const questions = getQuestionsData();
     const maxQuestionTextLength = 1000, maxQuestionLongTextLength = 5000, maxQuestionAnswerLength = 5000;
-    const rangeMinValue = 1, rangeMaxValue = 10;
+    const rangeMinValue = 0, rangeMaxValue = 10;
 
     for (let i = 0; i < questions.length; i++) {
       const question = questions[i];
@@ -850,7 +850,7 @@ function undoChanges(){ //this function belongs to projects/edit
           const response = JSON.parse(xhr.responseText);
 
           if (!response.success && response.error)
-          return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+           return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
           return window.location = `/projects/edit?id=${project._id.toString()}`;
         }
       }

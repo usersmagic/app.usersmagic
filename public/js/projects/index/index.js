@@ -45,7 +45,6 @@ function uploadImage (file) {
   document.querySelector('.general-choose-image-input-text').childNodes[0].innerHTML = 'Uploading...';
   document.querySelector('.general-choose-image-input-text').childNodes[1].type = 'text';
   document.querySelector('.general-choose-image-input-text').style.cursor = 'progress';
-
   const formdata = new FormData();
   formdata.append('file', file);
 
@@ -109,7 +108,7 @@ window.onload = () => {
       isStartProjectOpen = true;
       createProjectOuterWrapper.style.display = 'flex';
       noProjectWrapper.style.display = 'none';
-    } else if (event.target.classList.contains('open-create-project-wrapper-button') || event.target.parentNode.classList.contains('open-create-project-wrapper-button')) {
+    } else if (event.target.classList.contains('open-create-project-wrapper-button') || event.target.parentNode.classList.contains('open-create-project-wrapper-button')) {
       createProjectOuterWrapper.style.display = 'flex';
     }
 
@@ -135,18 +134,17 @@ window.onload = () => {
   });
 
   projectImageInput.onchange = () => {
-    uploadImage(projectImageInput.files[0]);
+  uploadImage(projectImageInput.files[0]);
   }
 
   projectCreateForm.onsubmit = event => {
     event.preventDefault();
-
-    if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length || !projectImageValueInput.value || !projectImageValueInput.value.length || !projectCountryInput.value || projectCountryInput.value.length != 2)
-      return projectError.childNodes[0].innerHTML = "Please enter all the fields and select your country";
+    if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length )
+      return projectError.childNodes[0].innerHTML = "Please enter all the required fields";
 
     if (projectNameInput.value.length > 1000 || projectDescriptionInput.value.length > 1000)
       return projectError.childNodes[0].innerHTML = "Project name and description cannot be longer than 1000 characters";
-
+    
     return projectCreateForm.submit();
   }
 }

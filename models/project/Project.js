@@ -86,10 +86,6 @@ const ProjectSchema = new Schema({
       details: '',
       image: ''
     }
-  },
-  edited:{ //if the project being edited, this field is set to true
-    type: Boolean,
-    default: false
   }
   //In edit screen, the updated fields are being used
 });
@@ -113,7 +109,7 @@ ProjectSchema.statics.findProjectById = function (id, callback) {
 
 ProjectSchema.statics.createProject = function (data, callback) {
   // Creates a new document under the model Project, returns the created project or an error if there is
- 
+
     if (!data|| !data.creator || !validator.isMongoId(data.creator.toString()))
       return callback('bad_request');
 
@@ -137,10 +133,10 @@ ProjectSchema.statics.createProject = function (data, callback) {
         status: 'saved',
         image: data.image || null
       };
-  
+
       if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length )
         return callback('bad_request');
-       
+
       const newProject = new Project(newProjectData);
 
       newProject.save((err, project) => {

@@ -3,7 +3,7 @@ const cluster = require('cluster');
 const http = require('http');
 const path = require('path');
 const session = require('express-session');
-const cookieParser = require('cookie-parser');  
+const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
 const favicon = require('serve-favicon');
 const mongoose = require('mongoose');
@@ -28,37 +28,37 @@ if (cluster.isMaster) {
 } else {
   const app = express();
   const server = http.createServer(app);
-  
+
   i18n.configure({
     locales:['tr', 'en', 'de', 'es', 'fr'],
     directory: __dirname + '/translations',
     queryParameter: 'lang',
     defaultLocale: 'en'
   });
-  
+
   dotenv.config({ path: path.join(__dirname, ".env") });
-  
+
   const PORT = process.env.PORT || 3000;
   const mongoUri = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/usersmagic";
-  
+
   const authRouteController = require('./routes/authRoute');
   const imageRouteController = require('./routes/imageRoute');
   const indexRouteController = require('./routes/indexRoute');
   const projectsRouteController = require('./routes/projectsRoute');
   const settingsRouteController = require('./routes/settingsRoute');
-  
+
   app.set("views", path.join(__dirname, "views"));
   app.set("view engine", "pug");
-  
+
   mongoose.connect(mongoUri, { useNewUrlParser: true, auto_reconnect: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true });
-  
+
   app.use(express.static(path.join(__dirname, "public")));
-  
+
   app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
-  
+
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(bodyParser.json());
-  
+
   const sessionOptions = session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -70,7 +70,7 @@ if (cluster.isMaster) {
       mongooseConnection: mongoose.connection
     })
   });
-  
+
   app.use(sessionOptions);
   app.use(cookieParser());
 
@@ -82,7 +82,7 @@ if (cluster.isMaster) {
     res.append('Access-Control-Allow-Headers', 'Content-Type');
     next();
   });
-  
+
   app.use('/', indexRouteController);
   app.use('/auth', authRouteController);
   app.use('/image', imageRouteController);

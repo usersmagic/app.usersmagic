@@ -43,6 +43,18 @@
   white-space: initial;
 }
 
+#undo-button{
+  position: absolute;
+  background-color: rgb(209, 52, 0);
+  color: rgb(255,255,255);
+  width: 100px;
+  height: 80px;
+  margin-bottom:0px;
+  bottom: 150px;
+  right: 100px;
+  display: none;
+}
+
 .blocks-wrapper {
   display: flex;
   flex-direction: column;

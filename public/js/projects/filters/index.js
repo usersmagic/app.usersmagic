@@ -56,7 +56,7 @@ window.onload = () => {
       const testerNumberInput = event.target.previousElementSibling;
       const target = JSON.parse(event.target.parentNode.parentNode.parentNode.childNodes[0].value);
 
-      if (!testerNumberInput.value || isNaN(parseInt(testerNumberInput.value)) || !Number.isInteger(parseInt(testerNumberInput.value)) || parseInt(testerNumberInput.value) <= 0 || parseInt(testerNumberInput.value) > 10) {
+      if (!testerNumberInput.value || isNaN(parseInt(testerNumberInput.value)) || !Number.isInteger(parseInt(testerNumberInput.value)) || parseInt(testerNumberInput.value) <= 0) {
         testerNumberInput.classList.add('blink-red-animation-class');
         setTimeout(() => {
           testerNumberInput.classList.remove('blink-red-animation-class');

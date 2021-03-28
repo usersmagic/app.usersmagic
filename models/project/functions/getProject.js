@@ -22,12 +22,20 @@ module.exports = (project, options, callback) => {
     created_at: moment(project.created_at).tz(timezone).format('DD[.]MM[.]YYYY[, ]HH[:]mm'),
     name: project.name,
     description: project.description,
+    description_updated: project.description_updated,
     image: project.image,
+    image_updated: project.image_updated,
     questions: project.questions,
+    questions_updated : project.questions_updated,
     welcome_screen: project.welcome_screen ? {
       opening: project.welcome_screen.opening,
       details: project.welcome_screen.details,
       image: project.welcome_screen.image
+    } : {},
+    welcome_screen_updated: project.welcome_screen_updated ? {
+      opening: project.welcome_screen_updated.opening,
+      details: project.welcome_screen_updated.details,
+      image: project.welcome_screen_updated.image
     } : {}
   });
 }

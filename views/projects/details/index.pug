@@ -16,6 +16,8 @@ block main
       span.left-subtitle Share your test link with your own testers, or filter over 100,000 testers to find the exact target segment you want to reach!
       span.left-link-title Your Private Test Link:
       span.left-link#project-custom-url https://usersmagic.com/test/custom?id=#{project._id}
+      a(href=`/projects/edit?id=${project._id}`)
+          span.each-button-title Please click here, if you want to edit questions
     .right-wrapper
       a.each-button(href=`/projects/filters?id=${project._id}`)
         .each-button-icon-wrapper
@@ -35,3 +37,4 @@ block main
         .each-button-text-wrapper
           span.each-button-title See your report
           span.each-button-subtitle See the report of your results
+          

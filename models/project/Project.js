@@ -1,6 +1,7 @@
 const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
+const _ = require('lodash');
 
 const getProject = require('./functions/getProject');
 const validateQuestions = require('./functions/validateQuestions');
@@ -38,7 +39,12 @@ const ProjectSchema = new Schema({
   image: {
     // Image of the project
     type: String,
-    required: true,
+    required: false,
+    maxlength: 1000
+  },
+  image_updated:{
+    type:String,
+    default: '',
     maxlength: 1000
   },
   description: {
@@ -47,8 +53,19 @@ const ProjectSchema = new Schema({
     default: '',
     maxlength: 1000
   },
+  description_updated:{
+    //if the description edited, this field is used
+    type: String,
+    default: '',
+    maxlength: 1000
+  },
   questions: {
     // Questions array
+    type: Array,
+    default: []
+  },
+  questions_updated: {
+    //if the questions are edited, this field is used
     type: Array,
     default: []
   },
@@ -60,7 +77,21 @@ const ProjectSchema = new Schema({
       details: '',
       image: ''
     }
+  },
+  welcome_screen_updated:{
+    //if the content edited, this field will be used
+    type: Object,
+    default:{
+      opening: '',
+      details: '',
+      image: ''
+    }
+  },
+  edited:{ //if the project being edited, this field is set to true
+    type: Boolean,
+    default: false
   }
+  //In edit screen, the updated fields are being used
 });
 
 ProjectSchema.statics.findProjectById = function (id, callback) {
@@ -82,9 +113,9 @@ ProjectSchema.statics.findProjectById = function (id, callback) {
 
 ProjectSchema.statics.createProject = function (data, callback) {
   // Creates a new document under the model Project, returns the created project or an error if there is
-
-  if (!data || !data.creator || !validator.isMongoId(data.creator.toString()))
-    return callback('bad_request');
+ 
+    if (!data|| !data.creator || !validator.isMongoId(data.creator.toString()))
+      return callback('bad_request');
 
   const Project = this;
   const maxProjectLimit = 100; // The maximum project limit allowed per company
@@ -98,26 +129,26 @@ ProjectSchema.statics.createProject = function (data, callback) {
     if (projects.length >= maxProjectLimit)
       return callback('too_many_documents');
 
-      const newProjectData = {
-        creator: data.creator,
-        type: data.type || null,
+    const newProjectData = {
+      creator: data.creator,
+      type: data.type || null,
         name: data.name,
         description: data.description,
         status: 'saved',
         image: data.image || null
       };
   
-      if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length || !data.image || !data.image.length)
+      if (!newProjectData.type || !allowedProjectTypes.includes(newProjectData.type) || !newProjectData.name || !newProjectData.name.length || !newProjectData.description || !newProjectData.description.length )
         return callback('bad_request');
-  
+       
       const newProject = new Project(newProjectData);
-  
+
       newProject.save((err, project) => {
         if (err) return callback(err);
-  
+
         getProject(project, {}, (err, project) => {
           if (err) return callback(err);
-  
+
           return callback(null, project);
         });
       });
@@ -204,13 +235,12 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
   // Update project fields, returns error if it exists or null
 
   const Project = this;
-
   if (!id || !validator.isMongoId(id.toString()) || !data)
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
     if (err || !project) return callback('document_not_found');
-    if (project.status != 'saved') return callback('bad_request');
+    if (project.status != 'saved' && project.status != 'waiting') return callback('bad_request');
 
     const newData = {
       name: data.name || project.name,
@@ -228,7 +258,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
 
     Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: newData}, err => {
       if (err) return callback(err);
-      
+
       return callback(null);
     });
   });
@@ -236,7 +266,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
 
 ProjectSchema.statics.saveQuestions = function (id, data, callback) {
   // Save data.questions on the document with the given id, returns error if it exists
-  
+
   const Project = this;
 
   if (!id || !validator.isMongoId(id.toString()) || !data)
@@ -265,7 +295,7 @@ ProjectSchema.statics.finishProject = function (id, callback) {
     if (err || !project)
       return callback('document_not_found');
 
-    if (!project.name.length || !project.description.length || !project.image || !project.welcome_screen.opening.length || !project.welcome_screen.details.length)
+    if (!project.name.length || !project.description.length || !project.welcome_screen.opening.length || !project.welcome_screen.details.length)
       return callback('document_validation');
 
     validateQuestions(project.questions, {final: true}, (err, questions) => {
@@ -281,5 +311,139 @@ ProjectSchema.statics.finishProject = function (id, callback) {
     });
   });
 };
+
+//back to original button backend
+ProjectSchema.statics.revertToOriginal = function(id, callback){
+
+    const Project = this;
+
+    if(!id || !validator.isMongoId(id.toString() || !data))
+      return callback('bad_request');
+
+    Project.findById(mongoose.Types.ObjectId(id), (err, project) =>{
+        if(err || !project) return callback('document_not_found');
+        if(project.status != 'waiting') return callback('bad_request');
+
+        const backupData = {
+          image_updated: project.image,
+          description_updated: project.description,
+          questions_updated: project.questions,
+          welcome_screen_updated: project.welcome_screen
+        }
+
+        Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: backupData}, err =>{
+          if(err) return callback(err);
+
+          return callback(null);
+        });
+    });
+  }
+
+//for activating changes
+ProjectSchema.statics.updateChanges = function(id, callback){
+    const Project = this;
+
+    if(!id || !validator.isMongoId(id.toString() || !data))
+      return callback('bad_request');
+
+    Project.findById(mongoose.Types.ObjectId(id), (err, project) =>{
+      if(err || !project) return callback('document_not_found');
+      if(project.status != 'waiting') return callback('bad_request');
+
+    const undoData = {
+      image: project.image_updated,
+      description: project.description_updated,
+      questions: project.questions_updated,
+      welcome_screen: project.welcome_screen_updated
+    }
+
+    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: undoData}, err =>{
+      if(err) return callback(err);
+
+      return callback(null);
+    });
+  });
+}
+
+ProjectSchema.statics.updateEditedProject = function (id, data, callback) {
+  // Update project fields, returns error if it exists or null
+
+  const Project = this;
+  if (!id || !validator.isMongoId(id.toString()) || !data)
+    return callback('bad_request');
+
+  Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
+    if (err || !project) return callback('document_not_found');
+    if (project.status != 'waiting') return callback('bad_request');
+
+    const newData = {
+      name: data.name || project.name,
+      image_updated: data.image || project.image_updated,
+      description_updated: data.description || project.description_updated,
+      welcome_screen_updated: data.welcome_screen ? {
+        opening: data.welcome_screen.opening ? data.welcome_screen.opening : project.welcome_screen_updated.opening,
+        details: data.welcome_screen.details ? data.welcome_screen.details : project.welcome_screen_updated.details,
+        image: data.welcome_screen.image ? data.welcome_screen.image : project.welcome_screen_updated.image,
+      } : project.welcome_screen_updated
+    };
+
+    if (!newData.name.length)
+      newData.name = project.name;
+
+    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: newData}, err => {
+      if (err) return callback(err);
+
+      return callback(null);
+    });
+  });
+};
+
+ProjectSchema.statics.saveEditedQuestions = function (id, data, callback) {
+  // Save data.questions on the document with the given id, returns error if it exists
+
+  const Project = this;
+
+  if (!id || !validator.isMongoId(id.toString()) || !data)
+    return callback('bad_request');
+
+  validateQuestions(data.questions, {}, (err, questions) => {
+    if (err) return callback(err);
+
+    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {questions_updated: questions}}, (err, project) => {
+      if (err || !project) return callback(err);
+
+      return callback(null);
+    });
+  });
+};
+
+//compare original and updated fields to find out, if there is a change
+ProjectSchema.statics.checkForChanges = function(id, callback){
+
+  const Project = this;
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+    Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
+      if (err || !project) return callback('document_not_found');
+      if (project.status != 'waiting') return callback('bad_request');
+
+      let data;
+
+      //I wrote this code like that to be make it more readable
+      if(_.isEqual(project.questions,project.questions_updated) && _.isEqual(project.welcome_screen,project.welcome_screen_updated) && project.description == project.description_updated && project.image == project.image_updated){
+        data = {edited: false};
+      }
+      else {
+        data = {edited: true };
+    }
+    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: data}, err => {
+      if (err) return callback(err);
+
+      return callback(project);
+    });
+  });
+}
 
 module.exports = mongoose.model('Project', ProjectSchema);

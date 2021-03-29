@@ -9,20 +9,21 @@ block main
     a.header-each-step-text(href="/projects") Projects
     i.fas.fa-chevron-right.header-each-step-arrow
     a.header-each-step-text(href="/projects/edit?id=" + project._id)= project.name
-    .header-credit-wrapper
-      //-when I leave out the id, it looks ugly, even though I change css file -cnblgn 
+    .header-buttons-wrapper
+      .general-seablue-border-button.undo-button 
+        span Discard Changes
+      .general-seablue-button.update-project-button
+        span Update Survey
+    .header-credit-wrapper 
       span.header-credit-amount #{company.credit} credits
       span.header-get-credit-button Get Credits
-    .header-buttons-wrapper
-      .general-seablue-button.update-project-button
-        span Update Test
   .all-content-inner-wrapper
     .blocks-wrapper
       .welcome-block-wrapper
         img.each-type-image(src="/res/images/block_icons/welcome.png" alt="usersmagic welcome block")
         span.each-type-title Welcome Screen
       .custom-blocks-wrapper.drag-and-drop-wrapper
-        each question in project.questions_updated
+        each question in (project.questions_updated.length == 0 ? project.questions : project.questions_updated) 
           .each-block-wrapper(id=question._id)
             img.each-type-image(src="/res/images/block_icons/" + question.type + ".png" alt="usersmagic " + question.type)
             .each-block-text-wrapper
@@ -71,4 +72,3 @@ block main
         span.block-preview-header-title Preview
         span.block-preview-header-subtitle Preview automatically reloads after auto save
       .block-preview-content
-      button.general-seablue-button.undo-button#undo-button Revert changes to live version

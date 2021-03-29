@@ -221,13 +221,20 @@ function saveProject (callback) {
 // Initialize the block data with the project informations
 function getBlockData () {
 
-    blockData['welcome'].opening = project.welcome_screen_updated.opening;
-    blockData['welcome'].details = project.welcome_screen_updated.details;
-    blockData['welcome'].image = project.welcome_screen_updated.image;
+    blockData['welcome'].opening = (project.welcome_screen_updated.opening == "" ? project.welcome_screen.opening : project.welcome_screen_updated.opening);
+    blockData['welcome'].details = (project.welcome_screen_updated.details == "" ? project.welcome_screen.details : project.welcome_screen_updated.details);
+    blockData['welcome'].image = (project.welcome_screen_updated.image == "" ? project.welcome_screen.image : project.welcome_screen_updated.image);
 
+    if(project.questions_updated.length == 0){
+      project.questions.forEach(question =>{
+        blockData[question._id] = question;
+      })
+    }
+    else{
     project.questions_updated.forEach(question => {
       blockData[question._id] = question;
     });
+  }
 
   createSettingsPageContent(currentlyClickedBlock);
 }
@@ -942,7 +949,7 @@ window.onload = () => {
     if (event.target.classList.contains('settings-delete-button')) {
       createConfirm({
         title: 'Are you sure you want to delete this question?',
-        text: 'You cannot take this action back.',
+        text: '',
         reject: 'Cancel',
         accept: 'Continue'
       }, res => {

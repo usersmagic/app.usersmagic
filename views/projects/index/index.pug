@@ -34,7 +34,7 @@ block main
           span New Project
       .projects-wrapper
         each project in projects
-          a.each-project-wrapper(href=(project.status == 'saved' ? `/projects/create?id=${project._id}` :  `/projects/details?id=${project._id}`))
+          a.each-project-wrapper(href=(project.status == 'saved' ? `/projects/create?id=${project._id}` :  ( project.status == 'template' ? `/templates?id=${project._id}` : `/projects/details?id=${project._id}`)))
             .each-project-inner-wrapper
               .each-project-image
                 img(src=project.image alt="usersmagic " + project.name)

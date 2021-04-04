@@ -10,6 +10,6 @@ module.exports = (req, res) => {
   Project.createProject(data, (err, project) => {
     if (err) return res.redirect('/');
 
-    return res.redirect(`/projects/create?id=${project._id.toString()}`);
+    return res.redirect(`/templates?id=${project._id.toString()}`);
   });
 }

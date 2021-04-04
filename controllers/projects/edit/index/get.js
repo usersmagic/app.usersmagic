@@ -10,7 +10,7 @@ module.exports = (req, res) => {
     if(err) return res.redirect('/');
 
     return res.render('projects/edit/index', {
-      page: 'projects/create/index',
+      page: 'projects/edit/index',
       title: project.name,
       includes: {
         external: {

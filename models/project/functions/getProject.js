@@ -23,7 +23,7 @@ module.exports = (project, options, callback) => {
     name: project.name,
     description: project.description,
     description_updated: project.description_updated,
-    image: project.image,
+    image: project.image || '/res/images/default/project.png',
     image_updated: project.image_updated,
     questions: project.questions,
     questions_updated : project.questions_updated,

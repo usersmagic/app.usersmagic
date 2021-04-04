@@ -186,9 +186,9 @@ function saveProject (callback) {
     questions: getQuestionsData()
   };
 
-      xhr.open('POST', `/projects/create/save?id=${project._id}`);
-      xhr.setRequestHeader('Content-type', 'application/json');
-      xhr.send(JSON.stringify(data));
+    xhr.open('POST', `/projects/edit/save?id=${project._id}`);
+    xhr.setRequestHeader('Content-type', 'application/json');
+    xhr.send(JSON.stringify(data));
 
   xhr.onreadystatechange = function () {
     if (xhr.readyState == 4 && xhr.status != 200) {
@@ -220,13 +220,21 @@ function saveProject (callback) {
 
 // Initialize the block data with the project informations
 function getBlockData () {
-  blockData['welcome'].opening = project.welcome_screen.opening;
-  blockData['welcome'].details = project.welcome_screen.details;
-  blockData['welcome'].image = project.welcome_screen.image;
 
-  project.questions.forEach(question => {
-    blockData[question._id] = question;
-  });
+    blockData['welcome'].opening = (project.welcome_screen_updated.opening == "" ? project.welcome_screen.opening : project.welcome_screen_updated.opening);
+    blockData['welcome'].details = (project.welcome_screen_updated.details == "" ? project.welcome_screen.details : project.welcome_screen_updated.details);
+    blockData['welcome'].image = (project.welcome_screen_updated.image == "" ? project.welcome_screen.image : project.welcome_screen_updated.image);
+
+    if(project.questions_updated.length == 0){
+      project.questions.forEach(question =>{
+        blockData[question._id] = question;
+      })
+    }
+    else{
+    project.questions_updated.forEach(question => {
+      blockData[question._id] = question;
+    });
+  }
 
   createSettingsPageContent(currentlyClickedBlock);
 }
@@ -761,37 +769,53 @@ function checkDataBeforeFinish (callback) {
   }
 }
 
-// Finish the current project, show the error or redirect user to details page
-function finishProject () {
-  saveProject(err => {
-    if (err) return;
+function undoChanges(){ //this function belongs to projects/edit
+  createConfirm({
+    title: 'Are you sure, you want to dismiss your changes?',
+    text: 'Your changes will not be updated and will be lost',
+    reject: 'Cancel',
+    accept: 'Continue'
+  },
+  res => {
+    if(res){
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/projects/edit/undo?id=${project._id}`);
+      xhr.send();
 
-    checkDataBeforeFinish(res => {
-      if (res) {
-        createConfirm({
-          title: 'Are you sure you want to start testing?',
-          text: '',
-          reject: 'Cancel',
-          accept: 'Continue'
-        }, res => {
-          if (res) {
-            const xhr = new XMLHttpRequest();
-            xhr.open('GET', `/projects/create/finish?id=${project._id}`);
-            xhr.send();
+      xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4 && xhr.responseText){
+          const response = JSON.parse(xhr.responseText);
 
-            xhr.onreadystatechange = function () {
-              if (xhr.readyState == 4 && xhr.responseText) {
-                const response = JSON.parse(xhr.responseText);
-
-                if (!response.success && response.error)
-                  return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
-                return window.location = `/projects/details?id=${project._id.toString()}`;
-              }
-            };
-          }
-        });
+          if (!response.success && response.error)
+           return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+          return window.location = `/projects/edit?id=${project._id.toString()}`;
+        }
       }
-    });
+    }
+  });
+}
+function updateProject(){
+  createConfirm({
+    title: 'Are you sure you want to start testing?',
+    text: '',
+    reject: 'Cancel',
+    accept: 'Continue'
+  },res =>{
+    if(res){
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', `/projects/edit/update?id=${project._id}`);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.responseText) {
+          const response = JSON.parse(xhr.responseText);
+
+          if (!response.success && response.error)
+            return alert("An error occured while finishing the project. Error message: " + (response.error.message ? response.error.message : response.error));
+          return window.location = `/projects/details?id=${project._id.toString()}`;
+        }
+      };
+    }
   });
 }
 
@@ -805,9 +829,7 @@ window.onload = () => {
   dragAndDrop(document); // Listen for drag-and-drop wrappers
   listenSliderButtons(document); // Listen slider buttons
   setTimeout(() => {
-
-  autoSave(); // Automatically save project
-
+    autoSave();
   }, 1000); // Wait for everything on the page to be uploaded
 
   const addBlockWrapper = document.querySelector('.add-block-wrapper');
@@ -927,7 +949,7 @@ window.onload = () => {
     if (event.target.classList.contains('settings-delete-button')) {
       createConfirm({
         title: 'Are you sure you want to delete this question?',
-        text: 'You cannot take this action back.',
+        text: '',
         reject: 'Cancel',
         accept: 'Continue'
       }, res => {
@@ -974,11 +996,6 @@ window.onload = () => {
       deleteImage(blockData[currentlyClickedBlock].image);
       blockData[currentlyClickedBlock].image = null;
       createSettingsPageContent(currentlyClickedBlock);
-    }
-
-    // Finish project
-    if (event.target.classList.contains('finish-project-button') || event.target.parentNode.classList.contains('finish-project-button')) {
-      finishProject();
     }
 
     // get back changes to original

@@ -97,7 +97,6 @@ window.onload = () => {
   const projectCreateForm = document.querySelector('.create-project-wrapper');
   const projectNameInput = document.getElementById('project-name-input');
   const projectDescriptionInput = document.getElementById('project-description-input');
-  const projectCountryInput = document.getElementById('project-country-input');
   const projectImageInput = document.getElementById('project-image-input');
   const projectImageValueInput = document.getElementById('project-image-value-input');
   const projectError = document.getElementById('project-error');
@@ -122,8 +121,8 @@ window.onload = () => {
 
     // Delete uploaded image
     if (event.target.classList.contains('delete-project-image-button')) {
-      const url = document.getElementById('project-image-value-input').value;
-      document.getElementById('project-image-value-input').value = null;
+      const url = projectImageValueInput.value;
+      projectImageValueInput.value = null;
       document.querySelector('.general-image-input-wrapper').remove();
       document.querySelector('.general-choose-image-input-text').style.cursor = 'pointer';
       document.querySelector('.general-choose-image-input-text').childNodes[0].innerHTML = 'Choose an image or a logo for your project';
@@ -134,11 +133,12 @@ window.onload = () => {
   });
 
   projectImageInput.onchange = () => {
-  uploadImage(projectImageInput.files[0]);
+    uploadImage(projectImageInput.files[0]);
   }
 
   projectCreateForm.onsubmit = event => {
     event.preventDefault();
+    
     if (!projectNameInput.value || !projectNameInput.value.length || !projectDescriptionInput.value || !projectDescriptionInput.value.length )
       return projectError.childNodes[0].innerHTML = "Please enter all the required fields";
 

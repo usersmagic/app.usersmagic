@@ -1,0 +1,40 @@
+extends ../partials/header
+block main
+  input.display-none#project-data-json(value=JSON.stringify(project))
+  input.display-none#templates-data-json(value=JSON.stringify(templates))
+  .templates-outer-wrapper
+    .menu-wrapper
+      .templates-go-back-button
+        i.fas.fa-arrow-left
+        span Back to templates
+      span.menu-title Template Gallery
+      span.menu-subtitle Don’t know what to ask? Use our templates to save time.
+    .templates-wrapper
+      .template-country-input-wrapper
+        span.template-country-input-title Choose Country:
+        .general-drop-down-list-outer-wrapper(style="z-index: 10; width: 300px; margin: 0px")
+          .general-drop-down-list-wrapper(style="z-index: 10;")
+            input.general-drop-down-list-input(type="text" autocomplete="none" value=company.country_name placeholder="Choose a country")
+            input.general-drop-down-list-input-not-visible#country-input(type="text" value=company.country)
+            input.general-drop-down-list-items-json(type="text" value=JSON.stringify(countries.map(country => { return {name: country.name, id: country.alpha2_code} })))
+            .general-drop-down-choices-wrapper
+              each country in countries
+                span.general-drop-down-list-each-item(id=country.alpha2_code)= country.name
+      each title in Object.keys(templates)
+        span.each-title= title
+        .templates-inner-wrapper
+          each template in templates[title]
+            .each-template-wrapper(id=template._id)
+              .each-template-image-wrapper
+                img(src=template.image alt="usersmagic " + template.name)
+              span.each-template-name= template.name
+    .template-details-wrapper
+      .general-seablue-button.select-template-button
+        span Select
+      span.template-details-title
+      .template-details-info-wrapper
+        span.template-details-subtitle
+        .template-details-image-wrapper
+          img(alt="usersmagic")
+      .template-questions-wrapper
+

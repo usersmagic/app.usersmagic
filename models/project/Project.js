@@ -315,7 +315,7 @@ ProjectSchema.statics.revertToOriginal = function (id, callback) {
 
   const Project = this;
 
-  if (!id || !validator.isMongoId(id.toString()) || !data)
+  if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id.toString()), (err, project) =>{
@@ -341,7 +341,7 @@ ProjectSchema.statics.updateChanges = function (id, callback) {
   // Equal the normal fields of the Project to the updated fields
   // Return an error if it exists
 
-  if (!id || !validator.isMongoId(id.toString()) || !data)
+  if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
 
   const Project = this;

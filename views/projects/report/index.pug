@@ -16,6 +16,25 @@ block main
     .all-content-inner-content-wrapper
       .results-header-wrapper
         span.results-project-title= project.name
+      .filters-wrapper
+        .general-filter-button-wrapper
+          .general-filter-button.age Age
+          .general-filter-button.gender Gender
+        .filter-options.age
+          input(type="number" placeholder='min. Age' autocomplete="off" min="18" max="90").age-input
+          span -
+          input(type="number" placeholder='max. Age' autocomplete="off" min="18" max="90").age-input
+          .general-seablue-button#filter
+            Span Apply Filter
+        .filter-options.gender
+          .general-filter-button.filter-option-button
+            Span Male
+          .general-filter-button.filter-option-button
+            Span Female
+          .general-filter-button.filter-option-button
+            Span Other
+          .general-seablue-button#filter
+            Span Apply Filter
       if questions && questions.length
         .questions-summary-results-wrapper
           each question in questions

@@ -13,6 +13,7 @@ const filtersCreateGetController = require('../controllers/projects/filters/crea
 const filtersCreateFinishGetController = require('../controllers/projects/filters/create/finish/get');
 const filtersSubmitPostController = require('../controllers/projects/filters/submit/post');
 const reportIndexGetController = require('../controllers/projects/report/index/get');
+const reportCsvGetController = require('../controllers/projects/report/csv/get');
 const editIndexGetController = require('../controllers/projects/edit/index/get');
 const editUndoGetController = require('../controllers/projects/edit/undo/get');
 const editUpdateGetController = require('../controllers/projects/edit/update/get');
@@ -69,6 +70,12 @@ router.get(
     isLoggedIn,
     isAccountComplete,
     reportIndexGetController
+);
+router.get(
+  '/report/csv',
+    isLoggedIn,
+    isAccountComplete,
+    reportCsvGetController
 );
 
 router.post(

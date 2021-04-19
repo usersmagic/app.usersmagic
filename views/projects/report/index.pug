@@ -17,7 +17,11 @@ block main
     .all-content-inner-content-wrapper
       .results-header-wrapper
         span.results-project-title= project.name
-      .filters-wrapper
+        .results-download-button
+          span.results-download-button-span Download Results
+          .download-options-wrapper
+            a.each-download-option(href="/projects/report/csv?id=" + project._id) .CSV
+      //- .filters-wrapper
         .general-filter-button-wrapper
           .general-filter-button.age Age
           .general-filter-button.gender Gender

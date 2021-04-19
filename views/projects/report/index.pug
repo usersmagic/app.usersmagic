@@ -1,6 +1,7 @@
 extends ../../partials/header
 block main
   //- .general-beta-text beta version 1.0.0
+  input.display-none#filters(type=text value=JSON.stringify(filters))
   .all-content-header-wrapper
     .header-user-logo
       img(src=company.profile_photo alt="usersmagic " + company.name)
@@ -16,6 +17,28 @@ block main
     .all-content-inner-content-wrapper
       .results-header-wrapper
         span.results-project-title= project.name
+        .results-download-button
+          span.results-download-button-span Download Results
+          .download-options-wrapper
+            a.each-download-option(href="/projects/report/csv?id=" + project._id) .CSV
+      //- .filters-wrapper
+        .general-filter-button-wrapper
+          .general-filter-button.age Age
+          .general-filter-button.gender Gender
+        .filter-options.age
+          input(type='number' placeholder='min. Age' autocomplete="off" min="18" max="90").age-input#start
+          span -
+          input(type='number' placeholder='max. Age' autocomplete="off" min="18" max="90").age-input#end
+          .general-seablue-button.apply-age#filter
+            span Apply Filter
+        .filter-options.gender
+          .general-filter-button.filter-option-button
+            span(value='male') Male
+          .general-filter-button.filter-option-button
+            span(value='female') Female
+          .general-filter-button.filter-option-button
+            span(value='other') Other
+        .selected-filters-wrapper
       if questions && questions.length
         .questions-summary-results-wrapper
           each question in questions

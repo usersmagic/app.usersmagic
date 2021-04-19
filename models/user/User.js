@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const async = require('async');
 
 const Schema = mongoose.Schema;
 
@@ -137,7 +138,7 @@ UserSchema.statics.findUser = function (email, password, callback) {
 
   let User = this;
 
-  User.findOne({email}).then(user => { 
+  User.findOne({email}).then(user => {
     if (!user)
       return callback('document_not_found');
 
@@ -170,4 +171,65 @@ UserSchema.statics.getUserById = function (id, callback) {
   });
 };
 
+UserSchema.statics.getUsersFromSubmitionsByFilters = function (_submitions, _filters, callback) {
+  if(!_filters) return callback("missing filters");
+  if(!_submitions) return callback("missing submition");
+
+  const User = this;
+  const submitions = [];
+
+  async.forEachOf(_submitions, (submition, key, callback) =>{
+    User.getUserById(submition.user_id, (err, user) =>{
+      if(err) callback();
+      else{
+        let app_for_filter = false;
+        let connected_filter = false;
+
+        _filters = _filters[0].split(',');
+
+        for(_filter of _filters){
+          if(_filter == '') continue;
+
+          if(_filter.includes("age")){
+            const ages = _filter.split("age:")[1].split(" - ");
+            const startAge = ages[0];
+            const endAge = ages[1];
+
+            const userAge = new Date().getFullYear() - user.birth_year;
+
+            if( userAge >= startAge && userAge <= endAge) app_for_filter = true;
+            connected_filter = true;
+          }
+        }
+
+        for(_filter of _filters){
+          if((!connected_filter | app_for_filter) & _filter.includes("gender")){
+            const gender = _filter.split("gender:")[1];
+            const userGender = translateGenderToEnglish(user.gender.toLowerCase());
+
+            if(gender.toLowerCase() == userGender) app_for_filter = true;
+            else {
+              connected_filter = false;
+              app_for_filter = false;
+            }
+          }
+        }
+
+        if(app_for_filter) submitions.push(submition);
+        callback();
+      }
+    })
+  }, err =>{
+    if(err) return callback(err);
+
+    return callback(null, submitions);
+  })
+}
 module.exports = mongoose.model('User', UserSchema);
+
+// the system was turkish at the beginning, this is for back compatibility
+function translateGenderToEnglish(gender){
+  if(gender == "kadın") return "female";
+  else if(gender == "erkek") return "male";
+  else return gender
+}

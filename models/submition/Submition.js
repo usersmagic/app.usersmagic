@@ -1,7 +1,9 @@
+const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
 const Project = require('../project/Project');
+const User = require('../user/User');
 
 const Schema = mongoose.Schema;
 
@@ -68,6 +70,51 @@ const SubmitionSchema = new Schema({
   }
 });
 
+SubmitionSchema.statics.findSubmitionsByUserData = function (data, callback) {
+  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
+    return callback('bad_request');
+
+  const Submition = this;
+  const search_query = [
+    { campaign_id: data.id.toString() },
+    { status: 'approved' }
+  ];
+
+  if (data.target_id)
+    search_query.push({ target_id: data.target_id.toString() });
+
+  Project.findById(mongoose.Types.ObjectId(data.id.toString()), (err, project) => {
+    if (err || !project) return callback('document_not_found');
+
+    Submition.find({ $and: search_query }, (err, submitions) => {
+      if (err) return callback(err);
+
+      async.timesSeries(
+        submitions.length,
+        (time, next) => {
+          const submition = submitions[time];
+
+          User.getUserById(submition.user_id, (err, user) => {
+            if (err) return next(err);
+
+            const data = {
+              no: time + 1,
+              gender: user.gender,
+              birth_year: user.birth_year
+            };
+
+            for (let i = 0; i < project.questions.length; i++)
+              data[project.questions[i].text] = submition.answers[project.questions[i]._id] ? submition.answers[project.questions[i]._id] : '';
+
+            return next(null, data);
+          })
+        },
+        (err, submitions) => callback(err, submitions)
+      );
+    });
+  });
+};
+
 SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback) {
   if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
     return callback('bad_request');
@@ -86,6 +133,9 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
 
     Submition.find({ $and: search_query }, (err, submitions) => {
       if (err) return callback(err);
+
+      User.getUsersFromSubmitionsByFilters(submitions, data.filters, (err, _submitions) =>{
+        if(!err) submitions = _submitions;
 
       const questions = project.questions.map(question => {
         const newQuestion = {
@@ -126,7 +176,6 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
 
       for (let i = 0; i < submitions.length; i++) {
         const submition = submitions[i];
-
 
         //if the questions are edited, dont return them
         const fields = compareReturnValidAnswers(questions, Object.entries(submition.answers));
@@ -205,9 +254,10 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
       }
 
       return callback(null, questions);
+      });
     });
   });
-}
+};
 
 SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback) {
   // Finds and returns number of submitions with the given filters or an error if it exists

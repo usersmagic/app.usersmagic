@@ -11,15 +11,103 @@
 
 .results-header-wrapper {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   padding: 30px 60px;
 }
 .results-project-title {
   color: rgba(46, 197, 206, 1);
   font-weight: 700;
-  font-size: 40px;
+  font-size: 34px;
   letter-spacing: 1px;
   line-height: 50px;
+}
+.results-download-button {
+  width: 200px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  z-index: 2;
+  border: 2px solid rgba(184, 235, 238, 1);
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0px 0px 10px rgba(136, 136, 136, 0.3);
+}
+.results-download-button span {
+  width: 200px;
+  height: 50px;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(46, 197, 206, 1);
+  font-weight: 500;
+  font-size: 14px;
+}
+.download-options-wrapper {
+  margin-top: -2px;
+  margin-left: -2px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  width: 200px;
+  min-height: 0px;
+  background-color: rgb(254, 254, 254);
+  overflow: hidden;
+}
+.each-download-option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  min-height: 50px;
+  color: rgb(3, 17, 73);
+  font-weight: 600;
+  font-size: 12px;
+  text-decoration: none;
+}
+.each-download-option:hover {
+  background-color: rgba(236, 236, 236, 0.4);
+}
+
+.open-bottom-animation-class {
+  animation: openBottom 0.4s ease-in-out 0s 1 forwards;
+}
+@keyframes openBottom {
+  from {
+    min-height: 0px;
+  }
+  to {
+    min-height: 50px;
+  }
+}
+@-webkit-keyframes openBottom {
+  from {
+    min-height: 0px;
+  }
+  to {
+    min-height: 50px;
+  }
+}
+
+.close-top-animation-class {
+  animation: closeTop 0.4s ease-in-out 0s 1 forwards;
+}
+@keyframes closeTop {
+  from {
+    min-height: 50px;
+  }
+  to {
+    min-height: 0px;
+  }
+}
+@-webkit-keyframes closeTop {
+  from {
+    min-height: 50px;
+  }
+  to {
+    min-height: 0px;
+  }
 }
 
 .questions-summary-results-wrapper {
@@ -403,4 +491,59 @@
   width: 100%;
   text-align: center;
   margin-top: 60px;
+}
+
+.filter-options {
+  display: none;
+  text-align: center;
+  margin-left: 25px;
+}
+
+.selected-filters-wrapper{
+  diplay: flex;
+  width: 100%;
+  text-align: center;
+}
+
+.selected-filter{
+  display: flex;
+  margin-top: 15px;
+  margin-left: 10px;
+  background-color: rgba(184, 235, 238, 1);
+  width: 200px;
+  text-align: center;
+  height: 40px;
+  border-radius: 5px;
+  padding-top: 5px;
+  border: 1px solid rgb(3,17,73);
+}
+.filter{
+  padding-left: 15px;
+}
+.cancel-filter{
+  color: rgb(255,0,0);
+  margin-left: 2px;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+}
+
+
+.filters-wrapper{
+  margin-bottom: 125px;
+}
+
+.age-input {
+  height: 25px;
+  width: 100px;
+  align-items: center;
+  margin-left: 20px;
+  margin-right: 15px;
+}
+
+#filter{
+  width: 150px;
+  margin-top: 50px;
 }

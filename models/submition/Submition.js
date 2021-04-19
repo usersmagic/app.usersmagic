@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 
 const Project = require('../project/Project');
+const User = require('../user/User');
 
 const Schema = mongoose.Schema;
 
@@ -87,6 +88,9 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
     Submition.find({ $and: search_query }, (err, submitions) => {
       if (err) return callback(err);
 
+      User.getUsersFromSubmitionsByFilters(submitions, data.filters, (err, _submitions) =>{
+        if(!err) submitions = _submitions;
+
       const questions = project.questions.map(question => {
         const newQuestion = {
           _id: question._id,
@@ -126,7 +130,6 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
 
       for (let i = 0; i < submitions.length; i++) {
         const submition = submitions[i];
-
 
         //if the questions are edited, dont return them
         const fields = compareReturnValidAnswers(questions, Object.entries(submition.answers));
@@ -205,6 +208,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
       }
 
       return callback(null, questions);
+      });
     });
   });
 }

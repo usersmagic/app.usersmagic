@@ -4,7 +4,7 @@ const question_types = {
 	'opinion_scale': 'Opinion Scale',
 	'open_answer': 'Open Answer',
 };
-let project, templates, country = null, id;
+let project, templates = [], country = null, id;
 
 function recreateContentOfTemplatesWrapper () {
   serverRequest(`/templates/filter?country=${country}`, 'GET', {}, res => {
@@ -15,13 +15,15 @@ function recreateContentOfTemplatesWrapper () {
         reject: 'Close'
       }, res => {});
 
-    templates = res.templates;
+    templates = [];
+    for (let i = 0; i < Object.values(res.templates).length; i++)
+      templates = templates.concat(Object.values(res.templates)[i]);
 
     const wrapper = document.querySelector('.templates-wrapper');
     while (wrapper.childElementCount > 1)
       wrapper.childNodes[1].remove();
 
-    Object.keys(templates).forEach(title => {
+    Object.keys(res.templates).forEach(title => {
       const eachTitle = document.createElement('span');
       eachTitle.classList.add('each-title');
       eachTitle.innerHTML = title;
@@ -30,7 +32,7 @@ function recreateContentOfTemplatesWrapper () {
       const templatesInnerWrapper = document.createElement('div');
       templatesInnerWrapper.classList.add('templates-inner-wrapper');
 
-      templates[title].forEach(template => {
+      res.templates[title].forEach(template => {
         const eachTemplateWrapper = document.createElement('div');
         eachTemplateWrapper.classList.add('each-template-wrapper');
         eachTemplateWrapper.id = template._id;
@@ -208,7 +210,10 @@ function createQuestion (question) {
 };
 
 function recreatePageForGivenTemplate () {
-  const template = Object.values(templates).map(templateList => templateList.find(template => template._id == id))[0];
+  let template = null;
+  for (let i = 0; i < templates.length; i++)
+    if (templates[i]._id == id)
+      template = templates[i];
 
   document.querySelector('.templates-go-back-button').style.display = 'flex';
   document.querySelector('.menu-title').innerHTML = template.name;
@@ -233,7 +238,9 @@ function recreatePageForGivenTemplate () {
 
 window.onload = () => {
   project = JSON.parse(document.getElementById('project-data-json').value);
-  templates = JSON.parse(document.getElementById('templates-data-json').value);
+  const templatesArrayList = Object.values(JSON.parse(document.getElementById('templates-data-json').value));
+  for (let i = 0; i < templatesArrayList.length; i++)
+    templates = templates.concat(templatesArrayList[i]);
   country = document.getElementById('country-input').value;
   listenDropDownListInputs(document); // Listen for drop down items
   checkForCountryChange();

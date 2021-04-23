@@ -99,8 +99,8 @@ SubmitionSchema.statics.findSubmitionsByUserData = function (data, callback) {
 
             const data = {
               no: time + 1,
-              gender: user.gender,
-              birth_year: user.birth_year
+              // gender: user.gender,
+              // birth_year: user.birth_year
             };
 
             for (let i = 0; i < project.questions.length; i++)

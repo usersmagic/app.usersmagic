@@ -69,7 +69,7 @@ const SubmitionSchema = new Schema({
   }
 });
 
-SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback) {
+SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, filters, callback) {
   if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
     return callback('bad_request');
 
@@ -88,7 +88,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, callback)
     Submition.find({ $and: search_query }, (err, submitions) => {
       if (err) return callback(err);
 
-      User.getUsersFromSubmitionsByFilters(submitions, data.filters, (err, _submitions) =>{
+      User.getUsersFromSubmitionsByFilters(submitions, filters, (err, _submitions) =>{
         if(!err) submitions = _submitions;
 
       const questions = project.questions.map(question => {

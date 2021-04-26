@@ -805,9 +805,7 @@ window.onload = () => {
   dragAndDrop(document); // Listen for drag-and-drop wrappers
   listenSliderButtons(document); // Listen slider buttons
   setTimeout(() => {
-
-  autoSave(); // Automatically save project
-
+    autoSave(); // Automatically save project
   }, 1000); // Wait for everything on the page to be uploaded
 
   const addBlockWrapper = document.querySelector('.add-block-wrapper');

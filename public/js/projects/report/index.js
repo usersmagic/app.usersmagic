@@ -206,17 +206,7 @@ function setQuery(){
 }
 
 window.onload = () => {
-  var foff = document.getElementsByClassName('questions-all-wrapper')[0];
-  //foff.innerHTML = '<div>FUCK OFF!!!</div>';
-
-  var foff2 = document.getElementsByClassName('questions-summary-results-wrapper')[0];
-  //foff2.innerHTML = '<div>NA FUCK YOU</div>';
-
   listenForContentHeader(document); // Listen for content header buttons
-
-  const filters_from_server = JSON.parse(document.getElementById("filters").value);
-  console.log(filters_from_server);
-  //initiateFilters(filters_from_server);
 
   document.addEventListener('click', event =>{
     let clicked_on_filters = false;
@@ -278,6 +268,22 @@ window.onload = () => {
         updateSelectedFilters();
         setQuery();
       }
+    }
+
+    if(event.target.classList.contains('pdf-download')){
+
+      html2canvas(document.getElementsByClassName('questions-all-wrapper')[0]).then(function(canvas){
+        console.log(canvas);
+        var data = canvas.toDataURL();
+        console.log(data);
+        var docDefinition = {
+          content: [{
+            image: data,
+            width: 500
+          }]
+        }
+        pdfMake.createPdf(docDefinition).download("Survey Results");
+      })
     }
   })
 

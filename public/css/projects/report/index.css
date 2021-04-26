@@ -455,6 +455,11 @@
   margin-right: 15px;
 }
 
+.pdf-download {
+  height: 50px;
+  width: 150px;
+}
+
 #filter{
   width: 150px;
   margin-top: 50px;

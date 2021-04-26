@@ -11,7 +11,7 @@ module.exports = (req, res) => {
     json2csv.json2csv(submitions, (err, csv) => {
       if (err) return res.redirect('/');
 
-      return res.attachment('usersmagic report.csv').send(csv);
+      return res.attachment('Survey Results.csv').send(csv);
     });
   });
 }

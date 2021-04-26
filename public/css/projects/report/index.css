@@ -78,7 +78,7 @@
     min-height: 0px;
   }
   to {
-    min-height: 50px;
+    min-height: 100px;
   }
 }
 @-webkit-keyframes openBottom {
@@ -86,7 +86,7 @@
     min-height: 0px;
   }
   to {
-    min-height: 50px;
+    min-height: 100px;
   }
 }
 
@@ -95,7 +95,7 @@
 }
 @keyframes closeTop {
   from {
-    min-height: 50px;
+    min-height: 100px;
   }
   to {
     min-height: 0px;
@@ -103,7 +103,7 @@
 }
 @-webkit-keyframes closeTop {
   from {
-    min-height: 50px;
+    min-height: 100px;
   }
   to {
     min-height: 0px;
@@ -542,6 +542,7 @@
   margin-left: 20px;
   margin-right: 15px;
 }
+
 
 #filter{
   width: 150px;

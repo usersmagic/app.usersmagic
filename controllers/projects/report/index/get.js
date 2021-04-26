@@ -9,7 +9,7 @@ module.exports = (req, res) => {
     if (err) return res.redirect('/');
 
     if (number > 0) {
-      Submition.findSubmitionsCumulativeData(req.query, (err, questions) => {
+      Submition.findSubmitionsCumulativeData(req.query, req.body, (err, questions) => {
         if (err) return res.redirect('/');
 
         Project.findOneByFields({

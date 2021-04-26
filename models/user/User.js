@@ -172,50 +172,47 @@ UserSchema.statics.getUserById = function (id, callback) {
 };
 
 UserSchema.statics.getUsersFromSubmitionsByFilters = function (_submitions, _filters, callback) {
-  if(!_filters) return callback("missing filters");
+  if(!_filters || Object.entries(_filters).length === 0) return callback("missing filters");
   if(!_submitions) return callback("missing submition");
 
   const User = this;
   const submitions = [];
 
+//  console.log(_filters.age);
+
   async.forEachOf(_submitions, (submition, key, callback) =>{
     User.getUserById(submition.user_id, (err, user) =>{
       if(err) callback();
       else{
-        let app_for_filter = false;
-        let connected_filter = false;
+        let in_age = false;
+        let in_gender = false;
 
-        _filters = _filters[0].split(',');
+        if(_filters.age.length != 0){
 
-        for(_filter of _filters){
-          if(_filter == '') continue;
-
-          if(_filter.includes("age")){
-            const ages = _filter.split("age:")[1].split(" - ");
+          for(age of _filters.age){
+            const ages = age.split(" - ");
             const startAge = ages[0];
             const endAge = ages[1];
 
             const userAge = new Date().getFullYear() - user.birth_year;
 
-            if( userAge >= startAge && userAge <= endAge) app_for_filter = true;
-            connected_filter = true;
+            // I used here DNF, e.g. (18-30) or (30-50) or (50-70)
+            if( userAge >= startAge && userAge <= endAge) in_age = true;
           }
         }
+        else in_age = true;
 
-        for(_filter of _filters){
-          if((!connected_filter | app_for_filter) & _filter.includes("gender")){
-            const gender = _filter.split("gender:")[1];
-            const userGender = translateGenderToEnglish(user.gender.toLowerCase());
+      if(_filters.gender.length != 0){
+        for(gender of _filters.gender){
+          const userGender = translateGenderToEnglish(user.gender.toLowerCase());
 
-            if(gender.toLowerCase() == userGender) app_for_filter = true;
-            else {
-              connected_filter = false;
-              app_for_filter = false;
-            }
-          }
+          //DNF again
+          if(gender.toLowerCase() == userGender) in_gender = true;
         }
+      }
+      else in_gender = true;
 
-        if(app_for_filter) submitions.push(submition);
+        if(in_gender && in_age) submitions.push(submition);
         callback();
       }
     })

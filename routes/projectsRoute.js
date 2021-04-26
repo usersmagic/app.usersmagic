@@ -23,6 +23,7 @@ const createSavePostController = require('../controllers/projects/create/save/po
 const filtersIndexPostController = require('../controllers/projects/filters/index/post');
 const filtersCreateSavePostController = require('../controllers/projects/filters/create/save/post');
 const editSavePostController = require('../controllers/projects/edit/save/post');
+const reportIndexPostController = require('../controllers/projects/report/index/post');
 
 router.get(
   '/',
@@ -132,5 +133,11 @@ router.get(
   isAccountComplete,
   editUpdateGetController
 );
+router.post(
+  '/report',
+  isLoggedIn,
+  isAccountComplete,
+  reportIndexPostController
+)
 
 module.exports = router;

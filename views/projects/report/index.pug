@@ -1,5 +1,8 @@
 extends ../../partials/header
 block main
+  script(src='/bower_components/pdfmake/build/pdfmake.min.js' type='text/javascript')
+  script(src='/bower_components/pdfmake/build/vfs_fonts.js' type='text/javascript')
+  script(src='/bower_components/html2canvas.min.js' type='text/javascript')
   //- .general-beta-text beta version 1.0.0
   input.display-none#filters(type=text value=JSON.stringify(filters))
   .all-content-header-wrapper
@@ -17,11 +20,13 @@ block main
     .all-content-inner-content-wrapper
       .results-header-wrapper
         span.results-project-title= project.name
-        .results-download-button
-          span.results-download-button-span Download Results
-          .download-options-wrapper
-            a.each-download-option(href="/projects/report/csv?id=" + project._id) .CSV
-      //- .filters-wrapper
+        if questions && questions.length
+          .results-download-button
+            span.results-download-button-span Download Results
+            .download-options-wrapper
+              a.each-download-option(href="/projects/report/csv?id=" + project._id) .CSV
+              a.each-download-option.pdf-download .PDF
+      //-.filters-wrapper
         .general-filter-button-wrapper
           .general-filter-button.age Age
           .general-filter-button.gender Gender

@@ -217,6 +217,16 @@ window.onload = () => {
   document.addEventListener('click', event =>{
     let clicked_on_filters = false;
 
+    for(filter of FILTERS){
+      if(event.target.classList.contains(filter)){
+        const domElements = document.getElementsByClassName('filter-options');
+        const htmlElem = getFilter(domElements, filter);
+        if(htmlElem.style.display == "none" || !htmlElem.style.display) htmlElem.style.display = "flex";
+        else htmlElem.style.display = "none";
+        clicked_on_filters = true;
+      }
+    }
+
     // close other filters
     if(clicked_on_filters){
       for (filter of FILTERS){

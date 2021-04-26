@@ -4,7 +4,7 @@ const selected_filters = {
   gender: []
 };
 
-//let selected_filters = [];
+isDownloadButtonOpen = false;
 
 // finds the true filter object from HTMLCollection
 function getFilter(DOMElements, filter){
@@ -208,18 +208,14 @@ function setQuery(){
 window.onload = () => {
   listenForContentHeader(document); // Listen for content header buttons
 
+  // const filters_from_server = JSON.parse(document.getElementById("filters").value);
+  // initiateFilters(filters_from_server);
+
+  const resultsDownloadButton = document.querySelector('.results-download-button');
+  const downloadOptionsWrapper = document.querySelector('.download-options-wrapper');
+
   document.addEventListener('click', event =>{
     let clicked_on_filters = false;
-
-    for(filter of FILTERS){
-      if(event.target.classList.contains(filter)){
-        const domElements = document.getElementsByClassName('filter-options');
-        const htmlElem = getFilter(domElements, filter);
-        if(htmlElem.style.display == "none" || !htmlElem.style.display) htmlElem.style.display = "flex";
-        else htmlElem.style.display = "none";
-        clicked_on_filters = true;
-      }
-    }
 
     // close other filters
     if(clicked_on_filters){
@@ -285,6 +281,47 @@ window.onload = () => {
         pdfMake.createPdf(docDefinition).download("Survey Results");
       })
     }
-  })
+
+    if (event.target.classList.contains('results-download-button-span')) {
+      if (isDownloadButtonOpen) {
+        isDownloadButtonOpen = false;
+
+        downloadOptionsWrapper.classList.remove('open-bottom-animation-class');
+        downloadOptionsWrapper.classList.add('close-top-animation-class');
+
+        setTimeout(() => {
+          resultsDownloadButton.style.borderBottomWidth = '2px';
+          resultsDownloadButton.style.borderBottomLeftRadius = '10px';
+          resultsDownloadButton.style.borderBottomRightRadius = '10px';
+
+          downloadOptionsWrapper.style.border = '0px';
+        }, 400);
+      } else {
+        isDownloadButtonOpen = true;
+        resultsDownloadButton.style.borderBottomWidth = '0px';
+        resultsDownloadButton.style.borderBottomLeftRadius = '0px';
+        resultsDownloadButton.style.borderBottomRightRadius = '0px';
+
+        downloadOptionsWrapper.style.border = '2px solid rgba(184, 235, 238, 1)';
+        downloadOptionsWrapper.style.borderTop = '0px';
+
+        downloadOptionsWrapper.classList.remove('close-top-animation-class');
+        downloadOptionsWrapper.classList.add('open-bottom-animation-class');
+      }
+    } else if (!event.target.classList.contains('each-download-option') && isDownloadButtonOpen) {
+      isDownloadButtonOpen = false;
+
+      downloadOptionsWrapper.classList.remove('open-bottom-animation-class');
+      downloadOptionsWrapper.classList.add('close-top-animation-class');
+
+      setTimeout(() => {
+        resultsDownloadButton.style.borderBottomWidth = '2px';
+        resultsDownloadButton.style.borderBottomLeftRadius = '10px';
+        resultsDownloadButton.style.borderBottomRightRadius = '10px';
+
+        downloadOptionsWrapper.style.border = '0px';
+      }, 400);
+    }
+  });
 
 }

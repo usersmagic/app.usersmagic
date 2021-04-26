@@ -1,3 +1,4 @@
+const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
@@ -68,6 +69,51 @@ const SubmitionSchema = new Schema({
     default: null
   }
 });
+
+SubmitionSchema.statics.findSubmitionsByUserData = function (data, callback) {
+  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
+    return callback('bad_request');
+
+  const Submition = this;
+  const search_query = [
+    { campaign_id: data.id.toString() },
+    { status: 'approved' }
+  ];
+
+  if (data.target_id)
+    search_query.push({ target_id: data.target_id.toString() });
+
+  Project.findById(mongoose.Types.ObjectId(data.id.toString()), (err, project) => {
+    if (err || !project) return callback('document_not_found');
+
+    Submition.find({ $and: search_query }, (err, submitions) => {
+      if (err) return callback(err);
+
+      async.timesSeries(
+        submitions.length,
+        (time, next) => {
+          const submition = submitions[time];
+
+          User.getUserById(submition.user_id, (err, user) => {
+            if (err) return next(err);
+
+            const data = {
+              no: time + 1,
+              // gender: user.gender,
+              // birth_year: user.birth_year
+            };
+
+            for (let i = 0; i < project.questions.length; i++)
+              data[project.questions[i].text] = submition.answers[project.questions[i]._id] ? submition.answers[project.questions[i]._id] : '';
+
+            return next(null, data);
+          })
+        },
+        (err, submitions) => callback(err, submitions)
+      );
+    });
+  });
+};
 
 SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, filters, callback) {
   if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
@@ -211,7 +257,7 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, filters, 
       });
     });
   });
-}
+};
 
 SubmitionSchema.statics.getNumberOfApprovedSubmitions = function (data, callback) {
   // Finds and returns number of submitions with the given filters or an error if it exists

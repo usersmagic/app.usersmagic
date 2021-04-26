@@ -87,27 +87,40 @@ SubmitionSchema.statics.findSubmitionsByUserData = function (data, callback) {
     if (err || !project) return callback('document_not_found');
 
     Submition.find({ $and: search_query }, (err, submitions) => {
-      if (err) return callback(err);
+      if (err) return callback('database_error');
 
       async.timesSeries(
         submitions.length,
         (time, next) => {
           const submition = submitions[time];
 
-          User.getUserById(submition.user_id, (err, user) => {
-            if (err) return next(err);
-
+          if (submition.type == 'target') {
+            User.getUserById(submition.user_id, (err, user) => {
+              if (err) return next(err);
+  
+              const data = {
+                no: time + 1,
+                // gender: user.gender,
+                // birth_year: user.birth_year
+              };
+  
+              for (let i = 0; i < project.questions.length; i++)
+                data[project.questions[i].text] = submition.answers[project.questions[i]._id] ? submition.answers[project.questions[i]._id] : '';
+  
+              return next(null, data);
+            });
+          } else {
             const data = {
               no: time + 1,
-              // gender: user.gender,
-              // birth_year: user.birth_year
+              // gender: 'not known',
+              // birth_year: 'not known'
             };
 
             for (let i = 0; i < project.questions.length; i++)
               data[project.questions[i].text] = submition.answers[project.questions[i]._id] ? submition.answers[project.questions[i]._id] : '';
 
             return next(null, data);
-          })
+          }
         },
         (err, submitions) => callback(err, submitions)
       );

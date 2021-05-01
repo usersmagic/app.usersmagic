@@ -24,9 +24,10 @@ block main
           .results-download-button
             span.results-download-button-span Download Results
             .download-options-wrapper
-              a.each-download-option(href="/projects/report/csv?id=" + project._id) .CSV
+              a.each-download-option.csv-download .CSV 
+              //- (href="/projects/report/csv?id=" + project._id)
               a.each-download-option.pdf-download .PDF
-      //-.filters-wrapper
+      .filters-wrapper
         .general-filter-button-wrapper
           .general-filter-button.age Age
           .general-filter-button.gender Gender

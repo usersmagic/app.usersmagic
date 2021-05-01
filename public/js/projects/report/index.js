@@ -75,7 +75,7 @@ function setQuery(){
 
         if (q.type == 'yes_no'){
           html_code += `<span class="summary-results-each-question-info-title">${Math.max(q.answers.yes, q.answers.no)}</span>`;
-          html_code += `<span class="summary-results-each-question-info-data">${question.answers.yes >= question.answers.no ? 'YES' : 'NO'}</span>`;
+          html_code += `<span class="summary-results-each-question-info-data">${q.answers.yes >= q.answers.no ? 'YES' : 'NO'}</span>`;
         }
 
         else if (q.type == 'multiple_choice'){
@@ -110,7 +110,7 @@ function setQuery(){
       html_code += `<span class="each-question-details">${question.details}</span>`;
 
       if (question.type == 'yes_no'){
-        html_code += '<div class="yes-no-wrapper"><div class="yes-content-wrapper><div class="yes-outer-wrapper>';
+        html_code += '<div class="yes-no-wrapper"><div class="yes-content-wrapper"><div class="yes-outer-wrapper">';
         html_code += `<div class="yes-inner-wrapper" style="height: ${question.answers.yes}%; margin-top: ${question.answers.no}%"></div>`;
         html_code += '<div class="yes-no-icon-outer-wrapper">';
         html_code += '<div class="yes-icon-wrapper">';
@@ -137,7 +137,9 @@ function setQuery(){
       else if (question.type == 'multiple_choice'){
         html_code += `<span class="multiple-choice-answer-title">${question.data.total} answers</span>`;
         html_code += '<div class="multiple-choice-answers-wrapper">';
-        for(key in Object.keys(question.answers)){
+        for(j in Object.keys(question.answers)){
+          j = parseInt(j);
+          const key = j+1;
           html_code += '<div class="each-multiple-choice">';
           html_code += `<span class="each-multiple-choice-text">${key}</span>`;
           html_code += `<span class="each-multiple-choice-number">${question.answers[key]}</span>`;
@@ -168,22 +170,18 @@ function setQuery(){
         html_code += `<span class="seablue">${question.data.median}</span></span>`;
         html_code += '</div>';
         html_code += '<div class="histogram-inner-wrapper">';
-        for(j in Object.keys(question.answers)){
-          j = parseInt(j);
-          const key = j+1;
+        for(key of Object.keys(question.answers)){
           html_code += `<div class="histogram-each-column" style="height: ${question.answer_percentages[key]}%">`;
           html_code += `<span class="histogram-each-column-text"> ${question.answers[key]}</span>`;
           html_code += '</div>';
-          if (j < Object.keys(question.answers).length-1)
+          if (key < Object.keys(question.answers).length-1)
             html_code += '<div class="histogram-column-seperator"></div>';
         }
         html_code += '</div>';
         html_code += '<div class="histogram-inner-line-wrapper">';
-        for(j in Object.keys(question.answers)){
-          j = parseInt(j);
-          const key = j+1;
+        for(key of Object.keys(question.answers)){
           html_code += `<div class="histogram-each-column-explanation">${key}</div>`;
-          if(j < Object.keys(question.answers).length-1)
+          if(key < Object.keys(question.answers).length-1)
             html_code += '<div class="histogram-column-seperator"></div>';
         }
         html_code += '</div>';
@@ -279,9 +277,7 @@ window.onload = () => {
     if(event.target.classList.contains('pdf-download')){
 
       html2canvas(document.getElementsByClassName('questions-all-wrapper')[0]).then(function(canvas){
-        console.log(canvas);
         var data = canvas.toDataURL();
-        console.log(data);
         var docDefinition = {
           content: [{
             image: data,
@@ -290,6 +286,22 @@ window.onload = () => {
         }
         pdfMake.createPdf(docDefinition).download("Survey Results");
       })
+    }
+
+    if(event.target.classList.contains('csv-download')){
+
+      const id = window.location.href.split('id=')[1].split('&')[0];
+      let data = {};
+
+      if(selected_filters.age.length != 0 || selected_filters.gender.length != 0){
+        data = {
+          filters: selected_filters
+        }
+      }
+
+      console.log(`/projects/report/csv?id=${id}&filters=${JSON.stringify(data)}`)
+
+      window.open(`/projects/report/csv?id=${id}&filters=${JSON.stringify(data)}`)
     }
 
     if (event.target.classList.contains('results-download-button-span')) {

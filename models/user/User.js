@@ -178,8 +178,6 @@ UserSchema.statics.getUsersFromSubmitionsByFilters = function (_submitions, _fil
   const User = this;
   const submitions = [];
 
-//  console.log(_filters.age);
-
   async.forEachOf(_submitions, (submition, key, callback) =>{
     User.getUserById(submition.user_id, (err, user) =>{
       if(err) callback();

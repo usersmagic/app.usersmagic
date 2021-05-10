@@ -70,8 +70,8 @@ const SubmitionSchema = new Schema({
   }
 });
 
-SubmitionSchema.statics.findSubmitionsByUserData = function (data, callback) {
-  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())))
+SubmitionSchema.statics.findSubmitionsByUserData = function (data, company, callback) {
+  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || (data.target_id && !validator.isMongoId(data.target_id.toString())) || !company || !validator.isMongoId(company.toString()))
     return callback('bad_request');
 
   const Submition = this;
@@ -85,6 +85,9 @@ SubmitionSchema.statics.findSubmitionsByUserData = function (data, callback) {
 
   Project.findById(mongoose.Types.ObjectId(data.id.toString()), (err, project) => {
     if (err || !project) return callback('document_not_found');
+
+    if (project.creator != company)
+      return callback('document_not_found');
 
     Submition.find({ $and: search_query }, (err, submitions) => {
       if (err) return callback('database_error');
@@ -193,18 +196,20 @@ SubmitionSchema.statics.findSubmitionsCumulativeData = function (data, filters, 
         //if the questions are edited, dont return them
         const fields = compareReturnValidAnswers(questions, Object.entries(submition.answers));
         validAnswers = fields;
-
-
+        
         for (let j = 0; j < validAnswers.length; j++) {
           let answer = validAnswers[j];
 
-          if (answer.toLowerCase() == 'hayır' || answer.toLowerCase() == 'evet')
+          if (answer.toLowerCase && (answer.toLowerCase() == 'hayır' || answer.toLowerCase() == 'evet'))
             answer = answer.toLowerCase() == 'hayır' ? 'no' : 'yes';
 
           if (questions[j].type == 'yes_no' && (answer.toLowerCase() == 'yes' || answer.toLowerCase() == 'no')) {
             questions[j].data[`${answer.toLowerCase()}_number`]++;
           } else if (questions[j].type == 'multiple_choice') {
-            questions[j].answers[answer]++;
+            if (!Array.isArray(answer))
+              questions[j].answers[answer]++;
+            else
+              answer.forEach(ans => questions[j].answers[ans]++);
           } else if (questions[j].type == 'opinion_scale') {
             questions[j].answers[answer]++;
           } else if (questions[j].type == 'open_answer') {

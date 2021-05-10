@@ -5,7 +5,8 @@ const Project = require('../../../models/project/Project');
 module.exports = (req, res) => {
   Project.findOneByFields({
     _id: req.query.id,
-    status: {$in: ['finished', 'waiting']}
+    status: {$in: ['finished', 'waiting']},
+    creator: req.session.company._id.toString()
   }, {
     timezone: req.session.company.timezone
   }, (err, project) => {

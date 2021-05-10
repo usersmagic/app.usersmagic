@@ -14,7 +14,8 @@ module.exports = (req, res) => {
       return res.redirect(`/projects/filters?id=${target.project_id}`);
 
     Project.findOneByFields({
-      _id: target.project_id
+      _id: target.project_id,
+      creator: req.session.company._id
     }, {}, (err, project) => {
       if (err) return res.redirect(`/projects/filters?id=${target.project_id}`);
 

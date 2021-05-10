@@ -4,7 +4,7 @@
 const Project = require('../../../models/project/Project');
 
 module.exports = (req, res) => {
-  Project.updateByTemplate(req.query, err => {
+  Project.updateByTemplate(req.query, req.session.company._id, err => {
     if (err) {
       res.write(JSON.stringify({ error: err, success: false }));
       return res.end();

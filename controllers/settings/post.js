@@ -4,7 +4,7 @@
 const Company = require('../../models/company/Company');
 
 module.exports = (req, res) => {
-  Company.updateCompany(req.query ? req.query.id : null, req.body, err => {
+  Company.updateCompany(req.session.company._id, req.body, err => {
     if (err) {
       res.write(JSON.stringify({ error: err, success: false }));
       return res.end();

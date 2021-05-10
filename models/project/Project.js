@@ -228,15 +228,16 @@ ProjectSchema.statics.findByFields = function (fields, options, callback) {
   });
 };
 
-ProjectSchema.statics.updateProject = function (id, data, callback) {
+ProjectSchema.statics.updateProject = function (id, company, data, callback) {
   // Update project fields, returns error if it exists or null
 
   const Project = this;
-  if (!id || !validator.isMongoId(id.toString()) || !data)
+  if (!id || !validator.isMongoId(id.toString()) || !company || !validator.isMongoId(company.toString()) || !data)
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
     if (err || !project) return callback('document_not_found');
+    if (project.creator != company.toString()) return callback('document_not_found');
     if (project.status != 'saved') return callback('bad_request');
 
     const newData = {
@@ -253,7 +254,7 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
     if (!newData.name.length)
       newData.name = project.name;
 
-    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: newData}, err => {
+    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: newData}, err => {
       if (err) return callback(err);
 
       return callback(null);
@@ -261,35 +262,46 @@ ProjectSchema.statics.updateProject = function (id, data, callback) {
   });
 };
 
-ProjectSchema.statics.saveQuestions = function (id, data, callback) {
+ProjectSchema.statics.saveQuestions = function (id, company, data, callback) {
   // Save data.questions on the document with the given id, returns error if it exists
 
   const Project = this;
 
-  if (!id || !validator.isMongoId(id.toString()) || !data)
+  if (!id || !validator.isMongoId(id.toString()) || !company || !validator.isMongoId(company.toString()) || !data)
     return callback('bad_request');
 
-  validateQuestions(data.questions, {}, (err, questions) => {
-    if (err) return callback(err);
+  Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
+    if (err || !project)
+      return callback('document_not_found');
 
-    Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {questions}}, (err, project) => {
-      if (err || !project) return callback(err);
+    if (project.creator != company.toString())
+      return callback('document_not_found');
 
-      return callback(null);
+    validateQuestions(data.questions, {}, (err, questions) => {
+      if (err) return callback(err);
+    
+      Project.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {questions}}, (err, project) => {
+        if (err || !project) return callback(err);
+    
+        return callback(null);
+      });
     });
   });
 };
 
-ProjectSchema.statics.finishProject = function (id, callback) {
+ProjectSchema.statics.finishProject = function (id, company, callback) {
   // Sets the status of the project with the given id as 'finished' if there is no error on fields, else returns error
 
   const Project = this;
 
-  if (!id || !validator.isMongoId(id.toString()))
+  if (!id || !validator.isMongoId(id.toString()) || !company || !validator.isMongoId(company.toString()))
     return callback('bad_request');
 
   Project.findById(mongoose.Types.ObjectId(id), (err, project) => {
     if (err || !project)
+      return callback('document_not_found');
+
+    if (project.creator != company.toString())
       return callback('document_not_found');
 
     if (!project.name.length || !project.description.length || !project.welcome_screen.opening.length || !project.welcome_screen.details.length)
@@ -417,17 +429,20 @@ ProjectSchema.statics.saveEditedQuestions = function (id, data, callback) {
   });
 };
 
-ProjectSchema.statics.updateByTemplate = function (data, callback) {
+ProjectSchema.statics.updateByTemplate = function (data, company, callback) {
   // Update the questions and welcome screen of the Project with the given id using the Template given with template_id
   // Return an error if it exists
 
-  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || !data.template_id || !validator.isMongoId(data.template_id))
+  if (!data || !data.id || !validator.isMongoId(data.id.toString()) || !data.template_id || !validator.isMongoId(data.template_id) || !company || !validator.isMongoId(company.toString()))
     return callback('bad_request');
 
   const Project = this;
 
   Project.findById(mongoose.Types.ObjectId(data.id.toString()), (err, project) => {
     if (err || !project) return callback('document_not_found');
+
+    if (project.creator != company.toString())
+      return callback('document_not_found');
 
     if (project.status != 'template')
       return callback('bad_request');

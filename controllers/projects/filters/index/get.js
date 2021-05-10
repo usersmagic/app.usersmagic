@@ -5,7 +5,7 @@ const Project = require('../../../../models/project/Project');
 const Target = require('../../../../models/target/Target');
 
 module.exports = (req, res) => {
-  Target.findByProjectId(req.query ? req.query.id : null, {
+  Target.findByProjectId(req.query.id, {
     timezone: req.session.company.timezone
   }, (err, targets) => {
     if (err) return res.redirect('/projects');
@@ -14,7 +14,8 @@ module.exports = (req, res) => {
       if (err) return res.redirect('/project');
 
       Project.findOneByFields({
-        '_id': req.query.id
+        _id: req.query.id,
+        creator: req.session.company._id
       }, {
         timezone: req.session.company.timezone
       }, (err, project) => {

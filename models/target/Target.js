@@ -109,6 +109,25 @@ TargetSchema.statics.createTarget = function (data, callback) {
   });
 };
 
+TargetSchema.statics.findTargetById = function (id, callback) {
+  // Find and return the Target with the given id, or an error if it exists
+
+  if (!id || !validator.isMongoId(id.toString()))
+    return callback('bad_request');
+
+  const Target = this;
+
+  Target.findById(mongoose.Types.ObjectId(id.toString()), (err, target) => {
+    if (err || !target) return callback('document_not_found');
+
+    getTarget(target, {}, (err, target) => {
+      if (err) return callback(err);
+
+      return callback(null, target);
+    });
+  });
+};
+
 TargetSchema.statics.findByProjectId = function (project_id, options, callback) {
   // Finds and returns the Target documents with the given project_id, sorted by the created_at field decreasing order
 

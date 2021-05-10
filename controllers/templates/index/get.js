@@ -8,7 +8,10 @@ const Template = require('../../../models/template/Template');
 module.exports = (req, res) => {
   const company = req.session.company;
 
-  Project.findProjectById(req.query.id, (err, project) => {
+  Project.findOneByFields({
+    _id: req.query.id,
+    creator: req.session.company._id
+  }, {}, (err, project) => {
     if (err) return res.redirect('/');
 
     if (project.status != 'template')

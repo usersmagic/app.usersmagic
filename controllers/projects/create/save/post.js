@@ -4,13 +4,13 @@
 const Project = require('../../../../models/project/Project');
 
 module.exports = (req, res) => {
-  Project.updateProject(req.query ? req.query.id : null, req.body, err => {
+  Project.updateProject(req.query.id, req.session.company._id, req.body, err => {
     if (err) {
       res.write(JSON.stringify({ error: err, success: false }));
       return res.end();
     }
 
-    Project.saveQuestions(req.query ? req.query.id : null, req.body, err => {
+    Project.saveQuestions(req.query.id, req.session.company._id, req.body, err => {
       if (err) {
         res.write(JSON.stringify({ error: err, success: false }));
         return res.end();

@@ -13,7 +13,8 @@ module.exports = (req, res) => {
         if (err) return res.redirect('/');
 
         Project.findOneByFields({
-          _id: req.query.id
+          _id: req.query.id,
+          creator: req.session.company._id
         }, {}, (err, project) => {
           if (err) return res.redirect('/');
 

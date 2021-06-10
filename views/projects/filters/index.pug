@@ -64,9 +64,9 @@ block main
                 .each-target-buttons-wrapper
                   .target-tester-number-wrapper
                     span.target-tester-number-text How many testers do you need?
-                    input.target-tester-number-input(type="number" placeholder="____")
+                    input.target-tester-number-input(type="number" placeholder="___")
                     span.approve-tester-number-button(id=target._id.toString()) Start
-                  if target.submition_limit == 0
+                  if target.submition_limit == 0 && (!target.approved_submition_count || target.approved_submition_count < 10000)
                     span.target-start-button Find Testers
                   else
                     span.target-stop-button(id=target._id.toString()) Stop Test

@@ -205,6 +205,20 @@ function setQuery(){
   })
 }
 
+// This function is for adjusting the format for pdf download
+function setAnswerSectionMaxHeight(value){
+  var open_answers = document.getElementsByClassName("open-answer-wrapper");
+  var multiple_choice_answers = document.getElementsByClassName("multiple-choice-answers-wrapper");
+
+  for (answer_field of open_answers){
+    answer_field.style.maxHeight = value;
+  }
+
+  for (answer_field of multiple_choice_answers){
+    answer_field.style.maxHeight = value;
+  }
+}
+
 window.onload = () => {
   listenForContentHeader(document); // Listen for content header buttons
 
@@ -277,18 +291,25 @@ window.onload = () => {
     }
 
     if(event.target.classList.contains('pdf-download')){
-
+      setAnswerSectionMaxHeight("none");
       html2canvas(document.getElementsByClassName('questions-all-wrapper')[0]).then(function(canvas){
         console.log(canvas);
+        console.log(canvas.width);
         var data = canvas.toDataURL();
         console.log(data);
         var docDefinition = {
+          pageSize:{
+            width: canvas.width,
+            height: canvas.height,
+          },
+          //pageSize: 'A4',
           content: [{
             image: data,
-            width: 500
+            width: canvas.width
           }]
         }
         pdfMake.createPdf(docDefinition).download("Survey Results");
+        setAnswerSectionMaxHeight("300px");
       })
     }
 

@@ -10,6 +10,7 @@ const getTarget = require('./functions/getTarget');
 const Company = require('../company/Company');
 const Country = require('../country/Country');
 const Project = require('../project/Project');
+const TargetUserList = require('../target_user_list/TargetUserList');
 const User = require('../user/User');
 
 const Schema = mongoose.Schema;
@@ -65,15 +66,19 @@ const TargetSchema = new Schema({
     type: Number,
     default: 0
   },
-  users_list: {
-    // List of ids from User model. The users in this list can join this target group
-    type: Array,
-    default: []
+  approved_submition_count: {
+    // The number of approved Submitions under this Target
+    type: Number,
+    default: 0
   },
-  joined_users_list: {
-    // List of ids from User model. The users in this list have already joined the project, they cannot join one more time
-    type: Array,
-    default: []
+  price: {
+    // The price that will be paid to each user
+    type: Number,
+    default: null
+  },
+  last_update: {
+    type: Number,
+    default: 0
   }
 });
 
@@ -298,10 +303,16 @@ TargetSchema.statics.changeSubmitionLimit = function (id, data, callback) {
   if (!id || !validator.isMongoId(id.toString()) || !data || !Number.isInteger(data.limit))
     return callback('bad_request');
 
+  if (data.limit > 1000) // The submition limit max be 1000
+    return callback('bad_request');
+  
   const Target = this;
 
   Target.findById(mongoose.Types.ObjectId(id.toString()), (err, target) => {
     if (err || !target) return callback('document_not_found');
+
+    if (target.approved_submition_count > 9999)
+      return callback('bad_request');
 
     Project.findProjectById(target.project_id, (err, project) => {
       if (err) return callback(err);
@@ -324,75 +335,21 @@ TargetSchema.statics.changeSubmitionLimit = function (id, data, callback) {
           }, err => {
             if (err) return callback(err);
 
-            Target.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
+            Target.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
               submition_limit: data.limit
-            }}, err => callback(err));    
+            }}, err => {
+              if (err) return callback('database_error');
+
+              TargetUserList.updateEachTargetUserListSubmitionLimit(id, data.limit, err => {
+                if (err) return callback(err);
+
+                return callback(null);
+              });
+            });    
           }); 
         });
       });
     });
-  });
-};
-
-TargetSchema.statics.updateTargetStatus = function (id, data, callback) {
-  // Gets an id and updates status of the document with the given id. Returns the target or an error if it exists
-
-  if (!id || !validator.isMongoId(id) || !data)
-    return callback('bad_request');
-
-  const Target = this;
-
-  if (!data.approved && !data.reject_message)
-    return callback('bad_request');
-  
-  Target.findByIdAndUpdate(mongoose.Types.ObjectId(id), {$set: {
-    status: data.approved ? 'approved' : 'rejected',
-    error: data.approved ? null : data.reject_message
-  }}, {new: true}, (err, target) => {
-    if (err) return callback(err);
-
-    getTarget(target, {}, (err, target) => {
-      if (err) return callback(err);
-
-      return callback(null, target);
-    });
-  });
-};
-
-TargetSchema.statics.updateTargetsUsersList = function (callback) {
-  // Finds all the targets that's status is approved, updates their users_list
-
-  const Target = this;
-
-  Target.find({
-    status: 'approved',
-    submition_limit: {$gt: 0}
-  }, (err, targets) => {
-    if (err) return callback(err);
-
-    async.timesSeries(
-      targets.length,
-      (time, next) => {
-        const target = targets[time];
-
-        filtersArrayToSearchQuery(target.filters, (err, filters) => {
-          if (err) return next(err);
-
-          User.getUsersByFilters(filters, (err, users) => {
-            if (err) return next(err);
-
-            Target.findByIdAndUpdate(mongoose.Types.ObjectId(target._id), {$set: {
-              users_list: target.users_list.concat(users)
-            }}, {}, err => next(err));
-          });
-        });
-      },
-      err => {
-        if (err) return callback(err);
-
-        return callback(null);
-      }
-    );
   });
 };
 

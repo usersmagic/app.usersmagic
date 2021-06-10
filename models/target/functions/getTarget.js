@@ -30,7 +30,8 @@ module.exports = (target, options, callback) => {
       description: target.description,
       country: target.country,
       submition_limit: target.submition_limit,
-      credit_per_user: country.credit_per_user
+      credit_per_user: country.credit_per_user,
+      approved_submition_count: target.approved_submition_count || 0
     });
   });
 }

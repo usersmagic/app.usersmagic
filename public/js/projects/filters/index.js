@@ -61,6 +61,12 @@ window.onload = () => {
         setTimeout(() => {
           testerNumberInput.classList.remove('blink-red-animation-class');
         }, 600);
+      } else if (parseInt(testerNumberInput.value) > 1000 || parseInt(testerNumberInput.value) > 10000 - target.approved_submition_count) {
+        createConfirm({
+          title: 'Maximum Limit Exceeded',
+          text: 'You cannot start a target group with more than 1000 users, and total number of a target group cannot exceed 10000. Please enter a number smaller than or equal to ' + Math.min(10000 - target.approved_submition_count, 1000),
+          reject: 'Close'
+        }, res => { return });
       } else if (company.credit < parseInt(testerNumberInput.value) * target.credit_per_user) {
         createConfirm({
           title: 'Credit Error',

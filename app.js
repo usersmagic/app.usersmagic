@@ -29,7 +29,7 @@ if (cluster.isMaster) {
   const server = http.createServer(app);
 
   i18n.configure({
-    locales:['tr', 'en', 'de', 'es', 'fr'],
+    locales:['tr', 'en'],
     directory: __dirname + '/translations',
     queryParameter: 'lang',
     defaultLocale: 'en'

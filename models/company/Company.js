@@ -4,71 +4,56 @@ const validator = require('validator');
 const Schema = mongoose.Schema;
 
 const getCompany = require('./functions/getCompany');
-const hashPassword = require('./functions/hashPassword');
-const verifyNewCompanyData = require('./functions/verifyNewCompanyData');
-const verifyPassword = require('./functions/verifyPassword');
 
 const Country = require('../country/Country');
+const User = require('../user/User');
 
 const CompanySchema = new Schema({
-  email: {
-    // The email of the account
-    type: String,
-    unique: true,
-    minlength: 1,
-    required: true
-  },
-  password: {
-    // The password, saved hashed
-    type: String,
-    required: true,
-    minlength: 6,
-    maxlength: 1000
-  },
   country: {
-    // Alpha 2 country code of the company
+    // Alpha 2 country code of the Company
     type: String,
     default: null,
     length: 2
   },
-  company_name: {
-    // Name of the account company
+  name: {
+    // Name of the account Company
     type: String,
     default: null,
-    maxlenght: 1000
+    maxlenght: 1000,
+    minlength: 1
   },
   phone_number: {
-    // Phone number of the company
+    // Phone number of the Company
     type: String,
-    default: null
+    required: true,
+    unique: true
   },
   profile_photo: {
-    // Profile photo of company
+    // Profile photo of Company
     type: String,
     default: '/res/images/default/company.png'
   },
-  account_holder_name: {
-    // Name of the account holder
-    type: String,
-    default: null,
-    maxlenght: 1000
-  },
-  timezone: {
-    // Timezone of the account
-    type: String,
-    default: null
+  teams: {
+    // An array of teams under Company, { name: String, color: String }
+    type: Array,
+    default: [],
+    maxlength: 1000
   },
   credit: {
-    // Credit of the account
+    // Credit of the Company account. Stripe payment
     type: Number,
     default: 0
+  },
+  plan: {
+    // The payment plan of the Company. Allowed values: [free, basic, professional, enterprise]
+    type: String,
+    default: 'free'
   }
 });
 
-CompanySchema.pre('save', hashPassword);
-
 CompanySchema.statics.findCompanyById = function (id, callback) {
-  // Finds and returns the document with the given id, or an error if it exists
+  // Finds and returns the Company with the given id, or an error if it exists
+  // Format Company using getCompany
 
   if (!id || !validator.isMongoId(id.toString()))
     return callback('bad_request');
@@ -87,194 +72,129 @@ CompanySchema.statics.findCompanyById = function (id, callback) {
 };
 
 CompanySchema.statics.createCompany = function (data, callback) {
+  // Create a new Company using data. Use admin_id to pull values. Not provided, create as a new admin
+  // Return its id, or an error if it exists
+
+  if (!data || !data.country || !data.company_name || !data.phone_number || typeof data.phone_number != 'string')
+    return callback('bad_request');
+
+  data.phone_number = data.phone_number.trim().split(' ').join(''); // Format phone number
+
+  if (!validator.isMobilePhone(data.phone_number))
+    return callback('bad_request');
+
   const Company = this;
 
-  verifyNewCompanyData(data, (err, newCompanyData) => {
-    if (err) return callback(err);
+  Country.getCountryWithAlpha2Code(data.country, (err, country) => {
+    if (err || !country) return callback('bad_request');
+
+    const newCompanyData = {
+      country: data.country,
+      name: data.company_name.trim(),
+      phone_number: data.phone_number.trim()
+    };
 
     const newCompany = new Company(newCompanyData);
 
     newCompany.save((err, company) => {
-      if (err && err.code == 11000) return callback('email_duplication');
-      if (err) return callback('unknown_error');
+      if (err && err.code == 11000) return callback('duplicated_unique_field');
+      if (err) return callback('database_error');
 
-      getCompany(company, (err, company) => {
-        if (err) return callback(err);
-
-        callback(null, company);
-      });
+      return callback(null, company._id.toString());
     });
   });
 };
 
-CompanySchema.statics.updateCompany = function (id, data, callback) {
-  // Updates the data of the document with the given id. If data does not include a field, the field is returned to its default value
-  // Returns an error if it exists
+CompanySchema.statics.pushTeamUnderCompany = function (id, team, callback) {
+  // Push the given team ({ name, color }) under Company with given id
+  // Return an error if it exists
 
-  if (!id || !validator.isMongoId(id.toString()) || !data)
+  if (!id || !validator.isMongoId(id.toString()) || !team || !team.name || typeof team.name != 'string' || !team.color || !random_color_values.includes(team.color))
     return callback('bad_request');
 
-  if (data.phone_number && data.phone_number.length && !validator.isMobilePhone(data.phone_number))
-    return callback('phone_validation');
-
-  if (data.timezone && data.timezone.length && !Country.isTimezoneExists(data.timezone))
-    return callback('timezone_validation');
+  team.name = team.name.trim();
 
   const Company = this;
 
-  if (data.country && data.country.length) {
-    Country.getCountryWithAlpha2Code(data.country, (err, country) => {
-      if (err || !country) return callback('bad_request');
+  Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
+    if (err || !company) return callback('document_not_found');
+    if (company.teams.find(each => each.name == team.name))
+      return callback('duplicated_unique_field');
 
-      Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
-        if (err || !company) return callback('document_not_found');
+    Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$push: {
+      teams: {
+        name: team.name,
+        color: team.color
+      }
+    }}, err => {
+      if (err) return callback('database_error');
 
-        Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-          country: data.country,
-          company_name: data.company_name && data.company_name.length ? data.company_name : null,
-          phone_number: data.phone_number && data.phone_number.length ? data.phone_number : null,
-          account_holder_name: data.account_holder_name && data.account_holder_name.length ? data.account_holder_name : null,
-          timezone: data.timezone && data.timezone.length ? data.timezone : null,
-          profile_photo: (data.profile_photo && data.profile_photo.length) ? data.profile_photo : (data.profile_photo ? '/res/images/default/company.png' : company.profile_photo)
-        }}, (err, company) => {
-          if (err) return callback(err);
-          if (!company) return callback('document_not_found');
-    
-          return callback(null);
-        });
-      });
+      return callback(null);
     });
-  } else {
-    Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
-      if (err || !company) return callback('document_not_found');
-
-      Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-        company_name: data.company_name && data.company_name.length ? data.company_name : null,
-        phone_number: data.phone_number && data.phone_number.length ? data.phone_number : null,
-        account_holder_name: data.account_holder_name && data.account_holder_name.length ? data.account_holder_name : null,
-        timezone: data.timezone && data.timezone.length ? data.timezone : null,
-        profile_photo: (data.profile_photo && data.profile_photo.length) ? data.profile_photo : (data.profile_photo ? '/res/images/default/company.png' : company.profile_photo)
-      }}, (err, company) => {
-        if (err) return callback(err);
-        if (!company) return callback('document_not_found');
-  
-        return callback(null);
-      });
-    });
-  }
-
-  Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-    country: data.country && data.country.length == 2
-  }})
+  });
 };
 
-CompanySchema.statics.isCompanyDataComplete = function (id, callback) {
-  // Finds the document with the given id and checks if its status is 'complete': its country and company_name fields are complete
-  // Returns a boolean field showing success
+CompanySchema.statics.checkIfGivenTeamIsUnderCompany = function (id, team, callback) {
+  // Check if the given team is under the Company with the given id
+  // Return true or false, the team does or does not exist, respectively
 
-  if (!id || !validator.isMongoId(id.toString()))
+  if (!id || !validator.isMongoId(id.toString()) || !team || typeof team != 'string')
     return callback(false);
 
+  team = team.trim();
+
   const Company = this;
 
-  Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
-    if (err || !company)
-      return callback(false);
+  Company.findCompanyById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
+    if (err || !company) return callback(false);
 
-    if (!company.company_name || !company.company_name.length || !company.country || !company.country.length)
-      return callback(false);
+    if (company.teams.find(each => each.name == team))
+      return callback(true);
 
-    return callback(true);
+    return callback(false);
   });
 };
 
-CompanySchema.statics.findCompany = function (data, callback) {
-  if (!data || !data.email || !data.password)
-    return callback('bad_request')
+CompanySchema.statics.pullTeam = function (id, team, callback) {
+  // Pop the given team from the Company with the given id
+  // Return an error if it exists
+
+  if (!id || !team || typeof team != 'string')
+    return callback('bad_request');
+
+  team = team.trim();
 
   const Company = this;
 
-  Company.findOne({
-    email: data.email.trim()
-  }, (err, company) => {
-    if (err || !company) return callback('document_not_found');
+  Company.findCompanyById(id, (err, company) => {
+    if (err || !company) return callback('document_not_found');
 
-    verifyPassword(data.password, company.password, res => {
-      if (!res) return callback('password_verification');
+    if (!company.teams.find(each => each.name == team))
+      return callback('document_not_found');
 
-      getCompany(company, (err, company) => {
-        if (err) return callback(err);
+    Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$pull: {
+      "teams.name": team
+    }}, err => {
+      if (err) return callback('database_error');
 
-        callback(null, company);
-      });
+      return callback(null);
     });
   });
 };
 
-CompanySchema.statics.changePassword = function (id, data, callback) {
-  // Takes a user id, old password and a new password. Changes the document's password with the given id to the new password
-  // Returns an error if it exists
+CompanySchema.statics.updateName = function (id, name, callback) {
+  // Update name of the given Company
+  // Return an error if it exists
 
-  if (!data || !id|| !validator.isMongoId(id.toString()) || !data.old_password || !data.new_password || data.new_password.length < 6)
-    return callback('bad_request')
-
-  const Company = this;
-
-  Company.findById(mongoose.Types.ObjectId(id.toString()), (err, company) => {
-    if (err || !company) return callback('document_not_found');
-
-    verifyPassword(data.old_password, company.password, res => {
-      if (!res) return callback('password_verification');
-
-      company.password = data.new_password;
-
-      company.save(err => {
-        if (err) return callback(err);
-
-        return callback(null)
-      });
-    });
-  });
-};
-
-CompanySchema.statics.getAllCompanies = function (data, callback) {
-  // Finds all companies using the given data. Manipulates the data if it doesn't match requirements
-  // Returns an object containing companies and data or an error if it exists
-  if (!data || typeof data != 'object')
-    data = {};
-
-  if (!data.page || isNaN(parseInt(data.page)))
-    data.page = 0;
-  data.page = parseInt(data.page);
-
-  if (!data.limit || isNaN(parseInt(data.limit)))
-    data.limit = 100;
-  data.limit = Math.min(100, parseInt(data.limit));
-
-  const Company = this;
-
-  Company
-    .find({})
-    .sort({ '_id': -1 })
-    .limit(data.limit)
-    .skip(data.page * data.limit)
-    .then(companies => callback(null, { companies, data}))
-    .catch(err => callback(err));
-};
-
-CompanySchema.statics.updateCredit = function (id, data, callback) {
-  // Update the credit of the Company with the given id, return an error if it exists
-  
-  if (!id || !validator.isMongoId(id.toString()) || !data || typeof data != 'object' || !Number.isInteger(data.credit))
+  if (!id || !validator.isMongoId(id.toString()) || !name || typeof name != 'string' || !name.length)
     return callback('bad_request');
 
   const Company = this;
 
   Company.findByIdAndUpdate(mongoose.Types.ObjectId(id.toString()), {$set: {
-    credit: data.credit
-  }}, (err, company) => {
+    name
+  }}, err => {
     if (err) return callback('database_error');
-    if (!company) return callback('document_not_found');
 
     return callback(null);
   });

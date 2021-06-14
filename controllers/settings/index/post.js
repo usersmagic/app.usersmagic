@@ -1,10 +1,10 @@
-// Save new company data
+// Update CompanyUser data
 // XMLHTTP Request
 
-const Company = require('../../models/company/Company');
+const CompanyUser = require('../../../models/company_user/CompanyUser');
 
 module.exports = (req, res) => {
-  Company.updateCompany(req.session.company._id, req.body, err => {
+  CompanyUser.updateCompanyUser(req.session.user._id, req.body, err => {
     if (err) {
       res.write(JSON.stringify({ error: err, success: false }));
       return res.end();

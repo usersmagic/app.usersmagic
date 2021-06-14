@@ -61,6 +61,21 @@
 .form-register-link a:hover {
   text-decoration: underline;
 }
+.form-error-line {
+  margin-top: -30px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 40px;
+  min-height: 40px;
+  width: 100%;
+}
+.form-error-line span {
+  color: rgb(255, 0, 0);
+  font-size: 12px;
+  font-weight: 600;
+}
 
 .content-wrapper {
   flex: 1;

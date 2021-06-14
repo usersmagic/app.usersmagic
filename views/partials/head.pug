@@ -4,47 +4,21 @@ html(lang='tr')
     meta(name='viewport', content='width=device-width, initial-scale=1.0, shrink-to-fit=no, maximum-scale=1.0, user-scalable=0')
     meta(name='description' content='Usersmagic, hedef kitlene test ettirmenin en kolay yolu. Usersmagic ile hedef kitlenize ulaşın, ürününüzün kullanıcı kitlesini genişletin, sosyal medya kanalları üzerinden ürününüzün reklamını yapın. Usersmagic\'i kullanmaya başlamak için sitedeki formu doldurun, temsilcilerimiz bir hafta içinde size ulaşsın.')
     title Usersmagic | #{title}
-    link(href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' rel='stylesheet')
+    link(href='https://fonts.googleapis.com/css?family=Manrope:100,200,300,400,500,600,700,800,900' rel='stylesheet')
     if includes && includes.external
       if includes.external.css
-        if includes.external.css.includes('page')
-          link(rel='stylesheet' href=`/css/${page}.css`)
-        if includes.external.css.includes('admin')
-          link(rel='stylesheet' href='/css/general/admin.css')
-        if includes.external.css.includes('general')
-          link(rel='stylesheet' href='/css/general/general.css')
-        if includes.external.css.includes('header')
-          link(rel='stylesheet' href='/css/general/header.css')
-        if includes.external.css.includes('contentHeader')
-          link(rel='stylesheet' href='/css/general/contentHeader.css')
-        if includes.external.css.includes('logo')
-          link(rel='stylesheet' href='/css/general/logo.css')
-        if includes.external.css.includes('inputs')
-          link(rel='stylesheet' href='/css/general/inputs.css')
-        if includes.external.css.includes('buttons')
-          link(rel='stylesheet' href='/css/general/buttons.css')
-        if includes.external.css.includes('confirm')
-          link(rel='stylesheet' href='/css/general/confirm.css')
-        if includes.external.css.includes('fontawesome')
-          link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css', integrity='sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ', crossorigin='anonymous')
+        each file_name in includes.external.css
+          if file_name == 'page'
+            link(rel='stylesheet' href=`/css/${page}.css`)
+          else if file_name == 'fontawesome'
+            link(rel='stylesheet' href='https://use.fontawesome.com/releases/v5.2.0/css/all.css' integrity='sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ', crossorigin='anonymous')
+          else
+            link(rel='stylesheet' href=`/css/general/${file_name}.css`)
       if includes.external.js
-        if includes.external.js.includes('page')
-          script(src=`/js/${page}.js`)
-        if includes.external.js.includes('duplicateElement')
-          script(src='/js/functions/duplicateElement.js')
-        if includes.external.js.includes('dragAndDrop')
-          script(src='/js/functions/dragAndDrop.js')
-        if includes.external.js.includes('buttonListeners')
-          script(src='/js/functions/buttonListeners.js')
-        if includes.external.js.includes('confirm')
-          script(src='/js/functions/confirmFunction.js')
-        if includes.external.js.includes('inputListeners')
-          script(src='/js/functions/inputListeners.js')
-        if includes.external.js.includes('serverRequests')
-          script(src='/js/functions/serverRequests.js')
-        if includes.external.js.includes('serverRequest')
-          script(src='/js/functions/serverRequest.js')
-        if includes.external.js.includes('headerListeners')
-          script(src='/js/functions/headerListeners.js')
+        each file_name in includes.external.js
+          if file_name == 'page'
+            script(src=`/js/${page}.js`)
+          else
+            script(src=`/js/functions/${file_name}.js`)
   body
     block content

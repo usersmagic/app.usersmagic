@@ -1,91 +1,299 @@
-extends ../partials/header
+extends ../partials/navbar
 block main
-  input.display-none#company-data-json(value=JSON.stringify(company))
-  //- .general-beta-text beta version 1.0.0
-  .change-password-outer-wrapper
-    .change-password-wrapper
-      span.change-password-title Change your Password
-      span.general-input-title Old Password
-        span.general-input-required-sign *
-      input.general-input-with-border#company-old-password-input(type="password" name="old_password" autocomplete="none" placeholder="Enter your old password")
-      span.general-input-title New Password
-        span.general-input-required-sign *
-      input.general-input-with-border#company-new-password-input(type="password" name="new_password" autocomplete="none" placeholder="Choose your new password")
-      span.general-input-title Confirm Password
-        span.general-input-required-sign *
-      input.general-input-with-border#company-confirm-password-input(type="password" name="confirm_password" autocomplete="none" placeholder="Repeat your new password")
-      button.save-new-password-button.general-seablue-button
-        span Save
-      .general-input-error-line#password-error
-        span
-  .all-content-header-wrapper
-    .header-user-logo
-      img(src=company.profile_photo alt="usersmagic " + company.name)
-    a.header-each-step-text(href="/settings") Settings
-    .header-credit-wrapper
-      span.header-credit-amount #{company.credit} credits
-      span.header-get-credit-button Get Credits
-  .all-content-inner-wrapper
-    .settings-inner-wrapper
-      .settings-buttons-wrapper
-        span.unsaved-changes-text You have unsaved changes
-        .general-seablue-button.settings-save-changes-button
-          span Save Changes
-      span.settings-each-division-title Personal Information
-      .settings-each-input-outer-wrapper#image-input-outer-wrapper
-        .settings-each-input-wrapper
-          span.general-input-title Company Name
-            span.general-input-required-sign *
-          input.general-input-with-border#company-name-input(type="text" name="company_name" value=company.company_name autocomplete="off" placeholder="Name of your company")
-        .settings-each-input-wrapper
-          span.general-input-title Country
-            span.general-input-required-sign *
-          .general-drop-down-list-outer-wrapper(style="z-index: 5;")
-            .general-drop-down-list-wrapper(style="z-index: 5;")
-              input.general-drop-down-list-input#company-country-visible-input(type="text" autocomplete="none" value=company.country_name placeholder="The country your company is registered")
-              input.general-drop-down-list-input-not-visible#company-country-input(type="text" name="country" value=company.country)
-              input.general-drop-down-list-items-json(type="text" value=JSON.stringify(countries.map(country => { return {name: country.name, id: country.alpha2_code} })))
-              .general-drop-down-choices-wrapper
-                each country in countries
-                  span.general-drop-down-list-each-item(id=country.alpha2_code)= country.name
-        .settings-each-input-wrapper
-          span.general-input-title Phone Number
-          input.general-input-with-border#company-phone-number-input(type="text" name="phone_number" value=company.phone_number autocomplete="off" placeholder="Please specify the country code as well")
-        .settings-each-input-wrapper
-          if company.profile_photo == '/res/images/default/company.png'
-            span.general-input-title Profile Photo
-            label.general-choose-image-input-text
-              span Choose a profile photo
-              input.display-none#image-input(type="file" accept="image/*")
+  input.display-none#user-json(type="text" value=JSON.stringify(user))
+  span.display-none#logout-confirm-title= __('Are you sure you want to logout?')
+  span.display-none#logout= __('Logout')
+  span.display-none#confirm-invite-request-title= __('Invite a New Member')
+  span.display-none#confirm-invite-request= __('Please confirm your request to invite a new member to your account.')
+  span.display-none#team-create-title= __('Create a New Team')
+  span.display-none#team-create-text= __('Please confirm you want to create a new team. The users you have selected will be notifies by email.')
+  span.display-none#delete-photo-title= __('Are you sure you want to delete this photo?')
+  span.display-none#delete-photo-text= __('You cannot take back this action. You can upload a new photo once you delete this one.')
+  span.display-none#delete-photo= __('Delete Photo')
+  span.display-none#upload-photo= __('Upload Photo')
+  span.display-none#confirm= __('Confirm')
+  span.display-none#cancel= __('Cancel')
+  span.display-none#password-length-error= __('Password should be 6 digits long')
+  span.display-none#confirm-password-error= __('Please confirm the password')
+  span.display-none#email-validation-error= __('Your invite request could not be delivered. Please check the email address and try again. If the problem continues, you may reach our team at hello@usersmagic.com.')
+  span.display-none#network-error= __('Please check your internet connection and try again')
+  span.display-none#unknown-error= __('An unknown error occured, please try again later')
+  span.display-none#enter-old-password-error= __('Enter your old password')
+  span.display-none#wrong-old-password-error= __('Your password is wrong')
+  span.display-none#enter-new-password-error= __('Enter your new password')
+  span.display-none#confirm-new-password-error= __('Confirm your new password')
+  span.display-none#short-password-error= __('Your password should be at least 6 digits')
+  spand.display-none#password-changed= __('Your password is changed')
+  span.settings-main-title= __('Settings')
+  .settings-change-page-buttons-wrapper
+    span(style="width: 75px; margin-left: 0px").selected-change-button= __('General')
+    span(style="width: 42px")= __('Plan')
+    span(style="width: 52px")= __('Team')
+    span(style="width: 125px")= __('Notifications')
+  .settings-change-page-line-wrapper
+    .settings-change-page-line
+  .settings-general-save-button-wrapper
+    .logout-button= __('Logout')
+    .settings-general-saving
+      i.fas.fa-spinner.rotate-animation-class
+    span.settings-general-save-button= __('Save Changes')
+  .settings-general-wrapper
+    .settings-general-inner-wrapper
+      span.settings-title= __('Personal')
+      span.settings-subtitle#photo-title= __('Photo')
+      if user.profile_photo 
+        .settings-profile-photo
+          img(src=user.profile_photo alt="usersmagic company user")
+        span.change-photo-button.delete-user-profile-photo-button= __('Delete Photo')
+      else
+        .settings-default-profile-photo(style="background-color: " + user.color)
+          span= user.name.split(' ')[0][0] + user.name.split(' ')[user.name.split(' ').length-1][0]
+        label.change-photo-button= __('Upload Photo')
+          input.display-none#user-photo-input(type="file" multiple=false accept="image/*")
+      .settings-photo-uploading-wrapper
+        i.fas.fa-spinner.rotate-animation-class#user-photo-uploading(style="display: none")
+      span.settings-subtitle= __('Work Email')
+      span.settings-input-no-change= user.email
+      span.settings-subtitle#name-title= __('Name')
+      input.settings-input#name-input(type="text" value=user.name placeholder=__('Cole Maura'))
+      span.settings-input-error#name-input-error= __('Please write your name')
+      span.settings-subtitle#company-role-title= __('Company Role')
+      .settings-drop-down-list-outer-wrapper(style="z-index: 3;")
+        .settings-drop-down-list-wrapper(style="z-index: 3;")
+          input.settings-drop-down-list-input#company-role-visible-input(type="text" autocomplete="none" value=__(user.role) placeholder=__('UX Designer'))
+          input.settings-drop-down-list-input-not-visible#company-role-input(type="text" value=user.role)
+          input.settings-drop-down-list-items-json(type="text" value=JSON.stringify(company_roles.map(role => { return {name: __(role), id: role} })))
+          .settings-drop-down-choices-wrapper
+            each role in company_roles
+              span.settings-drop-down-list-each-item(id=role)= __(role)
+      span.settings-input-error#company-role-input-error= __('Please choose your company role from the list')
+      span.settings-title= __('Company')
+      span.settings-subtitle= __('Logo')
+      .settings-profile-photo
+        img(src=user.company.profile_photo alt="usersmagic company user")
+      label.change-photo-button= __('Upload Photo')
+        input.display-none#company-photo-input(type="file")
+      span.settings-subtitle= __('Country')
+      span.settings-input-no-change= countries.find(country => country.alpha2_code == user.company.country).name
+      span.settings-subtitle#company-name-title= __('Company Name')
+      if user.type == 'admin'
+        input.settings-input#company-name-input(type="text" value=user.company.name placeholder=__('Usersmagic Inc.'))
+        span.settings-input-error#company-name-input-error= __('Please write name of your company')
+      else
+        span.settings-input-no-change= user.company.name
+      span.settings-subtitle= __('Company Phone')
+      span.settings-input-no-change= user.company.phone_number
+      span.settings-title= __('Security')
+      span.settings-subtitle= __('Old Password')
+      input.settings-input#old-password-input(type="password" placeholder=__('••••••••'))
+      span.settings-subtitle= __('New Password')
+      input.settings-input#new-password-input(type="password" placeholder=__('Enter your new password'))
+      span.settings-subtitle= __('Confirm New Password')
+      input.settings-input#confirm-password-input(type="password" placeholder=__('Confirm your new password'))
+      .change-password-button-wrapper
+        .change-password-button
+          i.fas.fa-key
+          span= __('Change Password')
+        span.change-password-error
+  span.settings-plan-title= __('Subscription')
+  .settings-plan-wrapper
+    .settings-plan-inner-wrapper
+      .settings-plan-column-one
+        span.column-one-title= __('Features')
+        span.column-one-each-text= __('Templates')
+        span.column-one-each-text= __('Filtering')
+        span.column-one-each-text= __('Included free survey responses')
+        span.column-one-each-text= __('View persona')
+        span.column-one-each-text= __('Share link')
+        span.column-one-each-text= __('Account manager')
+        span.column-one-each-text= __('Dedicated onboarding')
+        span.column-one-each-text= __('Survey guidance')
+      .settings-plan-column-two
+        .each-column-subtitle= __('For small teams & individuals')
+        .each-column-content-wrapper
+          .each-column-content-left-wrapper(class=(user.company.plan == 'free' ? "current-column" : ""))
+            .each-columnt-content-top-wrapper
+              span.each-column-content-title= __('Free')
+              span.each-column-content-subtitle $0
+              if user.company.plan == 'free'
+                span.each-column-content-current-button= __('Current Plan')
+              else
+                span.each-column-content-downgrade-button= __('Downgrade')
+            span.each-column-content-item 3
+            span.each-column-content-item
+            span.each-column-content-item
+            span.each-column-content-item
+            span.each-column-content-item
+              i.fas.fa-check
+            span.each-column-content-item
+            span.each-column-content-item
+            span.each-column-content-item
+          .each-column-content-right-wrapper(class=(user.company.plan == 'basic' ? "current-column" : ""))
+            .each-columnt-content-top-wrapper
+              span.each-column-content-title= __('Basic')
+              span.each-column-content-subtitle $29
+              if user.company.plan == 'free'
+                span.each-column-content-upgrade-button= __('Upgrade')
+              else if user.company.plan == 'basic'
+                span.each-column-content-current-button= __('Current Plan')
+              else
+                span.each-column-content-downgrade-button= __('Downgrade')
+            span.each-column-content-item Unlimited
+            span.each-column-content-item Limited
+            span.each-column-content-item 10
+            span.each-column-content-item
+            span.each-column-content-item
+              i.fas.fa-check
+            span.each-column-content-item
+            span.each-column-content-item
+            span.each-column-content-item
+      .settings-plan-column-three
+        .each-column-subtitle= __('For teams & enterprises')
+        .each-column-content-wrapper
+          .each-column-content-left-wrapper(class=(user.company.plan == 'professional' ? "current-column" : ""))
+            .each-columnt-content-top-wrapper
+              span.each-column-content-title= __('Professional')
+              span.each-column-content-subtitle $45
+              if user.company.plan == 'free' || user.company.plan == 'basic'
+                span.each-column-content-upgrade-button= __('Upgrade')
+              else if user.company.plan == 'professional'
+                span.each-column-content-current-button= __('Current Plan')
+              else
+                span.each-column-content-downgrade-button= __('Downgrade')
+            span.each-column-content-item Unlimited
+            span.each-column-content-item Limited
+            span.each-column-content-item 10
+            span.each-column-content-item
+            span.each-column-content-item
+              i.fas.fa-check
+            span.each-column-content-item
+            span.each-column-content-item
+            span.each-column-content-item
+          .each-column-content-right-wrapper(class=(user.company.plan == 'enterprise' ? "current-column" : ""))
+            .each-columnt-content-top-wrapper
+              span.each-column-content-title= __('Enterprise')
+              span.each-column-content-subtitle Custom
+              if user.company.plan == 'enterprise'
+                span.each-column-content-current-button= __('Current Plan')
+              else
+                span.each-column-content-upgrade-button= __('Upgrade')
+            span.each-column-content-item Unlimited
+            span.each-column-content-item Limited
+            span.each-column-content-item 10
+            span.each-column-content-item
+              i.fas.fa-check
+            span.each-column-content-item
+              i.fas.fa-check
+            span.each-column-content-item
+              i.fas.fa-check
+            span.each-column-content-item
+              i.fas.fa-check
+            span.each-column-content-item
+              i.fas.fa-check
+  .settings-team-wrapper
+    .settings-team-inner-wrapper
+      span.settings-team-title= __('Members')
+      each company_user in user.company.users
+        .each-team-user
+          if company_user.profile_photo
+            .each-team-user-profile
+              img(src=company_user.profile_photo alt="usersmagic")
           else
-            span.general-input-title Profile Photo
-            .general-image-input-wrapper
-              .general-image-input-wrapper-image
-                img(src=company.profile_photo alt="usersmagic " + company.company_name)
-              i.fas.fa-times.delete-company-image-button
-        .settings-each-input-wrapper
-          span.general-input-title Account Holder Name
-          input.general-input-with-border#company-account-holder-name-input(type="text" name="account_holder_name" value=company.account_holder_name autocomplete="off" placeholder="Name of the account holder")
-        .settings-each-input-wrapper
-          span.general-input-title Timezone
-          .general-drop-down-list-outer-wrapper
-            .general-drop-down-list-wrapper
-              input.general-drop-down-list-input(type="text" autocomplete="none" value=company.timezone placeholder="The timezone you prefer to see your dates. Default to the timezone of your country")
-              input.general-drop-down-list-input-not-visible#country-timezone-input(type="text" name="timezone" value=company.timezone)
-              input.general-drop-down-list-items-json(type="text" value=JSON.stringify(timezones.map(timezone => { return {name: timezone, id: timezone} })))
-              .general-drop-down-choices-wrapper
-                each timezone in timezones
-                  span.general-drop-down-list-each-item(id=timezone)= timezone
-      span.settings-each-division-title Account Settings
-      .settings-each-input-outer-wrapper
-        .settings-each-input-wrapper
-          span.general-input-title Email
-          span.general-input-with-border-no-change= company.email
-        .settings-each-input-wrapper
-          span.general-input-title Password
-          .general-seablue-border-button.change-password-button
-            span Change Password
-        .settings-each-input-wrapper
-          span.general-input-title Authentication
-          .general-red-border-button.logout-button
-            span Logout
+            .each-team-user-default-profile(style="background-color: " + company_user.color)
+              span= company_user.name.split(' ')[0][0] + company_user.name.split(' ')[company_user.name.split(' ').length-1][0]
+          span.each-team-user-name= company_user.name
+          if company_user._id == user._id
+            span.each-team-user-you (#{__('You')})
+          span.each-team-user-role= __(user.role)
+      if user.type == 'admin'
+        .invite-member-button
+          i.fas.fa-user-plus
+          span Invite Member
+        .invite-member-wrapper
+          i.fas.fa-times.invite-member-close-button
+          span.invite-member-title= __('User Type')
+          .invite-member-each-line
+            .invite-member-type-wrapper
+              .invite-member-each-type#invite-member-admin-type
+                i.fas.fa-user-lock
+                span= __('Admin')
+              .invite-member-each-type#invite-member-user-type
+                i.fas.fa-user
+                span= __('User')
+            span.invite-member-error
+            span.approve-invite-member-button= __('Invite')
+          .invite-member-each-line
+            span.invite-member-title= __('Account Email')
+            span.invite-member-title= __('Name')
+          .invite-member-each-line
+            input.invite-member-input#invite-member-email-input(type="text" placeholder=__('name@example.com'))
+            input.invite-member-input#invite-member-name-input(type="text" placeholder=__('Cole Maura'))
+          .invite-member-each-line
+            span.invite-member-title= __('Password')
+            span.invite-member-title= __('Confirm Password')
+          .invite-member-each-line
+            input.invite-member-input#invite-member-password-input(type="password" placeholder="••••••••")
+            input.invite-member-input#invite-member-confirm-password-input(type="password" placeholder="••••••••")
+      span.settings-team-title= __('Teams')
+      each team in user.company.teams
+        .each-team-wrapper
+          span.each-team-name(style="background-color: " + team.color)= team.name
+          each member in user.company.users
+            if member.teams.includes(team.name)
+              if member.profile_photo
+                .each-team-member-input-list-profile
+                  img(src=member.profile_photo alt="usersmagic")
+              else
+                .each-team-member-input-list-default-profile(style="background-color: " + member.color)
+                  span= member.name.split(' ')[0][0] + member.name.split(' ')[member.name.split(' ').length-1][0]
+          if user.type == 'admin'
+            i.each-team-edit-button.fas.fa-cog(id=team.name)
+            i.each-team-delete-button.fas.fa-trash-alt(id=team.name)
+      if user.type == 'admin'
+        .create-team-button
+          i.fas.fa-plus
+          span Create New
+        .create-team-wrapper
+          i.fas.fa-times.create-team-close-button
+          span.create-team-title= __('Team Name')
+          .create-team-top-line
+            span.create-team-name
+            i.fas.fa-times.create-team-name-reset-button(style="display: none")
+            input.create-team-name-input(type="text" placeholder=__('Marketing'))
+            span.approve-create-team-button= __('Create')
+          span.create-team-title= __('Team Members')
+          .team-members-wrapper
+            .team-members-input-wrapper
+              input.team-members-input(type="text" placeholder=__('Add members'))
+              .team-members-input-list-wrapper
+                each member in user.company.users
+                  .each-team-member-input-list(id=member._id)
+                    if member.profile_photo
+                      .each-team-member-input-list-profile
+                        img(src=member.profile_photo alt="usersmagic")
+                    else
+                      .each-team-member-input-list-default-profile(style="background-color: " + member.color)
+                        span= member.name.split(' ')[0][0] + member.name.split(' ')[member.name.split(' ').length-1][0]
+                    span= member.name
+        //- .edit-team-wrapper
+        //-   i.fas.fa-times.create-team-close-button
+        //-   span.create-team-title= __('Team Name')
+        //-   .create-team-top-line
+        //-     span.create-team-name
+        //-     i.fas.fa-times.create-team-name-reset-button(style="display: none")
+        //-     input.edit-team-name-input(type="text" placeholder=__('Marketing'))
+        //-     span.save-edit-team-button= __('Create')
+        //-   span.create-team-title= __('Team Members')
+        //-   .team-members-wrapper
+        //-     .team-members-input-wrapper
+        //-       input.team-members-input(type="text" placeholder=__('Add members'))
+        //-       .team-members-input-list-wrapper
+        //-         each member in user.company.users
+        //-           .each-team-member-input-list(id=member._id)
+        //-             if member.profile_photo
+        //-               .each-team-member-input-list-profile
+        //-                 img(src=member.profile_photo alt="usersmagic")
+        //-             else
+        //-               .each-team-member-input-list-default-profile(style="background-color: " + member.color)
+        //-                 span= member.name.split(' ')[0][0] + member.name.split(' ')[member.name.split(' ').length-1][0]
+        //-             span= member.name

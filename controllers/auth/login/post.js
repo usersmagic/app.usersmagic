@@ -1,17 +1,18 @@
-const Company = require('../../../models/company/Company');
+// Login to the account, set req.session.user
+// XMLHTTP Request
+
+const CompanyUser = require('../../../models/company_user/CompanyUser');
 
 module.exports = (req, res) => {
-  Company.findCompany(req.body, (err, company) => {
-    if (err || !company) {
-      req.session.error = err;
-      return res.redirect('/auth/login');
+  CompanyUser.findCompanyUser(req.body, (err, company_user) => {
+    if (err || !company_user) {
+      res.write(JSON.stringify({ error: err, success: false }));
+      return res.end();
     }
 
-    req.session.company = company;
+    req.session.user = company_user;
 
-    if (req.session.redirect)
-      return res.redirect(req.session.redirect);
-    else
-      return res.redirect('/');
+    res.write(JSON.stringify({ redirect: req.session.redirect, success: true }));
+    return res.end();
   });
 }

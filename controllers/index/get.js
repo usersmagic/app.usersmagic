@@ -1,3 +1,3 @@
 module.exports = (req, res) => {
-  return res.redirect('/projects');
+  return res.redirect('/settings');
 }

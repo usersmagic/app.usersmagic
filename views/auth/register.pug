@@ -1,27 +1,74 @@
 extends ../partials/head
 block content
-  //- .general-beta-text beta version 1.0.0
+  input.display-none#countries(type="text" value=JSON.stringify(countries.map(country => {return { alpha2_code: country.alpha2_code, phone_code: country.phone_code }})))
+  input.display-none#company-roles(type="text" value=JSON.stringify(company_roles))
+  span.display-none#bad-request-error= __('Please fill all the required fields')
+  span.display-none#password-length-error= __('Your password should at least be 6 digits long')
+  span.display-none#password-confirm-error= __('Please confirm your password')
+  span.display-none#country-error= __('Please choose a country from the list')
+  span.display-none#company-role-error= __('Please choose your company role from the list')
+  span.display-none#phone-duplicated-error= __('This phone number is already in use')
+  span.display-none#network-error= __('Please check your internet connection and try again')
+  span.display-none#unknown-error= __('An unknown error occured, please try again later')
   .all-wrapper
     .form-wrapper
       a.general-logo-wrapper(href="/")
         img(src="/res/images/logo.png" alt="usersmagic app")
         span usersmagic
-      span.form-title Welcome!
-      span.form-subtitle Create your free account
-      form.form-input-wrapper(action="/auth/register" method="POST")
-        span.general-input-title Email
-        input.general-input-with-border(type="text" autocomplete="off" name="email" placeholder="name@email.com")
-        span.general-input-title Password
-        input.general-input-with-border(type="password" name="password" placeholder="••••••••")
-        span.general-input-title Confirm Password
-        input.general-input-with-border(type="password" name="confirmPassword" placeholder="••••••••")
+      span.form-title.form-page-one-title= __('Welcome!')
+      span.form-subtitle.form-page-one-subtitle= __('Create your free account')
+      form.form-input-wrapper.form-page-one
+        span.general-input-title= __('Email')
+          span.general-input-required-sign *
+        input.general-input-with-border#email-input(type="text" autocomplete="off" placeholder=__('name@email.com'))
+        span.general-input-title= __('Password')
+          span.general-input-required-sign *
+        input.general-input-with-border#password-input(type="password" placeholder="••••••••")
+        span.general-input-title= __('Confirm Password')
+          span.general-input-required-sign *
+        input.general-input-with-border#confirm-password-input(type="password" placeholder="••••••••")
         button.general-seablue-button
-          span Create Account
-      //- span.form-agreement-text
-      //-   span By signing up, I agree to
-      //-   a(href="/agreement/termsofservice") Usersmagic's Term of Service
+          span= __('Continue')
+        .form-error-line
+          span.form-page-one-error
+      form.form-input-wrapper.form-page-two(style="display: none")
+        span.general-input-title= __('Name')
+          span.general-input-required-sign *
+        input.general-input-with-border#name-input(type="text" autocomplete="none" placeholder="Cole Maura")
+        span.general-input-title= __('Company Name')
+          span.general-input-required-sign *
+        input.general-input-with-border#company-name-input(type="text" autocomplete="none" placeholder="Usersmagic Inc.")
+        span.general-input-title= __('Country')
+          span.general-input-required-sign *
+        .general-drop-down-list-outer-wrapper(style="z-index: 3;")
+          .general-drop-down-list-wrapper(style="z-index: 3;")
+            input.general-drop-down-list-input#country-visible-input(type="text" autocomplete="none" placeholder=__('United States'))
+            input.general-drop-down-list-input-not-visible#country-input(type="text")
+            input.general-drop-down-list-items-json(type="text" value=JSON.stringify(countries.map(country => { return {name: country.name, id: country.alpha2_code} })))
+            .general-drop-down-choices-wrapper
+              each country in countries
+                span.general-drop-down-list-each-item(id=country.alpha2_code)= __(country.name)
+        span.general-input-title= __('Company Role')
+          span.general-input-required-sign *
+        .general-drop-down-list-outer-wrapper(style="z-index: 2;")
+          .general-drop-down-list-wrapper(style="z-index: 2;")
+            input.general-drop-down-list-input#company-role-visible-input(type="text" autocomplete="none" placeholder=__('UX Designer'))
+            input.general-drop-down-list-input-not-visible#company-role-input(type="text")
+            input.general-drop-down-list-items-json(type="text" value=JSON.stringify(company_roles.map(role => { return {name: __(role), id: role} })))
+            .general-drop-down-choices-wrapper
+              each role in company_roles
+                span.general-drop-down-list-each-item(id=role)= __(role)
+        span.general-input-title= __('Company Phone')
+          span.general-input-required-sign *
+        label.phone-code-input-wrapper
+          span.phone-code#company-phone-code +0
+          input.phone-code-input#company-phone-input(type="text" placeholder='544 444 44 44')
+        button.general-seablue-button
+          span= __('Create Account')
+        .form-error-line
+          span.form-page-two-error
       .form-login-link
-        span Already have an account?
-        a(href="/auth/login") Log in
+        span= __('Already have an account?')
+        a(href="/auth/login")= __('Log in')
     .content-wrapper
       span Talk to your target customers, not your friends!

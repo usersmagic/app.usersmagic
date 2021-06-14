@@ -1,0 +1,13 @@
+extends ./head
+block content
+  .general-all-wrapper
+    .general-navigation-bar-wrapper
+      img.general-navigation-bar-logo(src="/res/images/logo/light_blue_small.png" alt="usersmagic logo")
+      a.general-navigation-bar-button(href="/" style=(selected_page && selected_page == 'home' ? "color: rgb(3, 17, 73)" : ""))= __('Home')
+      a.general-navigation-bar-button(href="/projects" style=(selected_page && selected_page == 'projects' ? "color: rgb(3, 17, 73)" : ""))= __('Projects')
+      a.general-navigation-bar-button(href="/audience" style=(selected_page && selected_page == 'audience' ? "color: rgb(3, 17, 73)" : ""))= __('Audience')
+      a.general-navigation-bar-button(href="/insights" style=(selected_page && selected_page == 'insights' ? "color: rgb(3, 17, 73)" : ""))= __('Market Insights')
+      a.general-navigation-bar-button(href="/settings" style=(selected_page && selected_page == 'settings' ? "color: rgb(3, 17, 73)" : ""))= __('Settings')
+      span.general-navigation-copyright Usersmagic Inc.
+    .content-wrapper
+      block main

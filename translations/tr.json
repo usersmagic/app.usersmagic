@@ -129,5 +129,13 @@
 	"Are you sure you want to logout?": "Are you sure you want to logout?",
 	"Enter your old password": "Enter your old password",
 	"Your password should be at least 6 digits": "Your password should be at least 6 digits",
-	"Your password is changed": "Your password is changed"
+	"Your password is changed": "Your password is changed",
+	"Invite Member": "Invite Member",
+	"This email address is already in use. Please try with another email": "This email address is already in use. Please try with another email",
+	"admin": "admin",
+	"Complete Your Account": "Complete Your Account",
+	"Please change your password and specify your role in your company before you open your account": "Please change your password and specify your role in your company before you open your account",
+	"Please write your password and choose your role in your company from the list": "Please write your password and choose your role in your company from the list",
+	"Complete Account": "Complete Account",
+	"Please write your password and choose your role": "Please write your password and choose your role"
 }

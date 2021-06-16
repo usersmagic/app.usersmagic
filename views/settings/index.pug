@@ -1,6 +1,10 @@
 extends ../partials/navbar
 block main
   input.display-none#user-json(type="text" value=JSON.stringify(user))
+  each role in company_roles
+    span.display-none(id=role)= __(role)
+  span.display-none(id='new_member')= __('new_member')
+  span.display-none#admin= __('Admin')
   span.display-none#logout-confirm-title= __('Are you sure you want to logout?')
   span.display-none#logout= __('Logout')
   span.display-none#confirm-invite-request-title= __('Invite a New Member')
@@ -15,6 +19,7 @@ block main
   span.display-none#cancel= __('Cancel')
   span.display-none#password-length-error= __('Password should be 6 digits long')
   span.display-none#confirm-password-error= __('Please confirm the password')
+  span.display-none#email-duplicated-error= __('This email address is already in use. Please try with another email')
   span.display-none#email-validation-error= __('Your invite request could not be delivered. Please check the email address and try again. If the problem continues, you may reach our team at hello@usersmagic.com.')
   span.display-none#network-error= __('Please check your internet connection and try again')
   span.display-none#unknown-error= __('An unknown error occured, please try again later')
@@ -71,8 +76,9 @@ block main
       span.settings-subtitle= __('Logo')
       .settings-profile-photo
         img(src=user.company.profile_photo alt="usersmagic company user")
-      label.change-photo-button= __('Upload Photo')
-        input.display-none#company-photo-input(type="file")
+      if user.type == 'admin'
+        label.change-photo-button= __('Upload Photo')
+          input.display-none#company-photo-input(type="file")
       span.settings-subtitle= __('Country')
       span.settings-input-no-change= countries.find(country => country.alpha2_code == user.company.country).name
       span.settings-subtitle#company-name-title= __('Company Name')
@@ -118,7 +124,7 @@ block main
               if user.company.plan == 'free'
                 span.each-column-content-current-button= __('Current Plan')
               else
-                span.each-column-content-downgrade-button= __('Downgrade')
+                span.each-column-content-downgrade-button(class=(user.type == 'admin' ? "" : "not-allowed-plan-button"))= __('Downgrade')
             span.each-column-content-item 3
             span.each-column-content-item
             span.each-column-content-item
@@ -133,11 +139,11 @@ block main
               span.each-column-content-title= __('Basic')
               span.each-column-content-subtitle $29
               if user.company.plan == 'free'
-                span.each-column-content-upgrade-button= __('Upgrade')
+                span.each-column-content-upgrade-button(class=(user.type == 'admin' ? "" : "not-allowed-plan-button"))= __('Upgrade')
               else if user.company.plan == 'basic'
                 span.each-column-content-current-button= __('Current Plan')
               else
-                span.each-column-content-downgrade-button= __('Downgrade')
+                span.each-column-content-downgrade-button(class=(user.type == 'admin' ? "" : "not-allowed-plan-button"))= __('Downgrade')
             span.each-column-content-item Unlimited
             span.each-column-content-item Limited
             span.each-column-content-item 10
@@ -155,11 +161,11 @@ block main
               span.each-column-content-title= __('Professional')
               span.each-column-content-subtitle $45
               if user.company.plan == 'free' || user.company.plan == 'basic'
-                span.each-column-content-upgrade-button= __('Upgrade')
+                span.each-column-content-upgrade-button(class=(user.type == 'admin' ? "" : "not-allowed-plan-button"))= __('Upgrade')
               else if user.company.plan == 'professional'
                 span.each-column-content-current-button= __('Current Plan')
               else
-                span.each-column-content-downgrade-button= __('Downgrade')
+                span.each-column-content-downgrade-button(class=(user.type == 'admin' ? "" : "not-allowed-plan-button"))= __('Downgrade')
             span.each-column-content-item Unlimited
             span.each-column-content-item Limited
             span.each-column-content-item 10
@@ -176,7 +182,7 @@ block main
               if user.company.plan == 'enterprise'
                 span.each-column-content-current-button= __('Current Plan')
               else
-                span.each-column-content-upgrade-button= __('Upgrade')
+                span.each-column-content-upgrade-button(class=(user.type == 'admin' ? "" : "not-allowed-plan-button"))= __('Upgrade')
             span.each-column-content-item Unlimited
             span.each-column-content-item Limited
             span.each-column-content-item 10
@@ -202,22 +208,24 @@ block main
             .each-team-user-default-profile(style="background-color: " + company_user.color)
               span= company_user.name.split(' ')[0][0] + company_user.name.split(' ')[company_user.name.split(' ').length-1][0]
           span.each-team-user-name= company_user.name
+          if company_user.type == 'admin'
+            span.each-team-user-admin (#{__('Admin')})
           if company_user._id == user._id
             span.each-team-user-you (#{__('You')})
-          span.each-team-user-role= __(user.role)
+          span.each-team-user-role= __(company_user.role)
       if user.type == 'admin'
         .invite-member-button
           i.fas.fa-user-plus
-          span Invite Member
+          span= __('Invite Member')
         .invite-member-wrapper
           i.fas.fa-times.invite-member-close-button
           span.invite-member-title= __('User Type')
           .invite-member-each-line
             .invite-member-type-wrapper
-              .invite-member-each-type#invite-member-admin-type
+              .invite-member-each-type#admin
                 i.fas.fa-user-lock
                 span= __('Admin')
-              .invite-member-each-type#invite-member-user-type
+              .invite-member-each-type#user
                 i.fas.fa-user
                 span= __('User')
             span.invite-member-error

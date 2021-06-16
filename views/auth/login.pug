@@ -14,7 +14,7 @@ block content
       span.form-subtitle= __('Log in to unleash your users’ magic')
       form.form-input-wrapper(action="/auth/login" method="POST")
         span.general-input-title= __('Email')
-        input.general-input-with-border#email-input(type="text" autocomplete="off" placeholder=__('name@email.com'))
+        input.general-input-with-border#email-input(type="text" autocomplete="off" placeholder=__('name@email.com') autofocus)
         span.general-input-title= __('Password')
         input.general-input-with-border#password-input(type="password" placeholder="••••••••")
         button.general-seablue-button

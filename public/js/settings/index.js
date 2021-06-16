@@ -208,6 +208,43 @@ function updateUserPhoto(photo) {
   }
 }
 
+function createNewMember(user) {
+  const eachTeamUser = document.createElement('div');
+  eachTeamUser.classList.add('each-team-user');
+
+  const eachTeamUserDefaultProfile = document.createElement('div');
+  eachTeamUserDefaultProfile.classList.add('each-team-user-default-profile');
+  eachTeamUserDefaultProfile.style.backgroundColor = user.color;
+
+  const span = document.createElement('span');
+  span.innerHTML = user.name.split(' ')[0][0] + user.name.split(' ')[user.name.split(' ').length-1][0];
+  eachTeamUserDefaultProfile.appendChild(span);
+  eachTeamUser.appendChild(eachTeamUserDefaultProfile);
+
+  const eachTeamUserName = document.createElement('span');
+  eachTeamUserName.classList.add('each-team-user-name');
+  eachTeamUserName.innerHTML = user.name;
+  eachTeamUser.appendChild(eachTeamUserName);
+
+  if (user.type == 'admin') {
+    const eachTeamUserAdmin = document.createElement('span');
+    eachTeamUserAdmin.classList.add('each-team-user-admin');
+    eachTeamUserAdmin.innerHTML = document.getElementById('admin').innerHTML;
+    eachTeamUser.appendChild(eachTeamUserAdmin);
+  }
+
+  const eachTeamUserRole = document.createElement('span');
+  eachTeamUserRole.classList.add('each-team-user-role');
+  eachTeamUserRole.innerHTML = document.getElementById(user.role).innerHTML;
+  eachTeamUser.appendChild(eachTeamUserRole);
+
+  const settingsTeamInnerWrapper = document.querySelector('.settings-team-inner-wrapper');
+  settingsTeamInnerWrapper.appendChild(eachTeamUser);
+
+  while (eachTeamUser.previousElementSibling && !eachTeamUser.previousElementSibling.classList.contains('each-team-user'))
+    settingsTeamInnerWrapper.insertBefore(eachTeamUser, eachTeamUser.previousElementSibling);
+}
+
 function addNewMember(member) {
   const eachAddedMember = document.createElement('div');
   eachAddedMember.classList.add('each-added-member');
@@ -326,10 +363,13 @@ function pushNewTeam() {
 
 window.onload = () => {
   settingsDrowDownInputListener();
-  checkInviteMemberButtonStatus();
-  checkCreateTeamButtonStatus();
 
   user = JSON.parse(document.getElementById('user-json').value);
+
+  if (user.type == 'admin') {
+    checkInviteMemberButtonStatus();
+    checkCreateTeamButtonStatus();
+  }
 
   const logoutConfirmTitle = document.getElementById('logout-confirm-title').innerHTML;
   const logout = document.getElementById('logout').innerHTML;
@@ -344,6 +384,7 @@ window.onload = () => {
   const passwordLengthError = document.getElementById('password-length-error').innerHTML;
   const confirmPasswordError = document.getElementById('confirm-password-error').innerHTML;
   const emailValidationError = document.getElementById('email-validation-error').innerHTML;
+  const emailDuplicatedError = document.getElementById('email-duplicated-error').innerHTML;
   const networkError = document.getElementById('network-error').innerHTML;
   const unknownError = document.getElementById('unknown-error').innerHTML;
 
@@ -505,7 +546,7 @@ window.onload = () => {
     }
 
     if (event.target.classList.contains('approve-invite-member-button')) {
-      const type = document.querySelector('.selected-invite-member-wrapper');
+      const type = document.querySelector('.selected-invite-member-wrapper') ? document.querySelector('.selected-invite-member-wrapper').id : null;
       const email = document.getElementById('invite-member-email-input').value;
       const name = document.getElementById('invite-member-name-input').value;
       const password = document.getElementById('invite-member-password-input').value;
@@ -529,7 +570,45 @@ window.onload = () => {
         }, res => {
           if (!res) return;
 
-          
+          serverRequest('/settings/member/invite', 'POST', {
+            type,
+            email,
+            name,
+            password
+          }, res => {
+            if (res.success) {
+              createNewMember(res.user);
+              document.querySelector('.invite-member-button').style.display = 'flex';
+              document.querySelector('.invite-member-wrapper').style.display = 'none';
+            } else {
+              if (res.error == 'bad_request' || res.error == 'email_submition')
+                return createConfirm({
+                  title: '',
+                  text: emailValidationError,
+                  reject: confirm
+                }, res => { return });
+
+              if (res.error == 'duplicated_unique_field')
+                return createConfirm({
+                  title: '',
+                  text: emailDuplicatedError,
+                  reject: confirm
+                }, res => { return });
+
+              if (res.error == 'network_error')
+                return createConfirm({
+                  title: '',
+                  text: networkError,
+                  reject: confirm
+                }, res => { return });
+                
+              return createConfirm({
+                title: '',
+                text: unknownError,
+                reject: confirm
+              }, res => { return });
+            }
+          });
         });
       }
     }

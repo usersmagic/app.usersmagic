@@ -8,6 +8,7 @@ module.exports = (company_user, other_users, callback) => {
 
   const company_user_data = {
     _id: company_user._id.toString(),
+    completed: company_user.completed,
     email: company_user.email,
     type: company_user.type,
     role: company_user.role,
@@ -25,6 +26,7 @@ module.exports = (company_user, other_users, callback) => {
     company_user_data.company.users = other_users.map(company_user => {
       return {
         _id: company_user._id.toString(),
+        completed: company_user.completed,
         email: company_user.email,
         type: company_user.type,
         role: company_user.role,

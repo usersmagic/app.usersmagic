@@ -1,0 +1,33 @@
+extends ../partials/head
+block content
+  input.display-none#company-roles(type="text" value=JSON.stringify(company_roles))
+  span.display-none#bad-request-error= __('Please write your password and choose your role')
+  span.display-none#password-length-error= __('Your password should at least be 6 digits long')
+  span.display-none#password-confirm-error= __('Please confirm your password')
+  span.display-none#company-role-error= __('Please choose your company role from the list')
+  span.display-none#network-error #{__('Please check your internet connection and try again')}
+  span.display-none#unknown-error #{__('An unknown error occured, please try again later')}
+  .all-wrapper
+    form.complete-form-wrapper
+      span.complete-form-title= __('Complete Your Account')
+      span.complete-form-text= __('Please change your password and specify your role in your company before you open your account')
+      span.general-input-title= __('Password')
+        span.general-input-required-sign *
+      input.general-input-with-border#password-input(type="password" placeholder="••••••••")
+      span.general-input-title= __('Confirm Password')
+        span.general-input-required-sign *
+      input.general-input-with-border#confirm-password-input(type="password" placeholder="••••••••")
+      span.general-input-title= __('Company Role')
+        span.general-input-required-sign *
+      .general-drop-down-list-outer-wrapper(style="z-index: 2;")
+        .general-drop-down-list-wrapper(style="z-index: 2;")
+          input.general-drop-down-list-input#company-role-visible-input(type="text" autocomplete="none" placeholder=__('UX Designer'))
+          input.general-drop-down-list-input-not-visible#company-role-input(type="text")
+          input.general-drop-down-list-items-json(type="text" value=JSON.stringify(company_roles.map(role => { return {name: __(role), id: role} })))
+          .general-drop-down-choices-wrapper
+            each role in company_roles
+              span.general-drop-down-list-each-item(id=role)= __(role)
+      button.general-seablue-button
+        span= __('Complete Account')
+      .form-error-line
+        span.form-error

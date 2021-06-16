@@ -2,13 +2,15 @@ const async = require('async');
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const Schema = mongoose.Schema;
+const sendMail = require('../../utils/sendMail');
+
+const Company = require('../company/Company');
 
 const getCompanyUser = require('./functions/getCompanyUser');
 const hashPassword = require('./functions/hashPassword');
 const verifyPassword = require('./functions/verifyPassword');
 
-const Company = require('../company/Company');
+const Schema = mongoose.Schema;
 
 const random_color_values = ['rgb(3, 17, 73)', 'rgb(254, 211, 85)', 'rgb(46, 197, 206)', 'rgb(241, 120, 182)', 'rgb(120, 121, 241)'];
 const allowed_types = ['admin', 'user'], allowed_roles = ['ui_designer', 'ux_designer', 'user_researcher', 'full_stack_designer', 'product_manager', 'developer', 'manager', 'sales', 'marketing', 'other'];
@@ -167,6 +169,80 @@ CompanyUserSchema.statics.findCompanyUser = function (data, callback) {
           return callback(null, company_user);
         });
       });
+    });
+  });
+};
+
+CompanyUserSchema.statics.inviteCompanyUser = function (user_id, data, callback) {
+  // Check if the given user can invite another user, create a new CompanyUser if authenticated
+  // Return the new user object, or an error if it exists
+
+  if (!user_id || !data)
+    return callback('bad_request');
+
+  const CompanyUser = this;
+
+  CompanyUser.findCompanyUserById(user_id, (err, company_user) => {
+    if (err || !company_user) return callback('document_not_found');
+
+    if (company_user.type != 'admin')
+      return callback('not_authenticated_request');
+
+    if (!data.type || !allowed_types.includes(data.type))
+      data.type = 'user'; // Default type is user for invited members
+
+    data.company_id = company_user.company_id;
+
+    Company.findCompanyById(company_user.company_id, (err, company) => {
+      if (err) return callback(err);
+
+      CompanyUser.createCompanyUser(data, (err, id) => {
+        if (err) return callback(err);
+  
+        sendMail({
+          template: company.country == 'tr' ? 'invite_user_app_tr' : 'invite_user_app_en',
+          to: data.email,
+          name: data.name,
+          email: company_user.email,
+          company_name: company.name
+        }, err => {
+          if (err) return callback(err);
+
+          CompanyUser.findCompanyUserById(id, (err, user) => {
+            if (err) return callback('unknown_error');
+
+            return callback(null, user);
+          });
+        });
+      });
+    });
+  });
+};
+
+CompanyUserSchema.statics.completeCompanyUser = function (id, data, callback) {
+  // Complete the given CompanyUser
+  // Fields required to complete: password (password should be updated), role (all users should have a role)
+  // Return an error if it exists
+
+  if (!id || !data || !data.password || data.password.trim().length < 6 || !data.role || !allowed_roles.includes(data.role))
+    return callback('bad_request');
+
+  const CompanyUser = this;
+
+  CompanyUser.findById(mongoose.Types.ObjectId(id.toString()), (err, company_user) => {
+    if (err || !company_user) return callback('document_not_found');
+
+    if (company_user.completed)
+      return callback('already_authenticated');
+
+    company_user.completed = true;
+    company_user.password = data.password.trim();
+    company_user.role = data.role;
+
+    company_user.save(err => {
+      if (err) return callback('database_error');
+
+      return callback(null);
     });
   });
 };

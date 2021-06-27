@@ -10,7 +10,7 @@ block main
   span.display-none#confirm-invite-request-title= __('Invite a New Member')
   span.display-none#confirm-invite-request= __('Please confirm your request to invite a new member to your account.')
   span.display-none#team-create-title= __('Create a New Team')
-  span.display-none#team-create-text= __('Please confirm you want to create a new team. The users you have selected will be notifies by email.')
+  span.display-none#team-create-text= __('Please confirm you want to create a new team. The users you have selected will be notified by email.')
   span.display-none#delete-photo-title= __('Are you sure you want to delete this photo?')
   span.display-none#delete-photo-text= __('You cannot take back this action. You can upload a new photo once you delete this one.')
   span.display-none#delete-photo= __('Delete Photo')
@@ -244,10 +244,10 @@ block main
             input.invite-member-input#invite-member-confirm-password-input(type="password" placeholder="••••••••")
       span.settings-team-title= __('Teams')
       each team in user.company.teams
-        .each-team-wrapper
+        .each-team-wrapper(id=team._id.toString())
           span.each-team-name(style="background-color: " + team.color)= team.name
           each member in user.company.users
-            if member.teams.includes(team.name)
+            if member.teams.includes(team._id)
               if member.profile_photo
                 .each-team-member-input-list-profile
                   img(src=member.profile_photo alt="usersmagic")
@@ -255,12 +255,12 @@ block main
                 .each-team-member-input-list-default-profile(style="background-color: " + member.color)
                   span= member.name.split(' ')[0][0] + member.name.split(' ')[member.name.split(' ').length-1][0]
           if user.type == 'admin'
-            i.each-team-edit-button.fas.fa-cog(id=team.name)
-            i.each-team-delete-button.fas.fa-trash-alt(id=team.name)
+            i.each-team-edit-button.fas.fa-cog
+            i.each-team-delete-button.fas.fa-trash-alt
       if user.type == 'admin'
         .create-team-button
           i.fas.fa-plus
-          span Create New
+          span= __('Create New')
         .create-team-wrapper
           i.fas.fa-times.create-team-close-button
           span.create-team-title= __('Team Name')

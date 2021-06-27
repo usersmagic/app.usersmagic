@@ -118,7 +118,6 @@
 	"Confirm": "Confirm",
 	"Cancel": "Cancel",
 	"Create a New Team": "Create a New Team",
-	"Please confirm you want to create a new team. The users you have selected will be notifies by email.": "Please confirm you want to create a new team. The users you have selected will be notifies by email.",
 	"Please write your name": "Please write your name",
 	"Please write name of your company": "Please write name of your company",
 	"Are you sure you want to delete this photo?": "Are you sure you want to delete this photo?",
@@ -137,5 +136,7 @@
 	"Please change your password and specify your role in your company before you open your account": "Please change your password and specify your role in your company before you open your account",
 	"Please write your password and choose your role in your company from the list": "Please write your password and choose your role in your company from the list",
 	"Complete Account": "Complete Account",
-	"Please write your password and choose your role": "Please write your password and choose your role"
+	"Please write your password and choose your role": "Please write your password and choose your role",
+	"Please confirm you want to create a new team. The users you have selected will be notified by email.": "Please confirm you want to create a new team. The users you have selected will be notified by email.",
+	"Create New": "Create New"
 }

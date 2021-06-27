@@ -31,7 +31,7 @@ module.exports = (company_user, other_users, callback) => {
         type: company_user.type,
         role: company_user.role,
         name: company_user.name,
-        team: company_user.team,
+        teams: company_user.teams,
         profile_photo: company_user.profile_photo,
         color: company_user.color
       };

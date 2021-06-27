@@ -280,6 +280,9 @@ function addNewMember(member) {
 
   document.querySelector('.team-members-wrapper').appendChild(eachAddedMember);
   document.querySelector('.team-members-wrapper').insertBefore(eachAddedMember, eachAddedMember.previousElementSibling);
+
+  if (!document.querySelector('.team-members-input-list-wrapper').childElementCount)
+    document.querySelector('.team-members-input-wrapper').style.display = 'none';
 }
 
 function addMemberToInputUserList(member) {
@@ -357,8 +360,75 @@ function checkCreateTeamButtonStatus() {
   }, 1000);
 }
 
-function pushNewTeam() {
+function resetInputUserList() {
+  document.querySelector('.team-members-input-list-wrapper').innerHTML = '';
 
+  user.company.users.forEach(user => {
+    addMemberToInputUserList(user);
+  });
+}
+
+function pushNewTeam(team) {
+  const eachTeamWrapper = document.createElement('div');
+  eachTeamWrapper.classList.add('each-team-wrapper');
+  eachTeamWrapper.id = team._id.toString();
+
+  const eachTeamName = document.createElement('span');
+  eachTeamName.classList.add('each-team-name');
+  eachTeamName.style.backgroundColor = team.color;
+  eachTeamName.innerHTML = team.name.trim();
+  eachTeamWrapper.appendChild(eachTeamName);
+
+  for (let i = 0; i < team.members.length; i++) {
+    member = team.members[i];
+
+    if (member.profile_photo) {
+      const profile = document.createElement('div');
+      profile.classList.add('each-team-member-input-list-profile');
+      const img = document.createElement('img');
+      img.src = member.profile_photo;
+      img.alt = member.name;
+      profile.appendChild(img);
+      eachTeamWrapper.appendChild(profile);
+    } else {
+      const profileDefault = document.createElement('div');
+      profileDefault.classList.add('each-team-member-input-list-default-profile');
+      profileDefault.style.backgroundColor = member.color;
+      const span = document.createElement('span');
+      span.innerHTML = member.name.split(' ')[0][0] + member.name.split(' ')[member.name.split(' ').length-1][0];
+      profileDefault.appendChild(span);
+      eachTeamWrapper.appendChild(profileDefault);
+    }
+  }
+
+  const eachTeamEditButton = document.createElement('i');
+  eachTeamEditButton.classList.add('each-team-edit-button');
+  eachTeamEditButton.classList.add('fas');
+  eachTeamEditButton.classList.add('fa-cog');
+  eachTeamWrapper.appendChild(eachTeamEditButton);
+
+  const eachTeamDeleteButton = document.createElement('i');
+  eachTeamDeleteButton.classList.add('each-team-delete-button');
+  eachTeamDeleteButton.classList.add('fas');
+  eachTeamDeleteButton.classList.add('fa-trash-alt');
+  eachTeamWrapper.appendChild(eachTeamDeleteButton);
+
+  document.querySelector('.settings-team-inner-wrapper').appendChild(eachTeamWrapper);
+  document.querySelector('.settings-team-inner-wrapper').insertBefore(eachTeamWrapper, eachTeamWrapper.previousElementSibling);
+  document.querySelector('.settings-team-inner-wrapper').insertBefore(eachTeamWrapper, eachTeamWrapper.previousElementSibling);
+
+  document.querySelector('.create-team-name').style.display = 'none';
+  document.querySelector('.create-team-name-reset-button').style.display = 'none';
+  document.querySelector('.create-team-name-input').style.display = 'block';
+  document.querySelector('.create-team-name-input').value = '';
+
+  while (document.querySelector('.team-members-wrapper').childElementCount > 1)
+    document.querySelector('.team-members-wrapper').childNodes[0].remove();
+
+  resetInputUserList();
+
+  document.querySelector('.create-team-wrapper').style.display = 'none';
+  document.querySelector('.create-team-button').style.display = 'flex';
 }
 
 window.onload = () => {
@@ -639,7 +709,7 @@ window.onload = () => {
       addNewMember(member);
     } else if (event.target.parentNode && event.target.parentNode.parentNode && event.target.parentNode.parentNode.classList.contains('each-team-member-input-list')) {
       const member = user.company.users.find(each => each._id == event.target.parentNode.parentNode.id);
-      event.target.parentNode.parentNode.remove(); 
+      event.target.parentNode.parentNode.remove();
       addNewMember(member);
     }
 
@@ -650,6 +720,7 @@ window.onload = () => {
       if (!member)
         return;
       addMemberToInputUserList(member);
+      document.querySelector('.team-members-input-wrapper').style.display = 'inline-flex';
       target.remove();
     }
 
@@ -680,9 +751,12 @@ window.onload = () => {
           color: randomColor,
           members
         }, res => {
-          if (res.success);
+          if (res.success)
+            return pushNewTeam(res.team);
+
+          throwUnknownError();
         });
-      })
+      });
     }
   });
 

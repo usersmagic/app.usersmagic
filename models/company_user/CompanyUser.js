@@ -376,6 +376,7 @@ CompanyUserSchema.statics.addTeamToCompany = function (user_id, data, callback) 
         return callback('duplicatated_unique_field');
 
       const newTeamData = {
+        _id: mongoose.Types.ObjectId(),
         name: data.name,
         color: data.color
       };
@@ -384,19 +385,28 @@ CompanyUserSchema.statics.addTeamToCompany = function (user_id, data, callback) 
         data.members.length,
         (time, next) => {
           CompanyUser.findByIdAndUpdate(mongoose.Types.ObjectId(data.members[time]), {$push: {
-            teams: data.name
+            teams: newTeamData._id
           }}, (err, company_user) => {
             if (err || !company_user) return next('database_error');
-            return next(null);
+            return next(null, {
+              name: company_user.name,
+              profile_photo: company_user.profile_photo,
+              color: company_user.color
+            });
           });
         },
-        err => {
+        (err, members) => {
           if (err) return callback(err);
 
           Company.pushTeamUnderCompany(company_user.company_id, newTeamData, err => {
             if (err) return callback(err);
 
-            return callback(null);
+            return callback(null, {
+              _id: newTeamData._id,
+              name: data.name,
+              color: data.color,
+              members
+            });
           });
         }
       );

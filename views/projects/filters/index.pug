@@ -59,6 +59,8 @@ block main
                 span.each-target-name= target.name
                 span.each-target-created_at created at: #{target.created_at}
                 span.each-target-description= target.description
+                span.each-target-private-link-title Private Test Link:
+                span.each-target-private-link https://tester.usersmagic.com/test/custom?id=#{target._id.toString()}
                 span.each-target-waiting-tester-number(style="margin-bottom: -20px") Waiting for answers from #{target.submition_limit} testers
                 span.each-target-waiting-tester-number Calculated credit per tester: #{target.credit_per_user}
                 .each-target-buttons-wrapper

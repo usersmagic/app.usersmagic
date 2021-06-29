@@ -65,7 +65,7 @@
 }
 .each-target-wrapper {
   width: 450px;
-  height: 300px;
+  height: 340px;
   display: inline-block;
   margin-right: 30px;
   margin-bottom: 30px;
@@ -110,7 +110,7 @@
 }
 .each-target-created_at {
   width: 210px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   color: rgb(78, 75, 102);
   font-size: 14px;
   font-weight: 300;
@@ -121,6 +121,24 @@
   color: rgb(78, 75, 102);
   font-size: 14px;
   font-weight: 400;
+  text-decoration: none;
+  margin-bottom: 10px;
+}
+.each-target-private-link-title {
+  width: 100%;
+  margin-bottom: 5px;
+  color: rgb(78, 75, 102);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-decoration: none;
+}
+.each-target-private-link {
+  width: 100%;
+  color: rgb(78, 75, 102);
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 1px;
   text-decoration: none;
 }
 .each-target-waiting-tester-number {

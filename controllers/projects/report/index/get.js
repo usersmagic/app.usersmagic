@@ -36,6 +36,7 @@ module.exports = (req, res) => {
               project,
               questions,
               targets,
+              target_id: req.query.target_id || null,
               filters: req.query.filters ? req.query.filters : [""]
             });
           });
@@ -63,7 +64,8 @@ module.exports = (req, res) => {
             },
             company: req.session.company,
             project,
-            targets
+            targets,
+            target_id: req.query.target_id || null
           });
         });
       });
